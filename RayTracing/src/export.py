@@ -2,17 +2,20 @@ from PIL import Image
 import numpy as np
 
 array = []
-with open("image_data.txt", "r") as data:
-    
+name = ""
+with open("RayTracing/src/Data/image_data.txt", "r") as data:
     for row, line in enumerate(data.readlines()):
-        if line == "row":
+        if "row" in line:
             array.append([])
         
-        else:
+        elif ',' in line:
             r, g, b = line.split(',')
             array[-1].append((r, g, b))
+        
+        elif "." in line:
+            name = line[1:-2]
 
 pixel_data = np.array(array, dtype=np.uint8)
 
 image = Image.fromarray(pixel_data)
-image.save("Scene.png")
+image.save(f"Images/{name}.png")
