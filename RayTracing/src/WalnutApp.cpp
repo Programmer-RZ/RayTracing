@@ -7,6 +7,8 @@
 #include "renderer.h"
 #include "camera.h"
 
+#include <glm/gtc/type_ptr.hpp>
+
 class ExampleLayer : public Walnut::Layer
 {
 public:
@@ -20,12 +22,62 @@ public:
 
 	virtual void OnUIRender() override
 	{
+		// settings
 		ImGui::Begin("Settings");
 		ImGui::Text("Last Render: %.3fms", this->last_render_time);
 
 		if (ImGui::Button("Render")) {
 			this->render();
 		}
+		ImGui::End();
+
+		// entities
+		// settings
+		std::vector<int> spheres_todelete = {};
+		ImGui::Begin("Scene");
+
+		if (ImGui::Button("New Sphere")) {
+
+			glm::vec3 camera_pos = this->camera.GetPosition();
+			glm::vec3 camera_dir = this->camera.GetDirection();
+
+			Sphere sphere;
+			sphere.name = "Sphere " + std::to_string(this->scene.spheres.size() + 1);
+			sphere.pos = {
+				camera_pos.x + camera_dir.x * 2,
+				camera_pos.y + camera_dir.y * 2,
+				camera_pos.z + camera_dir.z * 2
+			};
+			sphere.radius = 0.5f;
+			sphere.Albedo = { 0.2f, 0.3f, 1.0f };
+
+			this->scene.spheres.push_back(sphere);
+		}
+
+
+		for (int i = 0; i < scene.spheres.size(); i++) {
+			ImGui::PushID(i);
+
+			ImGui::Separator();
+			ImGui::Separator();
+
+			Sphere& sphere = scene.spheres[i];
+			ImGui::Text(sphere.name.c_str());
+			ImGui::DragFloat3("Position", glm::value_ptr(sphere.pos), 0.1f);
+			ImGui::DragFloat("Radius", &sphere.radius, 0.1f);
+			ImGui::ColorEdit3("Color", glm::value_ptr(sphere.Albedo));
+
+			if (ImGui::Button("Delete Sphere")) {
+				spheres_todelete.push_back(i);
+			}
+
+			ImGui::PopID();
+		}
+
+		for (int index : spheres_todelete) {
+			this->scene.spheres.erase(this->scene.spheres.begin() + index);
+		}
+
 		ImGui::End();
 
 		// viewport
@@ -52,15 +104,15 @@ public:
 
 		this->renderer.on_resize(this->m_ViewportWidth, this->m_ViewportHeight);
 		this->camera.OnResize(this->m_ViewportWidth, this->m_ViewportHeight);
-		this->renderer.render(this->camera);
+		this->renderer.render(this->scene, this->camera);
 		
 		last_render_time = timer.ElapsedMillis();
 	}
 
 private:
 	Renderer renderer;
-
 	Camera camera;
+	Scene scene;
 
 	uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 

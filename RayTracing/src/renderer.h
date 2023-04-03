@@ -4,6 +4,7 @@
 
 #include "camera.h"
 #include "ray.h"
+#include "scene.h"
 
 #include <memory>
 #include "glm/glm.hpp"
@@ -14,12 +15,12 @@ private:
 	uint32_t* imageData = nullptr;
 
 private:
-	glm::vec4 TraceRay(const Ray& ray);
+	glm::vec4 TraceRay(const Scene& scene, const Ray& ray);
 
 public:
 	Renderer() = default;
 
-	void render(const Camera& camera);
+	void render(const Scene& scene, const Camera& camera);
 
 	void on_resize(uint32_t width, uint32_t height);
 
