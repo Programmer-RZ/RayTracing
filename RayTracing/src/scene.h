@@ -17,5 +17,6 @@ struct Sphere {
 };
 
 struct Scene {
+	std::string name = "Scene";
 	std::vector<Sphere> spheres = {};
 };

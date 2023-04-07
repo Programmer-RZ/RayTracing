@@ -2,18 +2,7 @@
 
 #include "Walnut/Random.h"
 
-namespace Utils {
-	static uint32_t ConvertToRGBA(const glm::vec4& color) {
-		uint8_t red = uint8_t(color.r * 255.0f);
-		uint8_t green = uint8_t(color.g * 255.0f);
-		uint8_t blue = uint8_t(color.b * 255.0f);
-		uint8_t alpha = uint8_t(color.a * 255.0f);
-
-		uint32_t result = (alpha << 24) | (blue << 16) | (green << 8) | red;
-
-		return result;
-	}
-}
+#include "utils.h"
 
 void Renderer::on_resize(uint32_t width, uint32_t height) {
 

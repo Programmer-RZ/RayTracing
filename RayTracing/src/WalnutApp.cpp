@@ -6,6 +6,7 @@
 
 #include "renderer.h"
 #include "camera.h"
+#include "export.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -14,7 +15,15 @@ class ExampleLayer : public Walnut::Layer
 public:
 	ExampleLayer()
 		: camera(45.0f, 0.1f, 100.0f)
-	{}
+	{
+		std::system("python ..\\Helper\\date_time.py");
+
+		std::ifstream file("..\\Data\\datetime.txt");
+		std::string datetime;
+		while (std::getline(file, datetime)) {
+			scene.name = datetime;
+		}
+	}
 
 	virtual void OnUpdate(float ts) override {
 		this->camera.OnUpdate(ts);
@@ -22,12 +31,27 @@ public:
 
 	virtual void OnUIRender() override
 	{
-		// settings
+		// options
 		ImGui::Begin("Settings");
 		ImGui::Text("Last Render: %.3fms", this->last_render_time);
+	
+		ImGui::Dummy(ImVec2(0.0f, 20.0f));
 
-		if (ImGui::Button("Render")) {
-			this->render();
+		ImGui::Separator();
+		ImGui::Separator();
+		// export
+		if (ImGui::Button("Export as PNG")) {
+			this->export_as_PNG();
+		}
+
+		ImGui::Dummy(ImVec2(0.0f, 20.0f));
+
+		ImGui::Separator();
+		ImGui::Separator();
+
+		// save as
+		if (ImGui::Button("Save scene info")) {
+
 		}
 		ImGui::End();
 
@@ -99,6 +123,20 @@ public:
 		this->render();
 	}
 
+	void export_as_PNG() {
+		// export
+		Export::ExportImage(
+			scene.name,
+			this->renderer.GetImageData(),
+			this->renderer.GetImageWidth(),
+			this->renderer.GetImageHeight()
+		);
+	}
+
+	void save_scene() {
+		
+	}
+
 	void render() {
 		Walnut::Timer timer;
 
@@ -126,6 +164,8 @@ Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
 
 	Walnut::Application* app = new Walnut::Application(spec);
 	app->PushLayer<ExampleLayer>();
+
+	/*
 	app->SetMenubarCallback([app]()
 	{
 		if (ImGui::BeginMenu("File"))
@@ -137,5 +177,6 @@ Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
 			ImGui::EndMenu();
 		}
 	});
+	*/
 	return app;
 }

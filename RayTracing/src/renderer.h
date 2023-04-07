@@ -20,6 +20,10 @@ private:
 public:
 	Renderer() = default;
 
+	uint32_t* GetImageData() const { return this->imageData; }
+	int GetImageWidth() const { return this->m_FinalImage->GetWidth(); }
+	int GetImageHeight() const { return this->m_FinalImage->GetHeight(); }
+
 	void render(const Scene& scene, const Camera& camera);
 
 	void on_resize(uint32_t width, uint32_t height);
