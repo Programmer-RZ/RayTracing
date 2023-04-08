@@ -1,2 +1,4 @@
-﻿  renderer.cpp
+﻿  WalnutApp.cpp
+  renderer.cpp
+  Generating Code...
   RayTracing.vcxproj -> C:\Ryan\Raytracing\Release-windows-x86_64\RayTracing.exe

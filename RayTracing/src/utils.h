@@ -2,6 +2,8 @@
 
 #include "glm/glm.hpp"
 
+#include <vector>
+
 namespace Utils {
 	static uint32_t ConvertToRGBA(const glm::vec4& color) {
 		uint8_t red = uint8_t(color.r * 255.0f);
@@ -14,12 +16,12 @@ namespace Utils {
 		return result;
 	}
 
-	static uint8_t* ConvertToFloats(const uint32_t& color) {
+	static std::vector<uint8_t> ConvertToFloats(const uint32_t& color) {
 		uint8_t r = color & 0xff; // Extract red channel
 		uint8_t g = (color >> 8) & 0xff; // Extract green channel
 		uint8_t b = (color >> 16) & 0xff; // Extract blue channel
 		uint8_t a = (color >> 24) & 0xff; // Extract alpha channel
-		static uint8_t rgba[4] = { r, g, b, a };
+		std::vector<uint8_t> rgba = { r, g, b, a };
 
 		return rgba;
 	}

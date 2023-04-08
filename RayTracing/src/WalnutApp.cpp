@@ -23,6 +23,33 @@ public:
 		while (std::getline(file, datetime)) {
 			scene.name = datetime;
 		}
+
+		Material& material0 = this->scene.materials.emplace_back();
+		material0.Albedo = { 1.0f, 0.0f, 1.0f };
+		material0.roughness = 0.0f;
+		material0.name = "Material0";
+
+		Material& material1 = this->scene.materials.emplace_back();
+		material1.Albedo = { 0.2f, 0.3f, 1.0f };
+		material1.roughness = 0.1f;
+		material1.name = "Material1";
+
+		{
+			Sphere sphere;
+			sphere.name = "Sphere1";
+			sphere.pos = { 0.0f, 0.0f, 0.0f };
+			sphere.radius = 0.5f;
+			sphere.material_index = 0;
+			this->scene.spheres.push_back(sphere);
+		}
+		{
+			Sphere sphere;
+			sphere.name = "Sphere2";
+			sphere.pos = { 0.0f, -50.5f, 0.0f };
+			sphere.radius = 50.0f;
+			sphere.material_index = 1;
+			this->scene.spheres.push_back(sphere);
+		}
 	}
 
 	virtual void OnUpdate(float ts) override {
@@ -34,6 +61,14 @@ public:
 		// options
 		ImGui::Begin("Settings");
 		ImGui::Text("Last Render: %.3fms", this->last_render_time);
+
+		ImGui::Dummy(ImVec2(0.0f, 20.0f));
+
+		ImGui::Separator();
+		ImGui::Separator();
+
+		ImGui::DragInt("Canvas Width", &m_ViewportWidth, 1.0f, 200, 1500);
+		ImGui::DragInt("Canvas Height", &m_ViewportHeight, 1.0f, 200, 1170);
 
 		ImGui::Dummy(ImVec2(0.0f, 20.0f));
 
@@ -63,7 +98,7 @@ public:
 				camera_pos.z + camera_dir.z * 2
 			};
 			sphere.radius = 0.5f;
-			sphere.Albedo = { 0.2f, 0.3f, 1.0f };
+			sphere.material_index = 0;
 
 			this->scene.spheres.push_back(sphere);
 		}
@@ -78,8 +113,9 @@ public:
 			Sphere& sphere = scene.spheres[i];
 			ImGui::Text(sphere.name.c_str());
 			ImGui::DragFloat3("Position", glm::value_ptr(sphere.pos), 0.1f);
-			ImGui::DragFloat("Radius", &sphere.radius, 0.1f);
-			ImGui::ColorEdit3("Color", glm::value_ptr(sphere.Albedo));
+			ImGui::DragFloat("Radius", &sphere.radius, 0.1f, 0.0f);
+
+			ImGui::DragInt("Material", &sphere.material_index, 1.0f, 0, int(this->scene.materials.size()) - 1);
 
 			if (ImGui::Button("Delete Sphere")) {
 				spheres_todelete.push_back(i);
@@ -94,12 +130,30 @@ public:
 
 		ImGui::End();
 
+		ImGui::Begin("Materials");
+
+		for (int i = 0; i < this->scene.materials.size(); i++) {
+			ImGui::PushID(i);
+
+			ImGui::Separator();
+			ImGui::Separator();
+
+			Material& material = this->scene.materials[i];
+
+			ImGui::Text((material.name).c_str());
+
+			ImGui::ColorEdit3("Color", glm::value_ptr(material.Albedo));
+			ImGui::DragFloat("Roughness", &material.roughness, 0.1f, 0.0f, 1.0f);
+			ImGui::DragFloat("Metallic", &material.metallic, 0.1f, 0.0f, 1.0f);
+
+			ImGui::PopID();
+		}
+
+		ImGui::End();
+
 		// viewport
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 		ImGui::Begin("Viewport");
-
-		this->m_ViewportWidth = ImGui::GetContentRegionAvail().x;
-		this->m_ViewportHeight = ImGui::GetContentRegionAvail().y;
 
 		auto image = this->renderer.get_final_image();
 		if (image) {
@@ -139,7 +193,7 @@ private:
 	Camera camera;
 	Scene scene;
 
-	uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
+	int m_ViewportWidth = 1200, m_ViewportHeight = 965;
 
 	float last_render_time = 0;
 };

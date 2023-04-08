@@ -1,7 +1,6 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include <iostream>
 #include <fstream>
 #include <string>
 
@@ -17,10 +16,10 @@ namespace Export {
 				data << "row" << std::endl;
 				for (int x = 0; x < imageWidth; x++) {
 
-					uint8_t* valuesPtr = Utils::ConvertToFloats(imageData[x + y * imageWidth]);
+					std::vector<uint8_t> values = Utils::ConvertToFloats(imageData[x + y * imageWidth]);
 
 					for (int value = 0; value < 3; value++) {
-						data << int(*(valuesPtr + value)) << ",";
+						data << int(values[value]) << ",";
 					}
 					data << std::endl;
 				}
