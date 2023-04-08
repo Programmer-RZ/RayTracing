@@ -14,8 +14,24 @@ private:
 	std::shared_ptr<Walnut::Image> m_FinalImage;
 	uint32_t* imageData = nullptr;
 
+	const Scene* ActiveScene = nullptr;
+	const Camera* ActiveCamera = nullptr;
+
 private:
-	glm::vec4 TraceRay(const Scene& scene, const Ray& ray);
+	struct HitPayload {
+		float HitDist;
+
+		glm::vec3 WorldPosition;
+		glm::vec3 WorldNormal;
+
+		int ObjectIndex;
+	};
+
+	glm::vec4 PerPixel(uint32_t x, uint32_t y);
+
+	HitPayload TraceRay(const Ray& ray);
+	HitPayload ClosestHit(const Ray& ray, float hitDist, int objectIndex);
+	HitPayload Miss(const Ray& ray);
 
 public:
 	Renderer() = default;

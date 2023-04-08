@@ -34,7 +34,7 @@ public:
 		// options
 		ImGui::Begin("Settings");
 		ImGui::Text("Last Render: %.3fms", this->last_render_time);
-	
+
 		ImGui::Dummy(ImVec2(0.0f, 20.0f));
 
 		ImGui::Separator();
@@ -42,16 +42,6 @@ public:
 		// export
 		if (ImGui::Button("Export as PNG")) {
 			this->export_as_PNG();
-		}
-
-		ImGui::Dummy(ImVec2(0.0f, 20.0f));
-
-		ImGui::Separator();
-		ImGui::Separator();
-
-		// save as
-		if (ImGui::Button("Save scene info")) {
-
 		}
 		ImGui::End();
 
@@ -133,10 +123,6 @@ public:
 		);
 	}
 
-	void save_scene() {
-		
-	}
-
 	void render() {
 		Walnut::Timer timer;
 
@@ -149,6 +135,7 @@ public:
 
 private:
 	Renderer renderer;
+
 	Camera camera;
 	Scene scene;
 

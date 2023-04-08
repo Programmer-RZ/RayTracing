@@ -13,9 +13,9 @@ namespace Export {
 		if (data.is_open()) {
 			data << "." + name + "." << std::endl;
 
-			for (uint32_t y = 0; y < imageHeight; y++) {
+			for (int y = 0; y < imageHeight; y++) {
 				data << "row" << std::endl;
-				for (uint32_t x = 0; x < imageWidth; x++) {
+				for (int x = 0; x < imageWidth; x++) {
 
 					uint8_t* valuesPtr = Utils::ConvertToFloats(imageData[x + y * imageWidth]);
 

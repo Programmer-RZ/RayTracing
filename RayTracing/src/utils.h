@@ -19,7 +19,7 @@ namespace Utils {
 		uint8_t g = (color >> 8) & 0xff; // Extract green channel
 		uint8_t b = (color >> 16) & 0xff; // Extract blue channel
 		uint8_t a = (color >> 24) & 0xff; // Extract alpha channel
-		uint8_t rgba[4] = { r, g, b, a };
+		static uint8_t rgba[4] = { r, g, b, a };
 
 		return rgba;
 	}
