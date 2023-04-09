@@ -10,12 +10,41 @@
 #include "glm/glm.hpp"
 
 class Renderer {
+
+public:
+	struct Settings {
+		bool Accumulate = true;
+	};
+
+public:
+	Renderer() = default;
+
+	uint32_t* GetImageData() const { return this->imageData; }
+	int GetImageWidth() const { return this->m_FinalImage->GetWidth(); }
+	int GetImageHeight() const { return this->m_FinalImage->GetHeight(); }
+	int& GetBounces() { return this->bounces; }
+	Settings& GetSettings() { return this->settings; }
+
+	void resetFrameIndex() { this->frameIndex = 1; }
+
+	void render(const Scene& scene, const Camera& camera);
+
+	void on_resize(uint32_t width, uint32_t height);
+
+	std::shared_ptr<Walnut::Image> get_final_image() const { return this->m_FinalImage; }
+
 private:
 	std::shared_ptr<Walnut::Image> m_FinalImage;
 	uint32_t* imageData = nullptr;
+	glm::vec4* AccumulationData = nullptr;
 
 	const Scene* ActiveScene = nullptr;
 	const Camera* ActiveCamera = nullptr;
+
+	Settings settings;
+
+	int frameIndex = 1;
+	int bounces = 2;
 
 private:
 	struct HitPayload {
@@ -32,17 +61,4 @@ private:
 	HitPayload TraceRay(const Ray& ray);
 	HitPayload ClosestHit(const Ray& ray, float hitDist, int objectIndex);
 	HitPayload Miss(const Ray& ray);
-
-public:
-	Renderer() = default;
-
-	uint32_t* GetImageData() const { return this->imageData; }
-	int GetImageWidth() const { return this->m_FinalImage->GetWidth(); }
-	int GetImageHeight() const { return this->m_FinalImage->GetHeight(); }
-
-	void render(const Scene& scene, const Camera& camera);
-
-	void on_resize(uint32_t width, uint32_t height);
-
-	std::shared_ptr<Walnut::Image> get_final_image() const { return this->m_FinalImage; }
 };

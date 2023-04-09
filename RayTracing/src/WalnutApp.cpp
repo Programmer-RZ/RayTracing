@@ -26,7 +26,7 @@ public:
 
 		Material& material0 = this->scene.materials.emplace_back();
 		material0.Albedo = { 1.0f, 0.0f, 1.0f };
-		material0.roughness = 0.0f;
+		material0.roughness = 0.5f;
 		material0.name = "Material0";
 
 		Material& material1 = this->scene.materials.emplace_back();
@@ -36,7 +36,7 @@ public:
 
 		{
 			Sphere sphere;
-			sphere.name = "Sphere1";
+			sphere.name = "Sphere0";
 			sphere.pos = { 0.0f, 0.0f, 0.0f };
 			sphere.radius = 0.5f;
 			sphere.material_index = 0;
@@ -44,7 +44,7 @@ public:
 		}
 		{
 			Sphere sphere;
-			sphere.name = "Sphere2";
+			sphere.name = "Sphere1";
 			sphere.pos = { 0.0f, -50.5f, 0.0f };
 			sphere.radius = 50.0f;
 			sphere.material_index = 1;
@@ -53,31 +53,55 @@ public:
 	}
 
 	virtual void OnUpdate(float ts) override {
-		this->camera.OnUpdate(ts);
+		if (this->camera.OnUpdate(ts)) {
+			this->renderer.resetFrameIndex();
+		}
 	}
 
 	virtual void OnUIRender() override
 	{
+		bool reset_Accumulation = false;
+
 		// options
 		ImGui::Begin("Settings");
 		ImGui::Text("Last Render: %.3fms", this->last_render_time);
 
-		ImGui::Dummy(ImVec2(0.0f, 20.0f));
+		ImGui::Separator();
+		ImGui::Separator();
+
+		ImGui::Text("Accumulate");
+		ImGui::Checkbox("Accumulate", &(this->renderer.GetSettings().Accumulate));
+		if (ImGui::Button("Reset Accumulation")) {
+			reset_Accumulation = true;
+		}
 
 		ImGui::Separator();
 		ImGui::Separator();
 
-		ImGui::DragInt("Canvas Width", &m_ViewportWidth, 1.0f, 200, 1500);
-		ImGui::DragInt("Canvas Height", &m_ViewportHeight, 1.0f, 200, 1170);
-
-		ImGui::Dummy(ImVec2(0.0f, 20.0f));
+		if (ImGui::DragInt("Light Bounces", &(this->renderer.GetBounces()), 5.0f, 1, 100)) {
+			reset_Accumulation = true;
+		}
 
 		ImGui::Separator();
 		ImGui::Separator();
+
+		if (ImGui::DragInt("Canvas Width", &m_ViewportWidth, 1.0f, 200, 1500)) {
+			reset_Accumulation = true;
+		}
+		
+		if (ImGui::DragInt("Canvas Height", &m_ViewportHeight, 1.0f, 200, 1170)) {
+			reset_Accumulation = true;
+		}
+
+		ImGui::End();
+
+		ImGui::Begin("Options");
+
 		// export
 		if (ImGui::Button("Export as PNG")) {
 			this->export_as_PNG();
 		}
+
 		ImGui::End();
 
 		// entities
@@ -101,6 +125,8 @@ public:
 			sphere.material_index = 0;
 
 			this->scene.spheres.push_back(sphere);
+
+			reset_Accumulation = true;
 		}
 
 
@@ -112,13 +138,22 @@ public:
 
 			Sphere& sphere = scene.spheres[i];
 			ImGui::Text(sphere.name.c_str());
-			ImGui::DragFloat3("Position", glm::value_ptr(sphere.pos), 0.1f);
-			ImGui::DragFloat("Radius", &sphere.radius, 0.1f, 0.0f);
 
-			ImGui::DragInt("Material", &sphere.material_index, 1.0f, 0, int(this->scene.materials.size()) - 1);
+			if (ImGui::DragFloat3("Position", glm::value_ptr(sphere.pos), 0.1f)) {
+				reset_Accumulation = true;
+			}
+			
+			if (ImGui::DragFloat("Radius", &sphere.radius, 0.1f, 0.0f)) {
+				reset_Accumulation = true;
+			}
+
+			if (ImGui::DragInt("Material", &sphere.material_index, 1.0f, 0, int(this->scene.materials.size()) - 2)) {
+				reset_Accumulation = true;
+			}
 
 			if (ImGui::Button("Delete Sphere")) {
 				spheres_todelete.push_back(i);
+				reset_Accumulation = true;
 			}
 
 			ImGui::PopID();
@@ -132,6 +167,16 @@ public:
 
 		ImGui::Begin("Materials");
 
+		if (ImGui::Button("New Material")) {
+
+			Material& material = this->scene.materials.emplace_back();
+			material.Albedo = { 0.2f, 0.3f, 1.0f };
+			material.roughness = 1.0f;
+			material.name = "Material" + std::to_string(this->scene.materials.size() - 2);
+
+			reset_Accumulation = true;
+		}
+
 		for (int i = 0; i < this->scene.materials.size(); i++) {
 			ImGui::PushID(i);
 
@@ -142,9 +187,17 @@ public:
 
 			ImGui::Text((material.name).c_str());
 
-			ImGui::ColorEdit3("Color", glm::value_ptr(material.Albedo));
-			ImGui::DragFloat("Roughness", &material.roughness, 0.1f, 0.0f, 1.0f);
-			ImGui::DragFloat("Metallic", &material.metallic, 0.1f, 0.0f, 1.0f);
+			if (ImGui::ColorEdit3("Color", glm::value_ptr(material.Albedo))) {
+				reset_Accumulation = true;
+			}
+			
+			if (ImGui::DragFloat("Roughness", &material.roughness, 0.1f, 0.0f, 1.0f)) {
+				reset_Accumulation = true;
+			}
+
+			if (ImGui::DragFloat("Metallic", &material.metallic, 0.1f, 0.0f, 1.0f)) {
+				reset_Accumulation = true;
+			}
 
 			ImGui::PopID();
 		}
@@ -163,6 +216,10 @@ public:
 
 		ImGui::End();
 		ImGui::PopStyleVar();
+
+		if (reset_Accumulation) {
+			this->renderer.resetFrameIndex();
+		}
 
 		this->render();
 	}

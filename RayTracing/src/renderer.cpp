@@ -21,6 +21,9 @@ void Renderer::on_resize(uint32_t width, uint32_t height) {
 
 	delete[] this->imageData;
 	this->imageData = new uint32_t[width * height];
+
+	delete[] this->AccumulationData;
+	this->AccumulationData = new glm::vec4[width * height];
 }
 
 void Renderer::render(const Scene& scene, const Camera& camera) {
@@ -28,19 +31,35 @@ void Renderer::render(const Scene& scene, const Camera& camera) {
 	this->ActiveScene = &scene;
 	this->ActiveCamera = &camera;
 
+	if (this->frameIndex == 1) {
+		memset(this->AccumulationData, 0, this->m_FinalImage->GetWidth() * this->m_FinalImage->GetHeight() * sizeof(glm::vec4));
+	}
+
 	for (uint32_t y = 0; y < this->m_FinalImage->GetHeight(); y++) {
 		for (uint32_t x = 1; x < this->m_FinalImage->GetWidth(); x+=2) {
 
 			glm::vec4 color = this->PerPixel(x, y);
-			color = glm::clamp(color, glm::vec4(0.0f), glm::vec4(1.0f));
+			this->AccumulationData[x + y * this->m_FinalImage->GetWidth()] += color;
+			this->AccumulationData[(x - 1) + y * this->m_FinalImage->GetWidth()] += color;
 
-			uint32_t RGBA = Utils::ConvertToRGBA(color);
+			glm::vec4 accumulatedColor = this->AccumulationData[x + y * this->m_FinalImage->GetWidth()];
+			accumulatedColor /= this->frameIndex;
+
+			accumulatedColor = glm::clamp(accumulatedColor, glm::vec4(0.0f), glm::vec4(1.0f));
+			uint32_t RGBA = Utils::ConvertToRGBA(accumulatedColor);
 			this->imageData[x + y * this->m_FinalImage->GetWidth()] = RGBA;
 			this->imageData[(x - 1) + y * this->m_FinalImage->GetWidth()] = RGBA;
 		}
 	}
 
 	this->m_FinalImage->SetData(this->imageData);
+
+	if (this->settings.Accumulate) {
+		this->frameIndex++;
+	}
+	else {
+		this->frameIndex = 1;
+	}
 }
 
 glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y)
@@ -51,9 +70,8 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y)
 	
 	glm::vec3 color(0.0f, 0.0f, 0.0f);
 	float multiplier = 1.0f;
-	int bounces = 2;
 
-	for (int i = 0; i < bounces; i++) {
+	for (int i = 0; i < this->bounces; i++) {
 		Renderer::HitPayload payload = this->TraceRay(ray);
 
 		if (payload.HitDist < 0.0f) {
