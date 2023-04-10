@@ -80,7 +80,7 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y)
 			break;
 		}
 
-		glm::vec3 lightDir = glm::normalize(glm::vec3(-1, -1, -1));
+		glm::vec3 lightDir = glm::normalize(this->lightDir);
 		float lightIntensity = glm::max(glm::dot(payload.WorldNormal, -lightDir), 0.0f); // == cos(angle)
 
 		const Sphere& sphere = this->ActiveScene->spheres[payload.ObjectIndex];

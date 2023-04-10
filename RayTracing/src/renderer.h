@@ -24,6 +24,7 @@ public:
 	int GetImageHeight() const { return this->m_FinalImage->GetHeight(); }
 	int& GetBounces() { return this->bounces; }
 	Settings& GetSettings() { return this->settings; }
+	glm::vec3& GetLightDir() { return this->lightDir; }
 
 	void resetFrameIndex() { this->frameIndex = 1; }
 
@@ -42,6 +43,8 @@ private:
 	const Camera* ActiveCamera = nullptr;
 
 	Settings settings;
+
+	glm::vec3 lightDir = glm::vec3(-1.0f, -1.0f, -1.0f);
 
 	int frameIndex = 1;
 	int bounces = 2;

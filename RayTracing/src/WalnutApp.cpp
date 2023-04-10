@@ -36,7 +36,7 @@ public:
 
 		{
 			Sphere sphere;
-			sphere.name = "Sphere0";
+			sphere.name = "Ground";
 			sphere.pos = { 0.0f, 0.0f, 0.0f };
 			sphere.radius = 0.5f;
 			sphere.material_index = 0;
@@ -78,18 +78,18 @@ public:
 		ImGui::Separator();
 		ImGui::Separator();
 
-		if (ImGui::DragInt("Light Bounces", &(this->renderer.GetBounces()), 5.0f, 1, 100)) {
+		if (ImGui::DragInt("Bounces", &(this->renderer.GetBounces()), 1.0f, 1, 5)) {
 			reset_Accumulation = true;
 		}
 
 		ImGui::Separator();
 		ImGui::Separator();
 
-		if (ImGui::DragInt("Canvas Width", &m_ViewportWidth, 1.0f, 200, 1500)) {
+		if (ImGui::DragInt("Width", &m_ViewportWidth, 1.0f, 200, 1500)) {
 			reset_Accumulation = true;
 		}
 		
-		if (ImGui::DragInt("Canvas Height", &m_ViewportHeight, 1.0f, 200, 1170)) {
+		if (ImGui::DragInt("Height", &m_ViewportHeight, 1.0f, 200, 1170)) {
 			reset_Accumulation = true;
 		}
 
@@ -109,13 +109,21 @@ public:
 		std::vector<int> spheres_todelete = {};
 		ImGui::Begin("Scene");
 
+		ImGui::Text("Light");
+		if (ImGui::DragFloat3("Light Direction", glm::value_ptr(this->renderer.GetLightDir()), 0.1f)) {
+			reset_Accumulation = true;
+		}
+
+		ImGui::Separator();
+		ImGui::Separator();
+
 		if (ImGui::Button("New Sphere")) {
 
 			glm::vec3 camera_pos = this->camera.GetPosition();
 			glm::vec3 camera_dir = this->camera.GetDirection();
 
 			Sphere sphere;
-			sphere.name = "Sphere " + std::to_string(this->scene.spheres.size() + 1);
+			sphere.name = "Sphere " + std::to_string(this->scene.spheres.size());
 			sphere.pos = {
 				camera_pos.x + camera_dir.x * 2,
 				camera_pos.y + camera_dir.y * 2,
@@ -147,7 +155,7 @@ public:
 				reset_Accumulation = true;
 			}
 
-			if (ImGui::DragInt("Material", &sphere.material_index, 1.0f, 0, int(this->scene.materials.size()) - 2)) {
+			if (ImGui::DragInt("Material", &sphere.material_index, 1.0f, 0, int(this->scene.materials.size()) - 1)) {
 				reset_Accumulation = true;
 			}
 
@@ -172,7 +180,7 @@ public:
 			Material& material = this->scene.materials.emplace_back();
 			material.Albedo = { 0.2f, 0.3f, 1.0f };
 			material.roughness = 1.0f;
-			material.name = "Material" + std::to_string(this->scene.materials.size() - 2);
+			material.name = "Material" + std::to_string(this->scene.materials.size() - 1);
 
 			reset_Accumulation = true;
 		}
