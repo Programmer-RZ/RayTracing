@@ -25,6 +25,7 @@ public:
 	int& GetBounces() { return this->bounces; }
 	Settings& GetSettings() { return this->settings; }
 	glm::vec3& GetLightDir() { return this->lightDir; }
+	float& GetBrightness() { return this->brightness; }
 
 	void resetFrameIndex() { this->frameIndex = 1; }
 
@@ -48,6 +49,7 @@ private:
 
 	int frameIndex = 1;
 	int bounces = 2;
+	float brightness = 0.4f;
 
 private:
 	struct HitPayload {

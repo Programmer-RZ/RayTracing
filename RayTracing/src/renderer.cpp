@@ -2,6 +2,10 @@
 
 #include "Walnut/Random.h"
 
+#include <iostream>
+
+#include <cmath>
+
 #include "utils.h"
 
 void Renderer::on_resize(uint32_t width, uint32_t height) {
@@ -74,14 +78,19 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y)
 	for (int i = 0; i < this->bounces; i++) {
 		Renderer::HitPayload payload = this->TraceRay(ray);
 
-		if (payload.HitDist < 0.0f) {
+		float hitDist = payload.HitDist;
+
+		//hitDist = std::round(hitDist * 1000) / 1000;
+		//std::cout << hitDist << std::endl;
+		
+		if (hitDist < 0.0f) {
 			glm::vec3 skycolor = glm::vec3(0.6f, 0.7f, 0.9f);
 			color += skycolor * multiplier;
 			break;
 		}
 
-		glm::vec3 lightDir = glm::normalize(this->lightDir);
-		float lightIntensity = glm::max(glm::dot(payload.WorldNormal, -lightDir), 0.0f); // == cos(angle)
+		this->lightDir = glm::normalize(this->lightDir);
+		float lightIntensity = glm::max(glm::dot(payload.WorldNormal, -this->lightDir), 0.0f); // == cos(angle)
 
 		const Sphere& sphere = this->ActiveScene->spheres[payload.ObjectIndex];
 		const Material& material = this->ActiveScene->materials[sphere.material_index];
@@ -91,7 +100,7 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y)
 
 		color += sphereColor * multiplier;
 
-		multiplier *= 0.5f;
+		multiplier *= this->brightness;
 
 		ray.Origin = payload.WorldPosition + payload.WorldNormal * 0.0001f;
 		ray.Direction = glm::reflect(ray.Direction, 

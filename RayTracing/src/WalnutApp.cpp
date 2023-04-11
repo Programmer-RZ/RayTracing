@@ -85,6 +85,13 @@ public:
 		ImGui::Separator();
 		ImGui::Separator();
 
+		if (ImGui::DragFloat("Brightness", &(this->renderer.GetBrightness()), 0.1f, 0.1f, 1.0f)) {
+			reset_Accumulation = true;
+		}
+
+		ImGui::Separator();
+		ImGui::Separator();
+
 		if (ImGui::DragInt("Width", &m_ViewportWidth, 1.0f, 200, 1500)) {
 			reset_Accumulation = true;
 		}
@@ -110,12 +117,14 @@ public:
 		ImGui::Begin("Scene");
 
 		ImGui::Text("Light");
-		if (ImGui::DragFloat3("Light Direction", glm::value_ptr(this->renderer.GetLightDir()), 0.1f)) {
+		if (ImGui::DragFloat3("Light Direction", glm::value_ptr(this->renderer.GetLightDir()), 0.1f, 0.0f, 1.0f)) {
 			reset_Accumulation = true;
 		}
 
 		ImGui::Separator();
 		ImGui::Separator();
+
+		ImGui::Text("Objects");
 
 		if (ImGui::Button("New Sphere")) {
 
