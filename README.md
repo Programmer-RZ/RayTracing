@@ -6,9 +6,15 @@
 
 
 # Requirements
+**C++**
 - Visual Studio 2022 (other versions have not been tested)
 - Vulkan SDK
+
+**Python**
 - Python 3.9.7 or higher
+- Datetime
+- PIL
+- Numpy
 
 # Features
 - Real-time Raytracing
