@@ -17,6 +17,7 @@
 - Numpy
 
 # Features
+**RayTracing**
 - Real-time Raytracing
 - Export as PNG
 - Shading
@@ -26,6 +27,9 @@
 - Accumulation
 - Material/Scene Editor
 - UI
+
+**Optimizations**
+- Ray coherence
 
 # Examples
 ![2023-04-11_08-07-33](https://user-images.githubusercontent.com/123858154/231158230-e1971c1b-00ba-48c3-9c89-99461ee7bc43.png)
