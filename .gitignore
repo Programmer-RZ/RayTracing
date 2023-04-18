@@ -1,7 +1,7 @@
 # Directories
 .vs/
-bin/
-bin-int/
+Release-windows-x86_64/
+Release-windows-x86_64-int/
 
 # Files
 *.vcxproj

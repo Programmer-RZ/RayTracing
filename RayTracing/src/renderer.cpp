@@ -3,10 +3,11 @@
 #include "Walnut/Random.h"
 
 #include <iostream>
-
 #include <cmath>
 
 #include "utils.h"
+
+#include "objects.h"
 
 void Renderer::on_resize(uint32_t width, uint32_t height) {
 
@@ -137,48 +138,16 @@ Renderer::HitPayload Renderer::Miss(const Ray& ray)
 
 Renderer::HitPayload Renderer::TraceRay(const Ray& ray)
 {
-
-	// (bx^2 + by^2)t^2 + (2(axbx + ayby))t + (ax^2 + ay^2 - r^2) = 0
-
-	// a = ray origin
-	// b = ray direction
-	// r = radius of sphere
-	// t = hit distance
-
-	int closestSphere = -1;
+	int closestObject = -1;
 	float hitDist = std::numeric_limits<float>::max();
 
-	for (int i = 0; i < this->ActiveScene->spheres.size(); i++) {
 
-		const Sphere& sphere = this->ActiveScene->spheres[i];
-		glm::vec3 origin = ray.Origin - sphere.pos;
-
-		float a = glm::dot(ray.Direction, ray.Direction);
-		float b = 2.0f * glm::dot(origin, ray.Direction);
-		float c = glm::dot(origin, origin) - sphere.radius * sphere.radius;
-
-		// Quadratic formula discriminent:
-		// b^2 - 4ac
-
-		float discriminent = b * b - 4.0f * a * c;
-
-		if (discriminent < 0) {
-			continue;
-		}
-
-		// (-b +- sqrt(discriminent)) / 2a
-		// float t0 = (-b + glm::sqrt(discriminent)) / (2.0f * a);
-		float closestT = (-b - glm::sqrt(discriminent)) / (2.0f * a);
-
-		if (closestT > 0.0f && closestT < hitDist) {
-			hitDist = closestT;
-			closestSphere = i;
-		}
-	}	
+	SphereIntersection sphere_intersection = SphereIntersection();
+	sphere_intersection.TraceRay(ray, this->ActiveScene, closestObject, hitDist);
 	
-	if (closestSphere < 0) {
+	if (closestObject < 0) {
 		return this->Miss(ray);
 	}
 
-	return this->ClosestHit(ray, hitDist, closestSphere);
+	return this->ClosestHit(ray, hitDist, closestObject);
 }

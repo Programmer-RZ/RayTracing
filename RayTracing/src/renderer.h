@@ -11,6 +11,16 @@
 
 class Renderer {
 
+private:
+	struct HitPayload {
+		float HitDist;
+
+		glm::vec3 WorldPosition;
+		glm::vec3 WorldNormal;
+
+		int ObjectIndex;
+	};
+
 public:
 	struct Settings {
 		bool Accumulate = true;
@@ -52,14 +62,6 @@ private:
 	float brightness = 0.4f;
 
 private:
-	struct HitPayload {
-		float HitDist;
-
-		glm::vec3 WorldPosition;
-		glm::vec3 WorldNormal;
-
-		int ObjectIndex;
-	};
 
 	glm::vec4 PerPixel(uint32_t x, uint32_t y);
 
