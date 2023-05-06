@@ -32,6 +32,9 @@ public:
 	uint32_t* GetImageData() const { return this->imageData; }
 	int GetImageWidth() const { return this->m_FinalImage->GetWidth(); }
 	int GetImageHeight() const { return this->m_FinalImage->GetHeight(); }
+	bool GetRealisticRendering() const { return this->realisticRendering; }
+	bool GetFinishedRealistic() const { return this->finishedRealistic; }
+	void SetFinishRealisticAndExport() { this->realisticRendering = false; this->finishedRealistic = false; this->coherence = 7; this->bounces = 2; }
 	int& GetBounces() { return this->bounces; }
 	Settings& GetSettings() { return this->settings; }
 	glm::vec3& GetLightDir() { return this->lightDir; }
@@ -42,6 +45,8 @@ public:
 	void render(const Scene& scene, const Camera& camera);
 
 	void on_resize(uint32_t width, uint32_t height);
+
+	void realisticRender();
 
 	std::shared_ptr<Walnut::Image> get_final_image() const { return this->m_FinalImage; }
 
@@ -58,8 +63,15 @@ private:
 	glm::vec3 lightDir = glm::vec3(-1.0f, -1.0f, -1.0f);
 
 	int frameIndex = 1;
+
+	// realistic rendering
 	int bounces = 2;
+	int coherence = 7;
 	float brightness = 0.4f;
+	bool realisticRendering = false;
+	bool finishedRealistic = false;
+	int realisticCount = 0;
+	int maxRealisticCount = 20;
 
 private:
 
@@ -68,4 +80,7 @@ private:
 	HitPayload TraceRay(const Ray& ray);
 	HitPayload ClosestHit(const Ray& ray, float hitDist, int objectIndex);
 	HitPayload Miss(const Ray& ray);
+
+private:
+	void resetArray();
 };

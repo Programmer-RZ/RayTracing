@@ -6,30 +6,30 @@
 
 #include "utils.h"
 
-namespace Export {
-	static void ExportImage(std::string name, uint32_t* imageData, int imageWidth, int imageHeight) {
-		std::ofstream data("..\\Data\\image_data.txt");
-		if (data.is_open()) {
-			data << "." + name + "." << std::endl;
+class Export {
+private:
+	int y_index;
+	int x_index;
+	bool finishedWrite;
+	bool finishedExport;
+	bool isExport;
+	std::ofstream data;
 
-			for (int y = 0; y < imageHeight; y++) {
-				data << "row" << std::endl;
-				for (int x = 0; x < imageWidth; x++) {
+	int percentage;
 
-					std::vector<uint8_t> values = Utils::ConvertToFloats(imageData[x + y * imageWidth]);
+public:
+	Export();
 
-					for (int value = 0; value < 3; value++) {
-						data << int(values[value]) << ",";
-					}
-					data << std::endl;
-				}
-			}
-		}
-		else {
-			std::cout << "Couldn't open file" << std::endl;
-		}
-		data.close();
+	bool GetFinishedExport() const { return this->finishedExport; }
+	bool GetIsExport() const { return this->isExport; }
+	int GetPercentage(int imageWidth, int imageHeight) const { return this->percentage; }
+	void SetIsExport(bool isexport) { this->isExport = isexport; }
 
-		std::system("python ..\\Helper\\export.py");
-	}
-}
+	void updatePercentage();
+
+	void reset();
+
+	void writeArray(std::string name, uint32_t* imageData, int imageWidth, int imageHeight);
+
+	void ExportImage(std::string name, uint32_t* imageData, int imageWidth, int imageHeight);
+};
