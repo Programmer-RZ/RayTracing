@@ -15,21 +15,22 @@ private:
 	bool isExport;
 	std::ofstream data;
 
-	int percentage;
+	double percentage;
 
 public:
 	Export();
+	~Export();
 
 	bool GetFinishedExport() const { return this->finishedExport; }
 	bool GetIsExport() const { return this->isExport; }
-	int GetPercentage(int imageWidth, int imageHeight) const { return this->percentage; }
+	double GetPercentage() const { return this->percentage; }
 	void SetIsExport(bool isexport) { this->isExport = isexport; }
 
-	void updatePercentage();
+	void updatePercentage(int imageWidth, int imageHeight);
 
 	void reset();
 
-	void writeArray(std::string name, uint32_t* imageData, int imageWidth, int imageHeight);
+	void writeArray(uint32_t* imageData, int imageWidth, int imageHeight);
 
-	void ExportImage(std::string name, uint32_t* imageData, int imageWidth, int imageHeight);
+	void ExportImage(uint32_t* imageData, int imageWidth, int imageHeight);
 };

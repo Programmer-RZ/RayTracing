@@ -14,12 +14,12 @@
 - Python 3.9.7 or higher
 - Datetime
 - PIL
-- Numpy
 
 # Features
 **RayTracing**
 - Real-time Raytracing
 - Export as PNG
+- Realistic Rendering
 - Shading
 - Shadows
 - Reflections
@@ -30,6 +30,8 @@
 
 **Optimizations**
 - Ray coherence
+- Reduced bounces
+- Only included accumulation in Realistic Rendering
 
 # Examples
 ![2023-04-11_08-07-33](https://user-images.githubusercontent.com/123858154/231158230-e1971c1b-00ba-48c3-9c89-99461ee7bc43.png)

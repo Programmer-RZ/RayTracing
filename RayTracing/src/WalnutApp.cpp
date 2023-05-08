@@ -16,13 +16,7 @@ public:
 	ExampleLayer()
 		: camera(45.0f, 0.1f, 100.0f)
 	{
-		std::system("python ..\\Helper\\date_time.py");
-
-		std::ifstream file("..\\Data\\datetime.txt");
-		std::string datetime;
-		while (std::getline(file, datetime)) {
-			scene.name = datetime;
-		}
+		scene.name = std::system("python ..\\Helper\\date_time.py");
 
 		Material& material0 = this->scene.materials.emplace_back();
 		material0.Albedo = { 0.2f, 0.3f, 1.0f };
@@ -58,6 +52,25 @@ public:
 				this->renderer.resetFrameIndex();
 			}
 		}
+
+		if (this->renderer.GetFinishedRealistic()) {
+			this->exportPNG.reset();
+			this->exportPNG.SetIsExport(true);
+			this->renderer.SetFinishRealisticAndExport();
+		}
+
+		if (this->exportPNG.GetIsExport()) {
+			if (!exportPNG.GetFinishedExport()) {
+				this->exportPNG.ExportImage(
+					this->renderer.GetImageData(),
+					this->renderer.GetImageWidth(),
+					this->renderer.GetImageHeight()
+				);
+			}
+			else {
+				this->exportPNG.SetIsExport(false);
+			}
+		}
 	}
 
 	virtual void OnUIRender() override
@@ -71,7 +84,7 @@ public:
 			ImGui::Text("Rendering Realistic Image...");
 		}
 
-		if (!this->renderer.GetRealisticRendering()) {
+		if (!this->renderer.GetRealisticRendering() && !this->exportPNG.GetIsExport()) {
 			if (ImGui::Button("Realistic Rendering")) {
 				this->renderer.realisticRender();
 			}
@@ -83,8 +96,9 @@ public:
 		}
 
 		if (this->exportPNG.GetIsExport()) {
-			int percentage = this->exportPNG.GetPercentage(this->renderer.GetImageWidth(), this->renderer.GetImageHeight());
-			ImGui::Text("Exporting at %i", percentage);
+			this->exportPNG.updatePercentage(this->renderer.GetImageWidth(), this->renderer.GetImageHeight());	
+			double percentage = this->exportPNG.GetPercentage();
+			ImGui::Text("Exporting at %.2f", percentage);
 		}
 
 		ImGui::End();
@@ -243,31 +257,6 @@ public:
 		}
 
 		this->render();
-
-		if (this->renderer.GetFinishedRealistic()) {
-			this->exportPNG.reset();
-			this->exportPNG.SetIsExport(true);
-			this->renderer.SetFinishRealisticAndExport();
-		}
-
-		if (this->exportPNG.GetIsExport()) {
-			if (!exportPNG.GetFinishedExport()) {
-				this->export_as_PNG();
-			}
-			else {
-				this->exportPNG.SetIsExport(false);
-			}
-		}
-	}
-
-	void export_as_PNG() {
-		// export
-		exportPNG.ExportImage(
-			scene.name,
-			this->renderer.GetImageData(),
-			this->renderer.GetImageWidth(),
-			this->renderer.GetImageHeight()
-		);
 	}
 
 	void render() {

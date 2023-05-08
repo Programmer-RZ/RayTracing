@@ -1,56 +1,58 @@
 #include "export.h"
+#include <iostream>
 
 Export::Export() 
 {
 	this->reset();
 }
 
-void Export::updatePercentage() {
-	this->percentage = static_cast<int>((this->x_index * this->y_index) / (imageWidth * imageHeight) * 100.0f);
+Export::~Export() {
+	this->data.close();
+}
+
+void Export::updatePercentage(int imageWidth, int imageHeight) {
+	this->percentage = static_cast<double>(this->x_index + (this->y_index) * imageWidth) / (imageWidth * imageHeight) * 100;
+	//std::cout << (this->x_index * (this->y_index + 1)) << std::endl;
 }
 
 void Export::reset() {
-	y_index = 0;
-	x_index = 0;
-	finishedWrite = false;
-	finishedExport = false;
-	data.open("..\\Data\\image_data.txt");
+	this->y_index = 0;
+	this->x_index = 0;
+	this->finishedWrite = false;
+	this->finishedExport = false;
+	this->isExport = false;
+	this->data = std::ofstream("..\\Data\\image_data.ppm");
 }
 
-void Export::writeArray(std::string name, uint32_t* imageData, int imageWidth, int imageHeight) {
-	if (x_index == 0 && y_index == 0) {
-		data << "." + name + "." << std::endl;
-	}
-
-	if (x_index >= imageWidth) {
-		x_index = 0;
-		y_index++;
-	}
-	else {
-		std::vector<uint8_t> values = Utils::ConvertToFloats(imageData[x_index + y_index * imageWidth]);
-		for (int value = 0; value < 3; value++) {
-			data << int(values[value]) << ",";
+void Export::writeArray(uint32_t* imageData, int imageWidth, int imageHeight) {
+	std::string output;
+	for (int i = 0; i < 5000; i++) {
+		if (this->y_index == 0 && this->x_index == 0) {
+			output = output + "P3\n" + std::to_string(imageWidth) + ' ' + std::to_string(imageHeight) + "\n255\n";
 		}
-		data << std::endl;
-	}
 
-	if (y_index >= imageHeight) {
-		finishedWrite = true;
-		data.close();
+		if (this->y_index >= imageHeight) {
+			this->finishedWrite = true;
+			this->data.close();
+			break;
+		}
+
+		if (this->x_index >= imageWidth) {
+			this->x_index = 0;
+			this->y_index++;
+			break;
+		}
+		else {
+			std::vector<uint8_t> values = Utils::ConvertToFloats(imageData[x_index + y_index * imageWidth]);
+			output = output + std::to_string(values[0]) + ' ' + std::to_string(values[1]) + ' ' + std::to_string(values[2]) + "\n";
+			this->x_index++;
+		}
 	}
-	else {
-		data << "row" << std::endl;
-	}
+	this->data << output;
 }
 
-void Export::ExportImage(std::string name, uint32_t* imageData, int imageWidth, int imageHeight) {
-	if (data.is_open()) {
-
-		writeArray(name, imageData, imageWidth, imageHeight);
-	}
-	else {
-		std::cerr << "Couldn't open file" << std::endl;
-	}
+void Export::ExportImage(uint32_t* imageData, int imageWidth, int imageHeight) {
+	writeArray(imageData, imageWidth, imageHeight);
 
 	if (finishedWrite) {
 		std::system("python ..\\Helper\\export.py");
