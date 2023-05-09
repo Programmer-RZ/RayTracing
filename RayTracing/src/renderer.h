@@ -66,12 +66,12 @@ private:
 
 	// realistic rendering
 	int bounces = 2;
-	int coherence = 7;
+	int coherence = 5;
 	float brightness = 0.4f;
 	bool realisticRendering = false;
 	bool finishedRealistic = false;
 	int realisticCount = 0;
-	int maxRealisticCount = 20;
+	int maxRealisticCount = 50;
 
 private:
 

@@ -55,7 +55,7 @@ void Export::ExportImage(uint32_t* imageData, int imageWidth, int imageHeight) {
 	writeArray(imageData, imageWidth, imageHeight);
 
 	if (finishedWrite) {
-		std::system("python ..\\Helper\\export.py");
+		std::system("python ..\\Helper\\exportPNG.py");
 		finishedExport = true;
 	}
 }
