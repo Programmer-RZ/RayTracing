@@ -13,6 +13,7 @@
 **Python**
 - Python 3.9.7 or higher
 - Datetime
+- Numpy
 - PIL
 
 # Features
