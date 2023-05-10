@@ -9,14 +9,14 @@ class Object {
 public:
 	Object() = default;
 
-	virtual void TraceRay(const Ray& ray, const Scene* ActiveScene, int& closestObject, float& hitDist) {}
+	virtual void TraceRay(const Ray& ray, const Scene* ActiveScene, int& closestObject, float& hitDist, std::string& objectName) {}
 };
 
 
 
 class SphereIntersection : public Object {
 public:
-	virtual void TraceRay(const Ray& ray, const Scene* ActiveScene, int& closestObject, float& hitDist) override {
+	virtual void TraceRay(const Ray& ray, const Scene* ActiveScene, int& closestObject, float& hitDist, std::string& objectName) override {
 		// (bx^2 + by^2)t^2 + (2(axbx + ayby))t + (ax^2 + ay^2 - r^2) = 0
 
 		// a = ray origin
@@ -49,6 +49,7 @@ public:
 			if (closestT > 0.0f && closestT < hitDist) {
 				hitDist = closestT;
 				closestObject = i;
+				objectName = "sphere";
 			}
 		}
 	}

@@ -60,14 +60,14 @@ private:
 
 	Settings settings;
 
-	glm::vec3 lightDir = glm::vec3(-1.0f, -1.0f, -1.0f);
+	glm::vec3 lightDir = glm::vec3(0.0f, -1.0f, 0.0f);
 
 	int frameIndex = 1;
 
 	// realistic rendering
 	int bounces = 2;
-	int coherence = 5;
-	float brightness = 0.4f;
+	int coherence = 7;
+	float brightness = 0.3f;
 	bool realisticRendering = false;
 	bool finishedRealistic = false;
 	int realisticCount = 0;
@@ -78,7 +78,7 @@ private:
 	glm::vec4 PerPixel(uint32_t x, uint32_t y);
 
 	HitPayload TraceRay(const Ray& ray);
-	HitPayload ClosestHit(const Ray& ray, float hitDist, int objectIndex);
+	HitPayload ClosestHit(const Ray& ray, float hitDist, int objectIndex, std::string name);
 	HitPayload Miss(const Ray& ray);
 
 private:

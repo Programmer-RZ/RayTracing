@@ -21,12 +21,12 @@ public:
 		Material& material0 = this->scene.materials.emplace_back();
 		material0.Albedo = { 0.2f, 0.3f, 1.0f };
 		material0.roughness = 0.1f;
-		material0.name = "Material1";
+		material0.name = "Material0";
 
 		Material& material1 = this->scene.materials.emplace_back();
 		material1.Albedo = { 1.0f, 0.0f, 1.0f };
 		material1.roughness = 0.5f;
-		material1.name = "Material0";
+		material1.name = "Material1";
 
 		{
 			Sphere sphere;
@@ -111,7 +111,7 @@ public:
 			ImGui::Separator();
 			ImGui::Separator();
 
-			if (ImGui::DragFloat("Brightness", &(this->renderer.GetBrightness()), 0.1f, 0.1f, 1.0f)) {
+			if (ImGui::DragFloat("Multiplier", &(this->renderer.GetBrightness()), 0.05f, 0.1f, 1.0f)) {
 				reset_Accumulation = true;
 			}
 
@@ -134,7 +134,7 @@ public:
 			ImGui::Begin("Scene");
 
 			ImGui::Text("Light");
-			if (ImGui::DragFloat3("Light Direction", glm::value_ptr(this->renderer.GetLightDir()), 0.1f, 0.0f, 1.0f)) {
+			if (ImGui::DragFloat3("Light Direction", glm::value_ptr(this->renderer.GetLightDir()), 0.1f, -1.0f, 1.0f)) {
 				reset_Accumulation = true;
 			}
 
@@ -226,10 +226,6 @@ public:
 				}
 
 				if (ImGui::DragFloat("Roughness", &material.roughness, 0.1f, 0.0f, 1.0f)) {
-					reset_Accumulation = true;
-				}
-
-				if (ImGui::DragFloat("Metallic", &material.metallic, 0.1f, 0.0f, 1.0f)) {
 					reset_Accumulation = true;
 				}
 

@@ -154,20 +154,20 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y)
 	return glm::vec4(color, 1.0f);
 }
 
-Renderer::HitPayload Renderer::ClosestHit(const Ray& ray, float hitDist, int objectIndex)
+Renderer::HitPayload Renderer::ClosestHit(const Ray& ray, float hitDist, int objectIndex, std::string name)
 {
 	Renderer::HitPayload payload;
 	payload.HitDist = hitDist;
 	payload.ObjectIndex = objectIndex;
 
+	if (name == "sphere") {
+		const Sphere& closestSphere = ActiveScene->spheres[objectIndex];
+		glm::vec3 origin = ray.Origin - closestSphere.pos;
+		payload.WorldPosition = origin + ray.Direction * hitDist;
+		payload.WorldNormal = glm::normalize(payload.WorldPosition);
 
-	const Sphere& closestSphere = ActiveScene->spheres[objectIndex];
-
-	glm::vec3 origin = ray.Origin - closestSphere.pos;
-	payload.WorldPosition = origin + ray.Direction * hitDist;
-	payload.WorldNormal = glm::normalize(payload.WorldPosition);
-
-	payload.WorldPosition += closestSphere.pos;
+		payload.WorldPosition += closestSphere.pos;
+	}
 
 	return payload;
 }
@@ -183,14 +183,15 @@ Renderer::HitPayload Renderer::TraceRay(const Ray& ray)
 {
 	int closestObject = -1;
 	float hitDist = std::numeric_limits<float>::max();
+	std::string objectName;
 
 
 	SphereIntersection sphere_intersection = SphereIntersection();
-	sphere_intersection.TraceRay(ray, this->ActiveScene, closestObject, hitDist);
+	sphere_intersection.TraceRay(ray, this->ActiveScene, closestObject, hitDist, objectName);
 	
 	if (closestObject < 0) {
 		return this->Miss(ray);
 	}
 
-	return this->ClosestHit(ray, hitDist, closestObject);
+	return this->ClosestHit(ray, hitDist, closestObject, objectName);
 }
