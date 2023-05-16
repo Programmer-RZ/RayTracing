@@ -33,10 +33,12 @@
 - Ray coherence
 - Reduced bounces
 - Only included accumulation in Realistic Rendering
+- Only renders new image when updated objects/position
 
 # Examples
 ![2023-04-11_08-07-33](https://user-images.githubusercontent.com/123858154/231158230-e1971c1b-00ba-48c3-9c89-99461ee7bc43.png)
 
 
 # Credits
-Big Thanks to [The Cherno](https://www.youtube.com/@TheCherno) for providing [RayTracing Tutorials](https://www.youtube.com/watch?v=gfW1Fhd9u9Q&list=PLlrATfBNZ98edc5GshdBtREv5asFW3yXl)
+Thanks to [The Cherno](https://www.youtube.com/@TheCherno) for providing [RayTracing Tutorials](https://www.youtube.com/watch?v=gfW1Fhd9u9Q&list=PLlrATfBNZ98edc5GshdBtREv5asFW3yXl)
+Thanks to [Raytracing in One Weekend Series](https://raytracing.github.io/) for providing very helpful articles about Raytracing

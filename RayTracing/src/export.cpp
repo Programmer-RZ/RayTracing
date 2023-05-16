@@ -4,6 +4,11 @@
 Export::Export() 
 {
 	this->reset();
+
+	this->formats[0] = "png";
+	this->formats[1] = "jpg";
+
+	this->currentFormat = "png";
 }
 
 Export::~Export() {
@@ -55,7 +60,12 @@ void Export::ExportImage(uint32_t* imageData, int imageWidth, int imageHeight) {
 	writeArray(imageData, imageWidth, imageHeight);
 
 	if (finishedWrite) {
-		std::system("python ..\\Helper\\exportPNG.py");
-		finishedExport = true;
+		if (this->currentFormat == "png") {
+			std::system("python ..\\Helper\\exportPNG.py");
+			finishedExport = true;
+		}
+		else if (this->currentFormat == "jpg") {
+			std::system("python ..\\Helper\\exportJPG.py");
+		}
 	}
 }

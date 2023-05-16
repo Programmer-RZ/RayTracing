@@ -17,6 +17,9 @@ private:
 
 	double percentage;
 
+	char* formats[2];
+	char* currentFormat;
+
 public:
 	Export();
 	~Export();
@@ -25,6 +28,7 @@ public:
 	bool GetIsExport() const { return this->isExport; }
 	double GetPercentage() const { return this->percentage; }
 	void SetIsExport(bool isexport) { this->isExport = isexport; }
+	char* GetCurrentFormat() { return this->currentFormat; }
 
 	void updatePercentage(int imageWidth, int imageHeight);
 

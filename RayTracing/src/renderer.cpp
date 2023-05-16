@@ -7,8 +7,6 @@
 
 #include "utils.h"
 
-#include "objects.h"
-
 void Renderer::realisticRender() {
 	this->resetArray();
 
@@ -28,13 +26,13 @@ void Renderer::resetArray() {
 	this->AccumulationData = new glm::vec4[width * height];
 }
 
-void Renderer::on_resize(uint32_t width, uint32_t height) {
+bool Renderer::on_resize(uint32_t width, uint32_t height) {
 
 	if (this->m_FinalImage) {
 
 		// no need to resize
 		if (this->m_FinalImage->GetWidth() == width && this->m_FinalImage->GetHeight() == height) {
-			return;
+			return false;
 		}
 
 		this->m_FinalImage->Resize(width, height);
@@ -48,14 +46,23 @@ void Renderer::on_resize(uint32_t width, uint32_t height) {
 
 	delete[] this->AccumulationData;
 	this->AccumulationData = new glm::vec4[width * height];
+
+	return true;
 }
 
 void Renderer::render(const Scene& scene, const Camera& camera) {
+	if (!this->sceneMoved) {
+		// no need to calculate the image again
+		return;
+	}
 
 	this->ActiveScene = &scene;
 	this->ActiveCamera = &camera;
 
+	// reset frame index if realistic rendering
 	if (this->realisticRendering) {
+		this->resetFrameIndex();
+
 		if (this->frameIndex == 1) {
 			memset(this->AccumulationData, 0, this->m_FinalImage->GetWidth() * this->m_FinalImage->GetHeight() * sizeof(glm::vec4));
 		}
@@ -128,8 +135,7 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y)
 		//std::cout << hitDist << std::endl;
 		
 		if (hitDist < 0.0f) {
-			glm::vec3 skycolor = glm::vec3(0.6f, 0.7f, 0.9f);
-			color += skycolor * multiplier;
+			color += this->skycolor * multiplier;
 			break;
 		}
 

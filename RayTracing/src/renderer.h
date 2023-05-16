@@ -5,6 +5,7 @@
 #include "camera.h"
 #include "ray.h"
 #include "scene.h"
+#include "hittable.h"
 
 #include <memory>
 #include "glm/glm.hpp"
@@ -29,26 +30,33 @@ public:
 public:
 	Renderer() = default;
 
+	void resetFrameIndex() { this->frameIndex = 1; }
+
+	void render(const Scene& scene, const Camera& camera);
+
+	bool on_resize(uint32_t width, uint32_t height);
+
+	void realisticRender();
+
+	// getters
+	std::shared_ptr<Walnut::Image> get_final_image() const { return this->m_FinalImage; }
 	uint32_t* GetImageData() const { return this->imageData; }
 	int GetImageWidth() const { return this->m_FinalImage->GetWidth(); }
 	int GetImageHeight() const { return this->m_FinalImage->GetHeight(); }
 	bool GetRealisticRendering() const { return this->realisticRendering; }
 	bool GetFinishedRealistic() const { return this->finishedRealistic; }
-	void SetFinishRealisticAndExport() { this->realisticRendering = false; this->finishedRealistic = false; this->coherence = 7; this->bounces = 2; }
+	bool GetSceneMoved() const { return this->sceneMoved; }
+	bool GetCameraMoved() const { return this->cameraMoved; }
 	int& GetBounces() { return this->bounces; }
 	Settings& GetSettings() { return this->settings; }
 	glm::vec3& GetLightDir() { return this->lightDir; }
+	glm::vec3& GetSkycolor() { return this->skycolor; }
 	float& GetBrightness() { return this->brightness; }
 
-	void resetFrameIndex() { this->frameIndex = 1; }
-
-	void render(const Scene& scene, const Camera& camera);
-
-	void on_resize(uint32_t width, uint32_t height);
-
-	void realisticRender();
-
-	std::shared_ptr<Walnut::Image> get_final_image() const { return this->m_FinalImage; }
+	// setters
+	void SetFinishRealisticAndExport() { this->realisticRendering = false; this->finishedRealistic = false; this->coherence = 7; this->bounces = 2; }
+	void SetSceneMoved(bool sceneMoved) { this->sceneMoved = sceneMoved; }
+	void SetCameraMoved(bool cameraMoved) { this->cameraMoved = cameraMoved; }
 
 private:
 	std::shared_ptr<Walnut::Image> m_FinalImage;
@@ -60,13 +68,16 @@ private:
 
 	Settings settings;
 
-	glm::vec3 lightDir = glm::vec3(0.0f, -1.0f, 0.0f);
+	glm::vec3 lightDir = glm::vec3(-0.546f, -0.722f, -0.425f);
+	glm::vec3 skycolor = glm::vec3(0.0f, 0.0f, 0.0f);
 
 	int frameIndex = 1;
+	bool sceneMoved = true;
+	bool cameraMoved = false;
 
 	// realistic rendering
 	int bounces = 2;
-	int coherence = 7;
+	int coherence = 5;
 	float brightness = 0.3f;
 	bool realisticRendering = false;
 	bool finishedRealistic = false;

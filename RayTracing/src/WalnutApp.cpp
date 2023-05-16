@@ -23,25 +23,12 @@ public:
 		material0.roughness = 0.1f;
 		material0.name = "Material0";
 
-		Material& material1 = this->scene.materials.emplace_back();
-		material1.Albedo = { 1.0f, 0.0f, 1.0f };
-		material1.roughness = 0.5f;
-		material1.name = "Material1";
-
 		{
 			Sphere sphere;
-			sphere.name = "Ground";
-			sphere.pos = { 0.0f, -50.5f, 0.0f };
-			sphere.radius = 50.0f;
-			sphere.material_index = 0;
-			this->scene.spheres.push_back(sphere);
-		}
-		{
-			Sphere sphere;
-			sphere.name = "Sphere 1";
+			sphere.name = "Sphere 0";
 			sphere.pos = { 0.0f, 0.0f, 0.0f };
 			sphere.radius = 0.5f;
-			sphere.material_index = 1;
+			sphere.material_index = 0;
 			this->scene.spheres.push_back(sphere);
 		}
 	}
@@ -49,61 +36,81 @@ public:
 	virtual void OnUpdate(float ts) override {
 		if (!this->renderer.GetRealisticRendering()) {
 			if (this->camera.OnUpdate(ts)) {
-				this->renderer.resetFrameIndex();
+				this->renderer.SetSceneMoved(true);
+				this->renderer.SetCameraMoved(true);
+			}
+			else {
+				this->renderer.SetSceneMoved(false);
+				this->renderer.SetCameraMoved(false);
 			}
 		}
 
 		if (this->renderer.GetFinishedRealistic()) {
-			this->exportPNG.reset();
-			this->exportPNG.SetIsExport(true);
+			this->exportScene.reset();
+			this->exportScene.SetIsExport(true);
 			this->renderer.SetFinishRealisticAndExport();
 		}
 
-		if (this->exportPNG.GetIsExport()) {
-			if (!exportPNG.GetFinishedExport()) {
-				this->exportPNG.ExportImage(
+		if (this->exportScene.GetIsExport()) {
+			if (!exportScene.GetFinishedExport()) {
+				this->exportScene.ExportImage(
 					this->renderer.GetImageData(),
 					this->renderer.GetImageWidth(),
 					this->renderer.GetImageHeight()
 				);
 			}
 			else {
-				this->exportPNG.SetIsExport(false);
+				this->exportScene.SetIsExport(false);
 			}
 		}
 	}
 
 	virtual void OnUIRender() override
 	{
-		bool reset_Accumulation = false;
+		bool sceneMoved = this->renderer.GetSceneMoved();
+		// if camera moved, scene moved is
+		// automatically set to true no matter what
+		if (this->renderer.GetCameraMoved()) {
+			sceneMoved = true;
+		}
+		else {
+			sceneMoved = false;
+		}
 
 		ImGui::Begin("Options");
 
-		// export
+		// exportScene
 		if (this->renderer.GetRealisticRendering()) {
 			ImGui::Text("Rendering Realistic Image...");
 		}
 
-		if (!this->renderer.GetRealisticRendering() && !this->exportPNG.GetIsExport()) {
+		if (!this->renderer.GetRealisticRendering() && !this->exportScene.GetIsExport()) {
 			if (ImGui::Button("Realistic Rendering")) {
 				this->renderer.realisticRender();
 			}
 
+			ImGui::Separator();
+			ImGui::Separator();
+
+			//if (ImGui::BeginCombo("Format"), this->exportScene.GetCurrentFormat()) {
+				
+			//}
+
 			if (ImGui::Button("Export as PNG")) {
-				this->exportPNG.reset();
-				this->exportPNG.SetIsExport(true);
+				this->exportScene.reset();
+				this->exportScene.SetIsExport(true);
 			}
 		}
 
-		if (this->exportPNG.GetIsExport()) {
-			this->exportPNG.updatePercentage(this->renderer.GetImageWidth(), this->renderer.GetImageHeight());	
-			double percentage = this->exportPNG.GetPercentage();
+		if (this->exportScene.GetIsExport()) {
+			this->exportScene.updatePercentage(this->renderer.GetImageWidth(), this->renderer.GetImageHeight());	
+			double percentage = this->exportScene.GetPercentage();
 			ImGui::Text("Exporting at %.2f", percentage);
 		}
 
 		ImGui::End();
 
-		if (!this->renderer.GetRealisticRendering() && !this->exportPNG.GetIsExport()) {
+		if (!this->renderer.GetRealisticRendering() && !this->exportScene.GetIsExport()) {
 			// options
 			ImGui::Begin("Settings");
 			ImGui::Text("Last Render: %.3fms", this->last_render_time);
@@ -112,18 +119,18 @@ public:
 			ImGui::Separator();
 
 			if (ImGui::DragFloat("Multiplier", &(this->renderer.GetBrightness()), 0.05f, 0.1f, 1.0f)) {
-				reset_Accumulation = true;
+				sceneMoved = true;
 			}
 
 			ImGui::Separator();
 			ImGui::Separator();
 
 			if (ImGui::DragInt("Width", &m_ViewportWidth, 1.0f, 200, 1500)) {
-				reset_Accumulation = true;
+				sceneMoved = true;
 			}
 
 			if (ImGui::DragInt("Height", &m_ViewportHeight, 1.0f, 200, 1170)) {
-				reset_Accumulation = true;
+				sceneMoved = true;
 			}
 
 			ImGui::End();
@@ -135,7 +142,15 @@ public:
 
 			ImGui::Text("Light");
 			if (ImGui::DragFloat3("Light Direction", glm::value_ptr(this->renderer.GetLightDir()), 0.1f, -1.0f, 1.0f)) {
-				reset_Accumulation = true;
+				sceneMoved = true;
+			}
+
+			ImGui::Separator();
+			ImGui::Separator();
+
+			ImGui::Text("Background");
+			if (ImGui::ColorEdit3("Sky", glm::value_ptr(this->renderer.GetSkycolor()))) {
+				sceneMoved = true;
 			}
 
 			ImGui::Separator();
@@ -160,7 +175,7 @@ public:
 
 				this->scene.spheres.push_back(sphere);
 
-				reset_Accumulation = true;
+				sceneMoved = true;
 			}
 
 
@@ -174,20 +189,20 @@ public:
 				ImGui::Text(sphere.name.c_str());
 
 				if (ImGui::DragFloat3("Position", glm::value_ptr(sphere.pos), 0.1f)) {
-					reset_Accumulation = true;
+					sceneMoved = true;
 				}
 
 				if (ImGui::DragFloat("Radius", &sphere.radius, 0.1f, 0.0f)) {
-					reset_Accumulation = true;
+					sceneMoved = true;
 				}
 
 				if (ImGui::DragInt("Material", &sphere.material_index, 1.0f, 0, int(this->scene.materials.size()) - 1)) {
-					reset_Accumulation = true;
+					sceneMoved = true;
 				}
 
 				if (ImGui::Button("Delete Sphere")) {
 					spheres_todelete.push_back(i);
-					reset_Accumulation = true;
+					sceneMoved = true;
 				}
 
 				ImGui::PopID();
@@ -208,7 +223,7 @@ public:
 				material.roughness = 1.0f;
 				material.name = "Material" + std::to_string(this->scene.materials.size() - 1);
 
-				reset_Accumulation = true;
+				sceneMoved = true;
 			}
 
 			for (int i = 0; i < this->scene.materials.size(); i++) {
@@ -222,11 +237,11 @@ public:
 				ImGui::Text((material.name).c_str());
 
 				if (ImGui::ColorEdit3("Color", glm::value_ptr(material.Albedo))) {
-					reset_Accumulation = true;
+					sceneMoved = true;
 				}
 
 				if (ImGui::DragFloat("Roughness", &material.roughness, 0.1f, 0.0f, 1.0f)) {
-					reset_Accumulation = true;
+					sceneMoved = true;
 				}
 
 				ImGui::PopID();
@@ -248,19 +263,22 @@ public:
 		ImGui::End();
 		ImGui::PopStyleVar();
 
-		if (reset_Accumulation) {
-			this->renderer.resetFrameIndex();
-		}
+		this->renderer.SetSceneMoved(sceneMoved);
 
 		this->render();
 	}
 
 	void render() {
-		if (!this->exportPNG.GetIsExport()) {
+		if (!this->exportScene.GetIsExport()) {
+
 			Walnut::Timer timer;
 
-			this->renderer.on_resize(this->m_ViewportWidth, this->m_ViewportHeight);
+			if (this->renderer.on_resize(this->m_ViewportWidth, this->m_ViewportHeight)) {
+				this->renderer.SetSceneMoved(true);
+			}
+
 			this->camera.OnResize(this->m_ViewportWidth, this->m_ViewportHeight);
+
 			this->renderer.render(this->scene, this->camera);
 
 			last_render_time = timer.ElapsedMillis();
@@ -277,7 +295,7 @@ private:
 
 	float last_render_time = 0;
 
-	Export exportPNG = Export();
+	Export exportScene = Export();
 };
 
 Walnut::Application* Walnut::CreateApplication(int argc, char** argv)

@@ -4,17 +4,17 @@
 #include "scene.h"
 #include "ray.h"
 
-class Object {
+class Hittable {
 
 public:
-	Object() = default;
+	Hittable() = default;
 
 	virtual void TraceRay(const Ray& ray, const Scene* ActiveScene, int& closestObject, float& hitDist, std::string& objectName) {}
 };
 
 
 
-class SphereIntersection : public Object {
+class SphereIntersection : public Hittable {
 public:
 	virtual void TraceRay(const Ray& ray, const Scene* ActiveScene, int& closestObject, float& hitDist, std::string& objectName) override {
 		// (bx^2 + by^2)t^2 + (2(axbx + ayby))t + (ax^2 + ay^2 - r^2) = 0
@@ -54,3 +54,4 @@ public:
 		}
 	}
 };
+
