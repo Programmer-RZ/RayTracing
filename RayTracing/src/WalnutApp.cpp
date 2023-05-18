@@ -166,7 +166,6 @@ public:
 
 			// entities
 			// settings
-			std::vector<int> spheres_todelete = {};
 			ImGui::Begin("Scene");
 
 			ImGui::Text("Light");
@@ -207,7 +206,8 @@ public:
 				sceneMoved = true;
 			}
 
-
+			// holds the indexes of sphere that the user deleted
+			std::vector<int> spheres_todelete = {};
 			for (int i = 0; i < scene.spheres.size(); i++) {
 				ImGui::PushID(i);
 
@@ -225,7 +225,7 @@ public:
 					sceneMoved = true;
 				}
 
-				if (ImGui::DragInt("Material", &sphere.material_index, 1.0f, 0, int(this->scene.materials.size()) - 1)) {
+				if (ImGui::DragInt("Material", &sphere.material_index, 1.0f, 0, int(this->scene.materials.size()-1))) {
 					sceneMoved = true;
 				}
 
@@ -255,6 +255,8 @@ public:
 				sceneMoved = true;
 			}
 
+			// holds the indexes of material that the user deleted
+			std::vector<int> materials_todelete = {};
 			for (int i = 0; i < this->scene.materials.size(); i++) {
 				ImGui::PushID(i);
 
@@ -273,7 +275,27 @@ public:
 					sceneMoved = true;
 				}
 
+				if (ImGui::Button("Delete material")) {
+					sceneMoved = true;
+					materials_todelete.push_back(i);
+				}
+
 				ImGui::PopID();
+			}
+			// delete all the materials
+			for (int index : materials_todelete) {
+				// if materials only has one element
+				// cannot delete it
+				if (this->scene.materials.size() > 1) {
+					this->scene.materials.erase(this->scene.materials.begin() + index);
+				}
+			}
+			// check if any spheres hold the materials
+			// if they do, set the sphere's material to the prev one
+			for (Sphere sphere : this->scene.spheres) {
+				if (sphere.material_index > this->scene.materials.size()-1) {
+					sphere.material_index = this->scene.materials.size()-1;
+				}
 			}
 
 			ImGui::End();
