@@ -7,13 +7,14 @@
 #include "renderer.h"
 #include "camera.h"
 #include "export.h"
+#include "sceneinfo.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
-class Saphire : public Walnut::Layer
+class RayTracing : public Walnut::Layer
 {
 public:
-	Saphire()
+	RayTracing()
 		: camera(45.0f, 0.1f, 100.0f)
 	{
 		scene.name = std::system("python ..\\Helper\\date_time.py");
@@ -52,6 +53,8 @@ public:
 		}
 
 		if (this->exportScene.GetIsExport()) {
+			// keep on writing to the ppm file
+			// until GetFinishedExport is true
 			if (!exportScene.GetFinishedExport()) {
 				this->exportScene.ExportImage(
 					this->renderer.GetImageData(),
@@ -109,11 +112,22 @@ public:
 						}	
 					}
 				}
+				ImGui::EndCombo();
 			}
 
 			if (ImGui::Button("Export")) {
 				this->exportScene.reset();
 				this->exportScene.SetIsExport(true);
+			}
+
+			ImGui::Separator();
+			ImGui::Separator();
+
+			if (ImGui::Button("Save scene info")) {
+				this->sceneinfo.write(this->scene.spheres, this->scene.materials);
+			}
+			if (this->sceneinfo.GetFinishedSave()) {
+				ImGui::Text("Successfully saved scene");
 			}
 		}
 
@@ -279,6 +293,9 @@ public:
 		ImGui::PopStyleVar();
 
 		this->renderer.SetSceneMoved(sceneMoved);
+		if (sceneMoved) {
+			this->sceneinfo.SetFinishedSave(false);
+		}
 
 		this->render();
 	}
@@ -310,16 +327,18 @@ private:
 
 	float last_render_time = 0;
 
+	// classes for saving the scene (jpg, png, ini, etc)
 	Export exportScene = Export();
+	SceneInfo sceneinfo = SceneInfo();
 };
 
 Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
 {
 	Walnut::ApplicationSpecification spec;
-	spec.Name = "Saphire v0.1";
+	spec.Name = "EvTech - Realistic 3D Art - v0.1";
 
 	Walnut::Application* app = new Walnut::Application(spec);
-	app->PushLayer<Saphire>();
+	app->PushLayer<RayTracing>();
 
 	/*
 	app->SetMenubarCallback([app]()
