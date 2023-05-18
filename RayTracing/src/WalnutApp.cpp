@@ -10,10 +10,10 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-class ExampleLayer : public Walnut::Layer
+class Saphire : public Walnut::Layer
 {
 public:
-	ExampleLayer()
+	Saphire()
 		: camera(45.0f, 0.1f, 100.0f)
 	{
 		scene.name = std::system("python ..\\Helper\\date_time.py");
@@ -70,7 +70,7 @@ public:
 		bool sceneMoved = this->renderer.GetSceneMoved();
 		// if camera moved, scene moved is
 		// automatically set to true no matter what
-		if (this->renderer.GetCameraMoved()) {
+		if (this->renderer.GetCameraMoved() || this->renderer.GetRealisticRendering()) {
 			sceneMoved = true;
 		}
 		else {
@@ -92,11 +92,26 @@ public:
 			ImGui::Separator();
 			ImGui::Separator();
 
-			//if (ImGui::BeginCombo("Format"), this->exportScene.GetCurrentFormat()) {
-				
-			//}
+			if (ImGui::BeginCombo("Format", this->exportScene.GetCurrentFormat())) {
+				char* allFormats[2];
+				char** formatsPtr = this->exportScene.GetFormats();
 
-			if (ImGui::Button("Export as PNG")) {
+				for (int i = 0; i < 2; i++) {
+					allFormats[i] = *(formatsPtr + i);
+				}
+
+				for (int n = 0; n < IM_ARRAYSIZE(allFormats); n++) {
+					bool isSelected = (this->exportScene.GetCurrentFormat() == this->exportScene.GetFormats()[n]);
+					if (ImGui::Selectable(this->exportScene.GetFormats()[n], isSelected)) {
+						this->exportScene.setFormat(this->exportScene.GetFormats()[n]);
+						if (isSelected) {
+							ImGui::SetItemDefaultFocus();
+						}	
+					}
+				}
+			}
+
+			if (ImGui::Button("Export")) {
 				this->exportScene.reset();
 				this->exportScene.SetIsExport(true);
 			}
@@ -301,10 +316,10 @@ private:
 Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
 {
 	Walnut::ApplicationSpecification spec;
-	spec.Name = "RayTracing";
+	spec.Name = "Saphire v0.1";
 
 	Walnut::Application* app = new Walnut::Application(spec);
-	app->PushLayer<ExampleLayer>();
+	app->PushLayer<Saphire>();
 
 	/*
 	app->SetMenubarCallback([app]()

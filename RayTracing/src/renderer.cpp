@@ -9,10 +9,12 @@
 
 void Renderer::realisticRender() {
 	this->resetArray();
+	this->resetFrameIndex();
 
 	this->coherence = 1;
 	this->bounces = 50;
 	this->realisticRendering = true;
+	this->sceneMoved = true;
 }
 
 void Renderer::resetArray() {
@@ -61,8 +63,6 @@ void Renderer::render(const Scene& scene, const Camera& camera) {
 
 	// reset frame index if realistic rendering
 	if (this->realisticRendering) {
-		this->resetFrameIndex();
-
 		if (this->frameIndex == 1) {
 			memset(this->AccumulationData, 0, this->m_FinalImage->GetWidth() * this->m_FinalImage->GetHeight() * sizeof(glm::vec4));
 		}

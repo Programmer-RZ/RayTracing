@@ -23,7 +23,7 @@ with open("../Data/image_data.ppm", "r") as data:
 
 # reset image_data.ppm to 0 bytes
 with open("../Data/image_data.ppm", "w") as data:
-    w.write("")
+    data.write("")
 
 pixel_data = np.array(array, dtype=np.uint8)
 name = getDateTime()

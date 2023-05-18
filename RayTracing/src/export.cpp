@@ -66,6 +66,7 @@ void Export::ExportImage(uint32_t* imageData, int imageWidth, int imageHeight) {
 		}
 		else if (this->currentFormat == "jpg") {
 			std::system("python ..\\Helper\\exportJPG.py");
+			finishedExport = true;
 		}
 	}
 }
