@@ -23,6 +23,7 @@ public:
 		material0.Albedo = { 0.2f, 0.3f, 1.0f };
 		material0.roughness = 0.1f;
 		material0.name = "Material0";
+		material0.id = 0;
 
 		{
 			Sphere sphere;
@@ -107,10 +108,10 @@ public:
 					bool isSelected = (this->exportScene.GetCurrentFormat() == this->exportScene.GetFormats()[n]);
 					if (ImGui::Selectable(this->exportScene.GetFormats()[n], isSelected)) {
 						this->exportScene.setFormat(this->exportScene.GetFormats()[n]);
-						if (isSelected) {
-							ImGui::SetItemDefaultFocus();
-						}	
 					}
+					if (isSelected) {
+						ImGui::SetItemDefaultFocus();
+					}	
 				}
 				ImGui::EndCombo();
 			}
@@ -225,9 +226,21 @@ public:
 					sceneMoved = true;
 				}
 
-				if (ImGui::DragInt("Material", &sphere.material_index, 1.0f, 0, int(this->scene.materials.size()-1))) {
-					sceneMoved = true;
+				if (ImGui::BeginCombo("Material", this->scene.materials[sphere.material_index].name.c_str())) {
+
+					for (int n = 0; n < this->scene.materials.size(); n++) {
+						bool isSelected = (this->scene.materials[sphere.material_index].id == this->scene.materials[n].id);
+						if (ImGui::Selectable(this->scene.materials[n].name.c_str(), isSelected)) {
+							sphere.material_index = n;
+							sceneMoved = true;
+						}
+						if (isSelected) {
+							ImGui::SetItemDefaultFocus();
+						}
+					}
+					ImGui::EndCombo();
 				}
+
 
 				if (ImGui::Button("Delete Sphere")) {
 					spheres_todelete.push_back(i);
@@ -251,6 +264,7 @@ public:
 				material.Albedo = { 0.2f, 0.3f, 1.0f };
 				material.roughness = 1.0f;
 				material.name = "Material" + std::to_string(this->scene.materials.size() - 1);
+				material.id = this->scene.materials.size() - 1;
 
 				sceneMoved = true;
 			}
@@ -292,9 +306,11 @@ public:
 			}
 			// check if any spheres hold the materials
 			// if they do, set the sphere's material to the prev one
-			for (Sphere sphere : this->scene.spheres) {
+			for (int i = 0; i < this->scene.spheres.size(); i++) {
+				Sphere& sphere = this->scene.spheres[i];
 				if (sphere.material_index > this->scene.materials.size()-1) {
 					sphere.material_index = this->scene.materials.size()-1;
+					sceneMoved = true;
 				}
 			}
 

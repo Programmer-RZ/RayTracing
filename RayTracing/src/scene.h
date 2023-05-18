@@ -10,6 +10,7 @@ struct Material {
 	glm::vec3 Albedo{ 1.0f, 0.0f, 1.0f };
 	float roughness = 1.0f;
 	float metallic = 0.0f;
+	int id;
 };
 
 struct Sphere {
