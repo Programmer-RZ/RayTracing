@@ -169,50 +169,60 @@ public:
 			// settings
 			ImGui::Begin("Scene");
 
+			// appearance
+			ImGui::Text("Apperance");
+
+			ImGui::Separator();
+			ImGui::Separator();
+
 			ImGui::Text("Light");
 			if (ImGui::DragFloat3("Light Direction", glm::value_ptr(this->renderer.GetLightDir()), 0.1f, -1.0f, 1.0f)) {
 				sceneMoved = true;
 			}
-
-			ImGui::Separator();
-			ImGui::Separator();
 
 			ImGui::Text("Background");
 			if (ImGui::ColorEdit3("Sky", glm::value_ptr(this->renderer.GetSkycolor()))) {
 				sceneMoved = true;
 			}
 
-			ImGui::Separator();
-			ImGui::Separator();
+			// blank space to seperate Appearance and Objects
+			ImGui::Dummy(ImVec2(0, 25));
 
+			// objects
 			ImGui::Text("Objects");
+			ImGui::Separator();
+			ImGui::Separator();
 
-			if (ImGui::Button("New Sphere")) {
+			if (ImGui::BeginCombo("3D Shape", this->scene.selected_object)) {
+
+				for (int n = 0; n < this->scene.num_of_avail_obj; n++) {
+					bool isSelected = (this->scene.selected_object == this->scene.objects[n]);
+					if (ImGui::Selectable(this->scene.objects[n], isSelected)) {
+						this->scene.selected_object = this->scene.objects[n];
+						sceneMoved = true;
+					}
+					if (isSelected) {
+						ImGui::SetItemDefaultFocus();
+					}
+				}
+				ImGui::EndCombo();
+			}
+
+			if (ImGui::Button("New")) {
 
 				glm::vec3 camera_pos = this->camera.GetPosition();
 				glm::vec3 camera_dir = this->camera.GetDirection();
-
-				Sphere sphere;
-				sphere.name = "Sphere " + std::to_string(this->scene.spheres.size());
-				sphere.pos = {
-					camera_pos.x + camera_dir.x * 2,
-					camera_pos.y + camera_dir.y * 2,
-					camera_pos.z + camera_dir.z * 2
-				};
-				sphere.radius = 0.5f;
-				sphere.material_index = 0;
-
-				this->scene.spheres.push_back(sphere);
-
 				sceneMoved = true;
+
+				if (static_cast<std::string>(this->scene.selected_object) == "Sphere") {
+					this->scene.createNewSphere(camera_pos, camera_dir);
+				}
 			}
 
 			// holds the indexes of sphere that the user deleted
 			std::vector<int> spheres_todelete = {};
 			for (int i = 0; i < scene.spheres.size(); i++) {
 				ImGui::PushID(i);
-
-				ImGui::Separator();
 				ImGui::Separator();
 
 				Sphere& sphere = scene.spheres[i];
@@ -273,8 +283,6 @@ public:
 			std::vector<int> materials_todelete = {};
 			for (int i = 0; i < this->scene.materials.size(); i++) {
 				ImGui::PushID(i);
-
-				ImGui::Separator();
 				ImGui::Separator();
 
 				Material& material = this->scene.materials[i];
