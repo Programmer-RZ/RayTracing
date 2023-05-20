@@ -18,26 +18,22 @@ public:
 		: camera(45.0f, 0.1f, 100.0f)
 	{
 		scene.name = std::system("python ..\\Helper\\date_time.py");
-
+		this->sceneinfo.read(scene.spheres, scene.materials);
+		/*
 		Material& material0 = this->scene.materials.emplace_back();
 		material0.Albedo = { 0.2f, 0.3f, 1.0f };
 		material0.roughness = 0.1f;
 		material0.name = "Material0";
 		material0.id = 0;
-
-		{
-			Sphere sphere;
-			sphere.name = "Sphere 0";
-			sphere.pos = { 0.0f, 0.0f, 0.0f };
-			sphere.radius = 0.5f;
-			sphere.material_index = 0;
-			this->scene.spheres.push_back(sphere);
-		}
+		*/
 	}
 
 	virtual void OnUpdate(float ts) override {
 		if (!this->renderer.GetRealisticRendering()) {
-			if (this->camera.OnUpdate(ts)) {
+			bool hasObjects = (
+				this->scene.spheres.size() != 0
+			);
+			if (this->camera.OnUpdate(ts, hasObjects)) {
 				this->renderer.SetSceneMoved(true);
 				this->renderer.SetCameraMoved(true);
 			}
@@ -208,7 +204,7 @@ public:
 				ImGui::EndCombo();
 			}
 
-			if (ImGui::Button("New")) {
+			if (ImGui::Button("New") && this->scene.materials.size() != 0) {
 
 				glm::vec3 camera_pos = this->camera.GetPosition();
 				glm::vec3 camera_dir = this->camera.GetDirection();

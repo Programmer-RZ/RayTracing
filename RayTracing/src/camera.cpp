@@ -15,8 +15,14 @@ Camera::Camera(float verticalFOV, float nearClip, float farClip)
 	m_Position = glm::vec3(0, 0, 3);
 }
 
-bool Camera::OnUpdate(float ts)
+bool Camera::OnUpdate(float ts, bool hasObjects)
 {
+	if (!hasObjects) {
+		// no objects in scene
+		// no need to update camera
+		return false;
+	}
+	
 	glm::vec2 mousePos = Input::GetMousePosition();
 	glm::vec2 delta = (mousePos - m_LastMousePosition) * 0.002f;
 	m_LastMousePosition = mousePos;
