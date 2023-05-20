@@ -23,16 +23,11 @@ private:
 	};
 
 public:
-	struct Settings {
-		bool Accumulate = true;
-	};
-
-public:
 	Renderer() = default;
 
 	void resetFrameIndex() { this->frameIndex = 1; }
 
-	void render(const Scene& scene, const Camera& camera);
+	void render(const Scene& scene, const Camera& camera, glm::vec3& lightDir, glm::vec3& skycolor);
 
 	bool on_resize(uint32_t width, uint32_t height);
 
@@ -48,9 +43,6 @@ public:
 	bool GetSceneMoved() const { return this->sceneMoved; }
 	bool GetCameraMoved() const { return this->cameraMoved; }
 	int& GetBounces() { return this->bounces; }
-	Settings& GetSettings() { return this->settings; }
-	glm::vec3& GetLightDir() { return this->lightDir; }
-	glm::vec3& GetSkycolor() { return this->skycolor; }
 	float& GetBrightness() { return this->brightness; }
 
 	// setters
@@ -66,12 +58,10 @@ private:
 	const Scene* ActiveScene = nullptr;
 	const Camera* ActiveCamera = nullptr;
 
-	Settings settings;
-
-	glm::vec3 lightDir = glm::vec3(-0.546f, -0.722f, -0.425f);
-	glm::vec3 skycolor = glm::vec3(0.0f, 0.0f, 0.0f);
-
+	// accumulation
 	int frameIndex = 1;
+
+	// scene
 	bool sceneMoved = true;
 	bool cameraMoved = false;
 
@@ -86,7 +76,7 @@ private:
 
 private:
 
-	glm::vec4 PerPixel(uint32_t x, uint32_t y);
+	glm::vec4 PerPixel(uint32_t x, uint32_t y, glm::vec3& lightDir, glm::vec3& skycolor);
 
 	HitPayload TraceRay(const Ray& ray);
 	HitPayload ClosestHit(const Ray& ray, float hitDist, int objectIndex, std::string name);

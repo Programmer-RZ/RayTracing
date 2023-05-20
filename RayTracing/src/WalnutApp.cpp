@@ -172,12 +172,13 @@ public:
 			ImGui::Separator();
 
 			ImGui::Text("Light");
-			if (ImGui::DragFloat3("Light Direction", glm::value_ptr(this->renderer.GetLightDir()), 0.1f, -1.0f, 1.0f)) {
+			if (ImGui::DragFloat3("Light Direction", glm::value_ptr(this->scene.lightDir), 0.1f, -1.0f, 1.0f)) {
+				this->scene.lightDir = glm::normalize(this->scene.lightDir);
 				sceneMoved = true;
 			}
 
 			ImGui::Text("Background");
-			if (ImGui::ColorEdit3("Sky", glm::value_ptr(this->renderer.GetSkycolor()))) {
+			if (ImGui::ColorEdit3("Sky", glm::value_ptr(this->scene.skycolor))) {
 				sceneMoved = true;
 			}
 
@@ -353,7 +354,7 @@ public:
 
 			this->camera.OnResize(this->m_ViewportWidth, this->m_ViewportHeight);
 
-			this->renderer.render(this->scene, this->camera);
+			this->renderer.render(this->scene, this->camera, this->scene.lightDir, this->scene.skycolor);
 
 			last_render_time = timer.ElapsedMillis();
 		}

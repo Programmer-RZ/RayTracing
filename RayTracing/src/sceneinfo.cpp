@@ -50,6 +50,9 @@ void SceneInfo::write(std::vector<Sphere>& spheres, std::vector<Material>& mater
 		this->ini[material.name]["g"]         = std::to_string(material.Albedo.g);
 		this->ini[material.name]["roughness"] = std::to_string(material.roughness);
 	}
+
+	// appearance
+	
 	this->inifile.write(this->ini, true);
 	this->finishedSave = true;
 }

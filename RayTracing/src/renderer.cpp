@@ -52,7 +52,7 @@ bool Renderer::on_resize(uint32_t width, uint32_t height) {
 	return true;
 }
 
-void Renderer::render(const Scene& scene, const Camera& camera) {
+void Renderer::render(const Scene& scene, const Camera& camera, glm::vec3& lightDir, glm::vec3& skycolor) {
 	if (!this->sceneMoved) {
 		// no need to calculate the image again
 		return;
@@ -71,7 +71,7 @@ void Renderer::render(const Scene& scene, const Camera& camera) {
 	for (uint32_t y = 0; y < this->m_FinalImage->GetHeight(); y++) {
 		for (uint32_t x = this->coherence - 1; x < this->m_FinalImage->GetWidth(); x+=this->coherence) {
 
-			glm::vec4 color = this->PerPixel(x, y);
+			glm::vec4 color = this->PerPixel(x, y, lightDir, skycolor);
 			uint32_t RGBA;
 
 			if (this->realisticRendering) {
@@ -99,12 +99,7 @@ void Renderer::render(const Scene& scene, const Camera& camera) {
 	this->m_FinalImage->SetData(this->imageData);
 
 	if (this->realisticRendering) {
-		if (this->settings.Accumulate) {
-			this->frameIndex++;
-		}
-		else {
-			this->frameIndex = 1;
-		}
+		this->frameIndex++;
 	}
 
 	if (this->realisticRendering) {
@@ -117,7 +112,7 @@ void Renderer::render(const Scene& scene, const Camera& camera) {
 	}
 }
 
-glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y)
+glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, glm::vec3& lightDir, glm::vec3& skycolor)
 {
 	Ray ray;
 	ray.Origin = ActiveCamera->GetPosition();
@@ -135,12 +130,11 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y)
 		//std::cout << hitDist << std::endl;
 		
 		if (hitDist < 0.0f) {
-			color += this->skycolor * multiplier;
+			color += skycolor * multiplier;
 			break;
 		}
 
-		this->lightDir = glm::normalize(this->lightDir);
-		float lightIntensity = glm::max(glm::dot(payload.WorldNormal, -this->lightDir), 0.0f); // == cos(angle)
+		float lightIntensity = glm::max(glm::dot(payload.WorldNormal, -lightDir), 0.0f); // == cos(angle)
 
 		const Sphere& sphere = this->ActiveScene->spheres[payload.ObjectIndex];
 		const Material& material = this->ActiveScene->materials[sphere.material_index];
