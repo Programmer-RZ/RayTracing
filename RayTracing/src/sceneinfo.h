@@ -21,8 +21,8 @@ public:
 	SceneInfo();
 	~SceneInfo();
 
-	void read(std::vector<Sphere>& spheres, std::vector<Material>& materials);
-	void write(std::vector<Sphere>& spheres, std::vector<Material>& materials);
+	void read(Scene& scene, int& width, int& height, float& brightness);
+	void write(Scene& scene, int width, int height, float brightness);
 
 	bool GetFinishedSave() const { return this->finishedSave; }
 	void SetFinishedSave(bool finished) { this->finishedSave = finished; }

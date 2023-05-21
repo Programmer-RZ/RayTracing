@@ -18,7 +18,7 @@ public:
 		: camera(45.0f, 0.1f, 100.0f)
 	{
 		scene.name = std::system("python ..\\Helper\\date_time.py");
-		this->sceneinfo.read(scene.spheres, scene.materials);
+		this->sceneinfo.read(this->scene, this->m_ViewportWidth, this->m_ViewportHeight, this->renderer.GetBrightness());
 		/*
 		Material& material0 = this->scene.materials.emplace_back();
 		material0.Albedo = { 0.2f, 0.3f, 1.0f };
@@ -121,7 +121,7 @@ public:
 			ImGui::Separator();
 
 			if (ImGui::Button("Save scene info")) {
-				this->sceneinfo.write(this->scene.spheres, this->scene.materials);
+				this->sceneinfo.write(this->scene, this->m_ViewportWidth, this->m_ViewportHeight, this->renderer.GetBrightness());
 			}
 			if (this->sceneinfo.GetFinishedSave()) {
 				ImGui::Text("Successfully saved scene");
@@ -144,7 +144,7 @@ public:
 			ImGui::Separator();
 			ImGui::Separator();
 
-			if (ImGui::DragFloat("Multiplier", &(this->renderer.GetBrightness()), 0.05f, 0.1f, 1.0f)) {
+			if (ImGui::DragFloat("Bloom", &(this->renderer.GetBrightness()), 0.05f, 0.1f, 1.0f)) {
 				sceneMoved = true;
 			}
 
