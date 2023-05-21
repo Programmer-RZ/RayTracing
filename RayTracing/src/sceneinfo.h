@@ -11,11 +11,11 @@ class SceneInfo {
 	mINI::INIFile inifile;
 	mINI::INIStructure ini;
 
-	// files for clearing all old data
-	std::ofstream clear_spherenames;
-	std::ofstream clear_materialnames;
-
 	bool finishedSave;
+
+private:
+	void reopen();
+	void close();
 
 public:
 	SceneInfo();

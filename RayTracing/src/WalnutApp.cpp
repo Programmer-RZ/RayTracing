@@ -19,6 +19,7 @@ public:
 	{
 		scene.name = std::system("python ..\\Helper\\date_time.py");
 		this->sceneinfo.read(this->scene, this->m_ViewportWidth, this->m_ViewportHeight, this->renderer.GetBrightness());
+		
 		/*
 		Material& material0 = this->scene.materials.emplace_back();
 		material0.Albedo = { 0.2f, 0.3f, 1.0f };
