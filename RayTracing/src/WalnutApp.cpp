@@ -367,7 +367,7 @@ private:
 	Camera camera;
 	Scene scene;
 
-	int m_ViewportWidth = 1200, m_ViewportHeight = 965;
+	int m_ViewportWidth = 1200, m_ViewportHeight = 900;
 
 	float last_render_time = 0;
 
@@ -379,12 +379,12 @@ private:
 Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
 {
 	Walnut::ApplicationSpecification spec;
-	spec.Name = "EvTech - Realistic 3D Art - v0.1";
+	spec.Name = "Realistic 3D Art";
 
 	Walnut::Application* app = new Walnut::Application(spec);
 	app->PushLayer<RayTracing>();
 
-	/*
+
 	app->SetMenubarCallback([app]()
 	{
 		if (ImGui::BeginMenu("File"))
@@ -396,6 +396,6 @@ Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
 			ImGui::EndMenu();
 		}
 	});
-	*/
+
 	return app;
 }
