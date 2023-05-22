@@ -15,6 +15,7 @@ class SceneInfo {
 
 private:
 	void reopen();
+	void clear();
 	void close();
 
 public:

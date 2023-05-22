@@ -15,6 +15,13 @@ void SceneInfo::reopen() {
 	this->sphere_names.open("..\\Data\\sphere_names.txt");
 	this->material_names.open("..\\Data\\material_names.txt");
 }
+void SceneInfo::clear() {
+	this->sphere_names.open("..\\Data\\sphere_names.txt", std::ofstream::out | std::ofstream::trunc);
+	this->material_names.open("..\\Data\\material_names.txt", std::ofstream::out | std::ofstream::trunc);
+	this->sphere_names.close();
+	this->material_names.close();
+	this->ini.clear();
+}
 void SceneInfo::close() {
 	this->sphere_names.close();
 	this->material_names.close();
@@ -105,10 +112,9 @@ void SceneInfo::read(Scene& scene, int& width, int& height, float& brightness) {
 
 void SceneInfo::write(Scene& scene, int width, int height, float brightness) {
 	// clear old data
+	this->clear();
+
 	this->reopen();
-	this->sphere_names.clear();
-	this->material_names.clear();
-	this->ini.clear();
 	
 	// spheres
 	for (Sphere sphere : scene.spheres) {

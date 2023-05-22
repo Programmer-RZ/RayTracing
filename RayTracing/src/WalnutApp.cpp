@@ -306,7 +306,7 @@ public:
 			for (int index : materials_todelete) {
 				// if materials only has one element
 				// cannot delete it
-				if (this->scene.materials.size() > 1) {
+				if (this->scene.materials.size() > 1 || this->scene.spheres.size() == 0) {
 					this->scene.materials.erase(this->scene.materials.begin() + index);
 				}
 			}
@@ -384,7 +384,7 @@ Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
 	Walnut::Application* app = new Walnut::Application(spec);
 	app->PushLayer<RayTracing>();
 
-
+	/*
 	app->SetMenubarCallback([app]()
 	{
 		if (ImGui::BeginMenu("File"))
@@ -396,6 +396,7 @@ Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
 			ImGui::EndMenu();
 		}
 	});
+	*/
 
 	return app;
 }
