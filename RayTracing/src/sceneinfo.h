@@ -3,6 +3,7 @@
 #include <fstream>
 #include "libs\mINI\src\mini\ini.h"
 #include "scene.h"
+#include "camera.h"
 
 class SceneInfo {
 	std::fstream sphere_names;
@@ -22,8 +23,8 @@ public:
 	SceneInfo();
 	~SceneInfo();
 
-	void read(Scene& scene, int& width, int& height, float& brightness);
-	void write(Scene& scene, int width, int height, float brightness);
+	void read(Scene& scene, Camera& camera, int& width, int& height, float& brightness);
+	void write(Scene& scene, Camera& camera, int width, int height, float brightness);
 
 	bool GetFinishedSave() const { return this->finishedSave; }
 	void SetFinishedSave(bool finished) { this->finishedSave = finished; }

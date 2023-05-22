@@ -10,6 +10,9 @@ public:
 
 	bool OnUpdate(float ts, bool hasObjects);
 	void OnResize(uint32_t width, uint32_t height);
+	void RecalculateProjection();
+	void RecalculateView();
+	void RecalculateRayDirections();
 
 	const glm::mat4& GetProjection() const { return m_Projection; }
 	const glm::mat4& GetInverseProjection() const { return m_InverseProjection; }
@@ -21,11 +24,18 @@ public:
 
 	const std::vector<glm::vec3>& GetRayDirections() const { return m_RayDirections; }
 
+	const float GetVerticalFOV() const { return m_VerticalFOV; }
+	const float GetNearClip() const { return m_NearClip; }
+	const float GetFarClip() const { return m_FarClip; }
+
+	void SetPosition(glm::vec3 position) { m_Position = position; }
+	void SetDirection(glm::vec3 direction) { m_ForwardDirection = direction; }
+	void SetVerticalFOV(float verticalFOV) { m_VerticalFOV = verticalFOV; }
+	void SetNearClip(float nearClip) { m_NearClip = nearClip; }
+	void SetFarClip(float farClip) { m_FarClip = farClip; }
+
 	float GetRotationSpeed();
-private:
-	void RecalculateProjection();
-	void RecalculateView();
-	void RecalculateRayDirections();
+
 private:
 	glm::mat4 m_Projection{ 1.0f };
 	glm::mat4 m_View{ 1.0f };

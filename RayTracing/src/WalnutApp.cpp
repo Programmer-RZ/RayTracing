@@ -18,7 +18,7 @@ public:
 		: camera(45.0f, 0.1f, 100.0f)
 	{
 		scene.name = std::system("python ..\\Helper\\date_time.py");
-		this->sceneinfo.read(this->scene, this->m_ViewportWidth, this->m_ViewportHeight, this->renderer.GetBrightness());
+		this->sceneinfo.read(this->scene, this->camera, this->m_ViewportWidth, this->m_ViewportHeight, this->renderer.GetBrightness());
 		
 		/*
 		Material& material0 = this->scene.materials.emplace_back();
@@ -122,7 +122,7 @@ public:
 			ImGui::Separator();
 
 			if (ImGui::Button("Save scene info")) {
-				this->sceneinfo.write(this->scene, this->m_ViewportWidth, this->m_ViewportHeight, this->renderer.GetBrightness());
+				this->sceneinfo.write(this->scene, this->camera, this->m_ViewportWidth, this->m_ViewportHeight, this->renderer.GetBrightness());
 			}
 			if (this->sceneinfo.GetFinishedSave()) {
 				ImGui::Text("Successfully saved scene");

@@ -15,6 +15,7 @@ void SceneInfo::reopen() {
 	this->sphere_names.open("..\\Data\\sphere_names.txt");
 	this->material_names.open("..\\Data\\material_names.txt");
 }
+
 void SceneInfo::clear() {
 	this->sphere_names.open("..\\Data\\sphere_names.txt", std::ofstream::out | std::ofstream::trunc);
 	this->material_names.open("..\\Data\\material_names.txt", std::ofstream::out | std::ofstream::trunc);
@@ -27,7 +28,7 @@ void SceneInfo::close() {
 	this->material_names.close();
 }
 
-void SceneInfo::read(Scene& scene, int& width, int& height, float& brightness) {
+void SceneInfo::read(Scene& scene, Camera& camera, int& width, int& height, float& brightness) {
 
 	this->reopen();
 
@@ -61,29 +62,29 @@ void SceneInfo::read(Scene& scene, int& width, int& height, float& brightness) {
 
 	for (std::string name : sphere_names) {
 		// std::stod converts std::string to double
-		float x = static_cast<float>(std::stod(this->ini.get(name).get("x")));
-		float y = static_cast<float>(std::stod(this->ini.get(name).get("y")));
-		float z = static_cast<float>(std::stod(this->ini.get(name).get("z")));
+		float x      = static_cast<float>(std::stod(this->ini.get(name).get("x")));
+		float y      = static_cast<float>(std::stod(this->ini.get(name).get("y")));
+		float z      = static_cast<float>(std::stod(this->ini.get(name).get("z")));
 		float radius = static_cast<float>(std::stod(this->ini.get(name).get("radius")));
-		int material = static_cast<int>(static_cast<float>(std::stod(this->ini.get(name).get("material"))));
+		int material = static_cast<int>(std::stod(this->ini.get(name).get("material")));
 
 		Sphere sphere;
-		sphere.pos = glm::vec3(x, y, z);
-		sphere.name = name;
-		sphere.radius = radius;
+		sphere.pos            = glm::vec3(x, y, z);
+		sphere.name           = name;
+		sphere.radius         = radius;
 		sphere.material_index = material;
 
 		scene.spheres.push_back(sphere);
 	}
 	for (std::string name : material_names) {
 		// std::stod converts std::string to double
-		float r = static_cast<float>(std::stod(this->ini.get(name).get("r")));
-		float g = static_cast<float>(std::stod(this->ini.get(name).get("g")));
-		float b = static_cast<float>(std::stod(this->ini.get(name).get("b")));
+		float r         = static_cast<float>(std::stod(this->ini.get(name).get("r")));
+		float g         = static_cast<float>(std::stod(this->ini.get(name).get("g")));
+		float b         = static_cast<float>(std::stod(this->ini.get(name).get("b")));
 		float roughness = static_cast<float>(std::stod(this->ini.get(name).get("roughness")));
 
 		Material material;
-		material.Albedo = glm::vec3(r, g, b);
+		material.Albedo    = glm::vec3(r, g, b);
 		material.roughness = roughness;
 
 		scene.materials.push_back(material);
@@ -91,26 +92,44 @@ void SceneInfo::read(Scene& scene, int& width, int& height, float& brightness) {
 
 	// apperance
 	// lightdir
-	float ld_x = static_cast<float>(std::stod(this->ini.get("lightdir").get("x")));
-	float ld_y = static_cast<float>(std::stod(this->ini.get("lightdir").get("y")));
-	float ld_z = static_cast<float>(std::stod(this->ini.get("lightdir").get("z")));
+	float ld_x     = static_cast<float>(std::stod(this->ini.get("lightdir").get("x")));
+	float ld_y     = static_cast<float>(std::stod(this->ini.get("lightdir").get("y")));
+	float ld_z     = static_cast<float>(std::stod(this->ini.get("lightdir").get("z")));
 	scene.lightDir = glm::vec3(ld_x, ld_y, ld_z);
 
 	// skycolor
-	float sc_r = static_cast<float>(std::stod(this->ini.get("skycolor").get("r")));
-	float sc_g = static_cast<float>(std::stod(this->ini.get("skycolor").get("g")));
-	float sc_b = static_cast<float>(std::stod(this->ini.get("skycolor").get("b")));
+	float sc_r     = static_cast<float>(std::stod(this->ini.get("skycolor").get("r")));
+	float sc_g     = static_cast<float>(std::stod(this->ini.get("skycolor").get("g")));
+	float sc_b     = static_cast<float>(std::stod(this->ini.get("skycolor").get("b")));
 	scene.skycolor = glm::vec3(sc_r, sc_g, sc_b);
 
 	// settings
-	width = static_cast<int>(std::stod(this->ini.get("settings").get("width")));
-	height = static_cast<int>(std::stod(this->ini.get("settings").get("height")));
+	width      = static_cast<int>(std::stod(this->ini.get("settings").get("width")));
+	height     = static_cast<int>(std::stod(this->ini.get("settings").get("height")));
 	brightness = static_cast<float>(std::stod(this->ini.get("settings").get("brightness")));
+	
+	// camera
+	float px = static_cast<float>(std::stod(this->ini.get("camera").get("px")));
+	float py = static_cast<float>(std::stod(this->ini.get("camera").get("py")));
+	float pz = static_cast<float>(std::stod(this->ini.get("camera").get("pz")));
+	camera.SetPosition(glm::vec3(px, py, pz));
+
+	float dx = static_cast<float>(std::stod(this->ini.get("camera").get("dx")));
+	float dy = static_cast<float>(std::stod(this->ini.get("camera").get("dy")));
+	float dz = static_cast<float>(std::stod(this->ini.get("camera").get("dz")));
+	camera.SetDirection(glm::vec3(dx, dy, dz));
+
+	camera.SetVerticalFOV(static_cast<float>(std::stod(this->ini.get("camera").get("verticalFOV"))));
+	camera.SetNearClip(static_cast<float>(std::stod(this->ini.get("camera").get("nearClip"))));
+	camera.SetFarClip(static_cast<float>(std::stod(this->ini.get("camera").get("farClip"))));
+
+	camera.RecalculateView();
+	camera.RecalculateRayDirections();
 
 	this->close();
 }
 
-void SceneInfo::write(Scene& scene, int width, int height, float brightness) {
+void SceneInfo::write(Scene& scene, Camera& camera, int width, int height, float brightness) {
 	// clear old data
 	this->clear();
 
@@ -154,6 +173,19 @@ void SceneInfo::write(Scene& scene, int width, int height, float brightness) {
 	this->ini["settings"]["width"]      = std::to_string(width);
 	this->ini["settings"]["height"]     = std::to_string(height);
 	this->ini["settings"]["brightness"] = std::to_string(brightness);
+
+	// camera
+	this->ini["camera"]["px"] = std::to_string(camera.GetPosition().x);
+	this->ini["camera"]["py"] = std::to_string(camera.GetPosition().y);
+	this->ini["camera"]["pz"] = std::to_string(camera.GetPosition().z);
+	
+	this->ini["camera"]["dx"] = std::to_string(camera.GetDirection().x);
+	this->ini["camera"]["dy"] = std::to_string(camera.GetDirection().y);
+	this->ini["camera"]["dz"] = std::to_string(camera.GetDirection().z);
+
+	this->ini["camera"]["verticalFOV"] = std::to_string(camera.GetVerticalFOV());
+	this->ini["camera"]["nearClip"]    = std::to_string(camera.GetNearClip());
+	this->ini["camera"]["farClip"]     = std::to_string(camera.GetFarClip());
 	
 	// write all the contents
 	this->inifile.write(this->ini, true);
