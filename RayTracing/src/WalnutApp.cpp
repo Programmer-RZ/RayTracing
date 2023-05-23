@@ -224,37 +224,39 @@ public:
 				ImGui::Separator();
 
 				Sphere& sphere = scene.spheres[i];
-				ImGui::Text(sphere.name.c_str());
 
-				if (ImGui::DragFloat3("Position", glm::value_ptr(sphere.pos), 0.1f)) {
-					sceneMoved = true;
-				}
+				if (ImGui::CollapsingHeader(sphere.name.c_str())) {
+					ImGui::Text(sphere.name.c_str());
 
-				if (ImGui::DragFloat("Radius", &sphere.radius, 0.1f, 0.0f)) {
-					sceneMoved = true;
-				}
-
-				if (ImGui::BeginCombo("Material", this->scene.materials[sphere.material_index].name.c_str())) {
-
-					for (int n = 0; n < this->scene.materials.size(); n++) {
-						bool isSelected = (this->scene.materials[sphere.material_index].id == this->scene.materials[n].id);
-						if (ImGui::Selectable(this->scene.materials[n].name.c_str(), isSelected)) {
-							sphere.material_index = n;
-							sceneMoved = true;
-						}
-						if (isSelected) {
-							ImGui::SetItemDefaultFocus();
-						}
+					if (ImGui::DragFloat3("Position", glm::value_ptr(sphere.pos), 0.1f)) {
+						sceneMoved = true;
 					}
-					ImGui::EndCombo();
+
+					if (ImGui::DragFloat("Radius", &sphere.radius, 0.1f, 0.0f)) {
+						sceneMoved = true;
+					}
+
+					if (ImGui::BeginCombo("Material", this->scene.materials[sphere.material_index].name.c_str())) {
+
+						for (int n = 0; n < this->scene.materials.size(); n++) {
+							bool isSelected = (this->scene.materials[sphere.material_index].id == this->scene.materials[n].id);
+							if (ImGui::Selectable(this->scene.materials[n].name.c_str(), isSelected)) {
+								sphere.material_index = n;
+								sceneMoved = true;
+							}
+							if (isSelected) {
+								ImGui::SetItemDefaultFocus();
+							}
+						}
+						ImGui::EndCombo();
+					}
+
+
+					if (ImGui::Button("Delete Sphere")) {
+						spheres_todelete.push_back(i);
+						sceneMoved = true;
+					}
 				}
-
-
-				if (ImGui::Button("Delete Sphere")) {
-					spheres_todelete.push_back(i);
-					sceneMoved = true;
-				}
-
 				ImGui::PopID();
 			}
 
@@ -285,21 +287,21 @@ public:
 
 				Material& material = this->scene.materials[i];
 
-				ImGui::Text((material.name).c_str());
+				if (ImGui::CollapsingHeader(material.name.c_str())) {
 
-				if (ImGui::ColorEdit3("Color", glm::value_ptr(material.Albedo))) {
-					sceneMoved = true;
+					if (ImGui::ColorEdit3("Color", glm::value_ptr(material.Albedo))) {
+						sceneMoved = true;
+					}
+
+					if (ImGui::DragFloat("Roughness", &material.roughness, 0.1f, 0.0f, 1.0f)) {
+						sceneMoved = true;
+					}
+
+					if (ImGui::Button("Delete material")) {
+						sceneMoved = true;
+						materials_todelete.push_back(i);
+					}
 				}
-
-				if (ImGui::DragFloat("Roughness", &material.roughness, 0.1f, 0.0f, 1.0f)) {
-					sceneMoved = true;
-				}
-
-				if (ImGui::Button("Delete material")) {
-					sceneMoved = true;
-					materials_todelete.push_back(i);
-				}
-
 				ImGui::PopID();
 			}
 			// delete all the materials
