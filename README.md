@@ -1,6 +1,6 @@
 # RayTracing
 
-"Real-time RayTracing". It's technically real-time but the framerate is something like 16 FPS. So currently, I'm working on optimizations. 
+RayTracing editory where you can create 3D designs and hyper-realistic art! Currently in heavy development.
 
 ![image](https://user-images.githubusercontent.com/123858154/231154761-a05ad542-2cb7-494a-874e-8cc3472940e6.png)
 
@@ -11,7 +11,7 @@
 - Vulkan SDK
 
 **Python**
-- Python 3.9.7 or higher
+- Python 3.9.7 or higher (included in path)
 - Datetime
 - Numpy
 - PIL
@@ -26,7 +26,9 @@
 - Reflections
 - Path Tracing
 - Accumulation
+- Sphere intersection
 - Material/Scene Editor
+- Collapsing headers
 - UI
 
 **Optimizations**
@@ -35,10 +37,22 @@
 - Only included accumulation in Realistic Rendering
 - Only renders new image when updated objects/position
 
+**Future features**
+- XY rect intersection
+- XZ rect intersection
+- YZ rect intersection
+- Box intersection
+
+# Dependencies
+- Walnut
+- ImGui
+- GLFW
+- GLM
+
 # Examples
 ![2023-04-11_08-07-33](https://user-images.githubusercontent.com/123858154/231158230-e1971c1b-00ba-48c3-9c89-99461ee7bc43.png)
 
 
 # Credits
-Thanks to [The Cherno](https://www.youtube.com/@TheCherno) for providing [RayTracing Tutorials](https://www.youtube.com/watch?v=gfW1Fhd9u9Q&list=PLlrATfBNZ98edc5GshdBtREv5asFW3yXl)
-Thanks to [Raytracing in One Weekend Series](https://raytracing.github.io/) for providing very helpful articles about Raytracing
+- Thanks to [The Cherno](https://www.youtube.com/@TheCherno) for providing [RayTracing Tutorials](https://www.youtube.com/watch?v=gfW1Fhd9u9Q&list=PLlrATfBNZ98edc5GshdBtREv5asFW3yXl)
+- Thanks to [Raytracing in One Weekend Series](https://raytracing.github.io/) for providing very helpful articles about Raytracing

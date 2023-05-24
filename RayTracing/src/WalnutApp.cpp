@@ -226,8 +226,6 @@ public:
 				Sphere& sphere = scene.spheres[i];
 
 				if (ImGui::CollapsingHeader(sphere.name.c_str())) {
-					ImGui::Text(sphere.name.c_str());
-
 					if (ImGui::DragFloat3("Position", glm::value_ptr(sphere.pos), 0.1f)) {
 						sceneMoved = true;
 					}
