@@ -1,9 +1,9 @@
 #pragma once
 
 #include <fstream>
-#include "libs\mINI\src\mini\ini.h"
+#include "..\libs\mINI\src\mini\ini.h"
 #include "scene.h"
-#include "camera.h"
+#include "../renderer/camera.h"
 
 class SceneInfo {
 	std::fstream sphere_names;

@@ -31,10 +31,11 @@ void Export::reset() {
 
 void Export::writeArray(uint32_t* imageData, int imageWidth, int imageHeight) {
 	std::string output;
-	// every iteration, right 5000 lines of image info
-	// this will allow the user to control the ui
+	// every iteration, right imageWidth/2 lines of image info
+	// this will allow the user to use the gui
 	// while exporting
-	for (int i = 0; i < 5000; i++) {
+	// without it freezing up
+	for (int i = 0; i < imageWidth / 2; i++) {
 		if (this->y_index == 0 && this->x_index == 0) {
 			output = output + "P3\n" + std::to_string(imageWidth) + ' ' + std::to_string(imageHeight) + "\n255\n";
 		}

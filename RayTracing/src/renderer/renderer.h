@@ -4,7 +4,7 @@
 
 #include "camera.h"
 #include "ray.h"
-#include "scene.h"
+#include "../scene/scene.h"
 #include "hittable.h"
 
 #include <memory>

@@ -5,7 +5,7 @@
 #include <iostream>
 #include <cmath>
 
-#include "utils.h"
+#include "../utils.h"
 
 void Renderer::realisticRender() {
 	this->resetArray();

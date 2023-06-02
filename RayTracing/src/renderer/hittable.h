@@ -1,7 +1,7 @@
 #pragma once
 
 #include "glm/glm.hpp"
-#include "scene.h"
+#include "../scene/scene.h"
 #include "ray.h"
 
 class Hittable {
