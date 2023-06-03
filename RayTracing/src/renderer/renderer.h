@@ -10,17 +10,7 @@
 #include <memory>
 #include "glm/glm.hpp"
 
-class Renderer {
-
-private:
-	struct HitPayload {
-		float HitDist;
-
-		glm::vec3 WorldPosition;
-		glm::vec3 WorldNormal;
-
-		int ObjectIndex;
-	};
+class Renderer {	
 
 public:
 	Renderer() = default;
@@ -58,6 +48,9 @@ private:
 	const Scene* ActiveScene = nullptr;
 	const Camera* ActiveCamera = nullptr;
 
+	// intersection formulas
+	SphereIntersection sphere_intersection = SphereIntersection();
+
 	// accumulation
 	int frameIndex = 1;
 
@@ -79,7 +72,7 @@ private:
 	glm::vec4 PerPixel(uint32_t x, uint32_t y, glm::vec3& lightDir, glm::vec3& skycolor);
 
 	HitPayload TraceRay(const Ray& ray);
-	HitPayload ClosestHit(const Ray& ray, float hitDist, int objectIndex, std::string name);
+	HitPayload ClosestHit(const Ray& ray, float hitDist, int objectIndex, Hittable* object);
 	HitPayload Miss(const Ray& ray);
 
 private:

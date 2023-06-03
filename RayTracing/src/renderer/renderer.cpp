@@ -122,7 +122,7 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, glm::vec3& lightDir, glm::v
 	float multiplier = 1.0f;
 
 	for (int i = 0; i < this->bounces; i++) {
-		Renderer::HitPayload payload = this->TraceRay(ray);
+		HitPayload payload = this->TraceRay(ray);
 
 		float hitDist = payload.HitDist;
 
@@ -136,62 +136,56 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, glm::vec3& lightDir, glm::v
 
 		float lightIntensity = glm::max(glm::dot(payload.WorldNormal, -lightDir), 0.0f); // == cos(angle)
 
-		const Sphere& sphere = this->ActiveScene->spheres[payload.ObjectIndex];
-		const Material& material = this->ActiveScene->materials[sphere.material_index];
+		const Material* material = payload.materialPtr;
 
-		glm::vec3 sphereColor = material.Albedo;
-		sphereColor *= lightIntensity;
+		glm::vec3 albedo = material->Albedo;
+		albedo *= lightIntensity;
 
-		color += sphereColor * multiplier;
+		color += albedo * multiplier;
 
 		multiplier *= this->brightness;
 
 		ray.Origin = payload.WorldPosition + payload.WorldNormal * 0.0001f;
 		ray.Direction = glm::reflect(ray.Direction, 
-			payload.WorldNormal + material.roughness * Walnut::Random::Vec3(-0.5f, 0.5f));
+			payload.WorldNormal + material->roughness * Walnut::Random::Vec3(-0.5f, 0.5f));
 	}
 
 	return glm::vec4(color, 1.0f);
 }
 
-Renderer::HitPayload Renderer::ClosestHit(const Ray& ray, float hitDist, int objectIndex, std::string name)
+HitPayload Renderer::ClosestHit(const Ray& ray, float hitDist, int objectIndex, Hittable* object)
 {
-	Renderer::HitPayload payload;
+	HitPayload payload;
 	payload.HitDist = hitDist;
 	payload.ObjectIndex = objectIndex;
 
-	if (name == "sphere") {
-		const Sphere& closestSphere = ActiveScene->spheres[objectIndex];
-		glm::vec3 origin = ray.Origin - closestSphere.pos;
-		payload.WorldPosition = origin + ray.Direction * hitDist;
-		payload.WorldNormal = glm::normalize(payload.WorldPosition);
-
-		payload.WorldPosition += closestSphere.pos;
-	}
+	object->ClosestHit(ray, this->ActiveScene, payload);
 
 	return payload;
 }
 
-Renderer::HitPayload Renderer::Miss(const Ray& ray)
+HitPayload Renderer::Miss(const Ray& ray)
 {
-	Renderer::HitPayload payload;
+	HitPayload payload;
 	payload.HitDist = -1.0f;
+
 	return payload;
 }
 
-Renderer::HitPayload Renderer::TraceRay(const Ray& ray)
+HitPayload Renderer::TraceRay(const Ray& ray)
 {
 	int closestObject = -1;
 	float hitDist = std::numeric_limits<float>::max();
-	std::string objectName;
 
+	// default no object in scene
+	Hittable noObj = Hittable();
+	Hittable* object = &noObj;
 
-	SphereIntersection sphere_intersection = SphereIntersection();
-	sphere_intersection.TraceRay(ray, this->ActiveScene, closestObject, hitDist, objectName);
+	this->sphere_intersection.TraceRay(ray, this->ActiveScene, closestObject, hitDist, object);
 	
 	if (closestObject < 0) {
 		return this->Miss(ray);
 	}
 
-	return this->ClosestHit(ray, hitDist, closestObject, objectName);
+	return this->ClosestHit(ray, hitDist, closestObject, object);
 }

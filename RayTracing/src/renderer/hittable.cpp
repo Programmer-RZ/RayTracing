@@ -1,7 +1,16 @@
 #include "hittable.h"
 
 
-void SphereIntersection::TraceRay(const Ray& ray, const Scene* ActiveScene, int& closestObject, float& hitDist, std::string& objectName) {
+void Hittable::TraceRay(const Ray& ray, const Scene* ActiveScene, int& closestObject, float& hitDist, Hittable*& object)
+{
+}
+
+void Hittable::ClosestHit(const Ray& ray, const Scene* scene, HitPayload& payload)
+{
+}
+
+
+void SphereIntersection::TraceRay(const Ray& ray, const Scene* ActiveScene, int& closestObject, float& hitDist, Hittable*& object) {
 	// (bx^2 + by^2)t^2 + (2(axbx + ayby))t + (ax^2 + ay^2 - r^2) = 0
 
 	// a = ray origin
@@ -34,7 +43,18 @@ void SphereIntersection::TraceRay(const Ray& ray, const Scene* ActiveScene, int&
 		if (closestT > 0.0f && closestT < hitDist) {
 			hitDist = closestT;
 			closestObject = i;
-			objectName = "sphere";
+			object = this;
 		}
 	}
+}
+
+void SphereIntersection::ClosestHit(const Ray& ray, const Scene* scene, HitPayload& payload)
+{
+	const Sphere& closestSphere = scene->spheres[payload.ObjectIndex];
+	glm::vec3 origin = ray.Origin - closestSphere.pos;
+	payload.WorldPosition = origin + ray.Direction * payload.HitDist;
+	payload.WorldNormal = glm::normalize(payload.WorldPosition);
+
+	payload.WorldPosition += closestSphere.pos;
+	payload.materialPtr = &(scene->materials[closestSphere.material_index]);
 }

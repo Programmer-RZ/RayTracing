@@ -4,18 +4,28 @@
 #include "../scene/scene.h"
 #include "ray.h"
 
-class Hittable {
+struct HitPayload {
+	float HitDist;
 
-public:
+	glm::vec3 WorldPosition;
+	glm::vec3 WorldNormal;
+
+	int ObjectIndex;
+	const Material* materialPtr;
+};
+
+struct Hittable {
+
 	Hittable() = default;
 
-	virtual void TraceRay(const Ray& ray, const Scene* ActiveScene, int& closestObject, float& hitDist, std::string& objectName) {}
+	virtual void TraceRay(const Ray& ray, const Scene* ActiveScene, int& closestObject, float& hitDist, Hittable*& object);
+	virtual void ClosestHit(const Ray& ray, const Scene* scene, HitPayload& payload);
 };
 
 
 
-class SphereIntersection : public Hittable {
-public:
-	virtual void TraceRay(const Ray& ray, const Scene* ActiveScene, int& closestObject, float& hitDist, std::string& objectName) override;
+struct SphereIntersection : public Hittable {
+	virtual void TraceRay(const Ray& ray, const Scene* ActiveScene, int& closestObject, float& hitDist, Hittable*& object) override;
+	virtual void ClosestHit(const Ray& ray, const Scene* scene, HitPayload& payload) override;
 };
 
