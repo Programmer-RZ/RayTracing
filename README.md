@@ -1,8 +1,8 @@
 # RayTracing
 
-RayTracing editory where you can create 3D designs and hyper-realistic art! Currently in heavy development.
+RayTracing editor where you can create 3D designs and hyper-realistic art! Currently in heavy development.
 
-![image](https://user-images.githubusercontent.com/123858154/231154761-a05ad542-2cb7-494a-874e-8cc3472940e6.png)
+![image](https://github.com/Programmer-RZ/RayTracing/assets/123858154/4976ac4e-7b41-46fa-961e-4a3e499f85dd)
 
 
 # Requirements
@@ -11,7 +11,7 @@ RayTracing editory where you can create 3D designs and hyper-realistic art! Curr
 - Vulkan SDK
 
 **Python**
-- Python 3.9.7 or higher (included in path)
+- Python (included in path)
 - Datetime
 - Numpy
 - PIL
@@ -38,9 +38,7 @@ RayTracing editory where you can create 3D designs and hyper-realistic art! Curr
 - Only renders new image when updated objects/position
 
 **Future features**
-- XY rect intersection
-- XZ rect intersection
-- YZ rect intersection
+- Logger
 - Box intersection
 
 # Dependencies
