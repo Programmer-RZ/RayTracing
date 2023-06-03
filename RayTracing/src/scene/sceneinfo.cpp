@@ -1,8 +1,10 @@
 #include "sceneinfo.h"
 #include <iostream>
 
+#include "../global.h"
+
 SceneInfo::SceneInfo()
-	: inifile("..\\Data\\sceneInfo.ini"),
+	: inifile(INIFILE_PATH),
 	finishedSave(false)
 {
 	this->inifile.read(this->ini);
@@ -12,20 +14,23 @@ SceneInfo::~SceneInfo() {
 }
 
 void SceneInfo::reopen() {
-	this->sphere_names.open("..\\Data\\sphere_names.txt");
-	this->material_names.open("..\\Data\\material_names.txt");
+	this->sphere_names.open(SPHERENAME_PATH);
+	this->material_names.open(MATERIALNAME_PATH);
+	this->sceneName.open(SCENENAME_PATH);
 }
 
 void SceneInfo::clear() {
-	this->sphere_names.open("..\\Data\\sphere_names.txt", std::ofstream::out | std::ofstream::trunc);
-	this->material_names.open("..\\Data\\material_names.txt", std::ofstream::out | std::ofstream::trunc);
-	this->sphere_names.close();
-	this->material_names.close();
+	this->sphere_names.open(SPHERENAME_PATH, std::ofstream::out | std::ofstream::trunc);
+	this->material_names.open(MATERIALNAME_PATH, std::ofstream::out | std::ofstream::trunc);
+	this->sceneName.open(SCENENAME_PATH, std::ofstream::out | std::ofstream::trunc);
 	this->ini.clear();
+
+	this->close();
 }
 void SceneInfo::close() {
 	this->sphere_names.close();
 	this->material_names.close();
+	this->sceneName.close();
 }
 
 void SceneInfo::read(Scene& scene, Camera& camera, int& width, int& height, float& brightness) {
@@ -50,6 +55,11 @@ void SceneInfo::read(Scene& scene, Camera& camera, int& width, int& height, floa
 		if (!current_name.empty()) {
 			material_names.push_back(current_name);
 		}
+	}
+
+	// read scene name
+	while (std::getline(this->sceneName, scene.name)) {
+		continue;
 	}
 
 	// now use the sphere_names and material_names
@@ -151,7 +161,7 @@ void SceneInfo::write(Scene& scene, Camera& camera, int width, int height, float
 	// materials
 	for (Material material : scene.materials) {
 		// write the name to material_names.txt
-		this->material_names << material.name << std::endl;;
+		this->material_names << material.name << std::endl;
 
 		// write the material's info to scene_info.ini
 		this->ini[material.name]["r"]         = std::to_string(material.Albedo.r);
@@ -159,6 +169,9 @@ void SceneInfo::write(Scene& scene, Camera& camera, int width, int height, float
 		this->ini[material.name]["g"]         = std::to_string(material.Albedo.g);
 		this->ini[material.name]["roughness"] = std::to_string(material.roughness);
 	}
+
+	// scene name
+	this->sceneName << scene.name;
 
 	// appearance
 	this->ini["lightdir"]["x"] = std::to_string(scene.lightDir.x);

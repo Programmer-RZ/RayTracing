@@ -8,6 +8,7 @@
 class SceneInfo {
 	std::fstream sphere_names;
 	std::fstream material_names;
+	std::fstream sceneName;
 	
 	mINI::INIFile inifile;
 	mINI::INIStructure ini;

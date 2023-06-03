@@ -8,6 +8,7 @@
 #include "renderer/camera.h"
 #include "scene/export.h"
 #include "scene/sceneinfo.h"
+#include "global.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -17,7 +18,7 @@ public:
 	RayTracing()
 		: camera(45.0f, 0.1f, 100.0f)
 	{
-		scene.name = std::system("python ..\\Helper\\date_time.py");
+		std::system(CREATESCENENAME_SCRIPT);
 		this->sceneinfo.read(this->scene, this->camera, this->m_ViewportWidth, this->m_ViewportHeight, this->renderer.GetBrightness());
 		
 		/*
@@ -175,6 +176,9 @@ public:
 
 	void SceneUI(bool& sceneMoved) {
 		ImGui::Begin("Scene");
+		ImGui::Text(scene.name.c_str());
+		ImGui::Separator();
+		ImGui::Dummy(ImVec2(0, 25));
 
 		// appearance
 		ImGui::Text("Apperance");

@@ -1,0 +1,6 @@
+INIFILE_PATH = "..\\storage\\sceneInfo.ini"
+SPHERENAME_PATH = "..\\storage\\sphere_names.txt"
+MATERIALNAME_PATH = "..\\storage\\material_names.txt"
+SCENENAME_PATH = "..\\storage\\sceneName.txt"
+IMAGEDATA_PATH = "..\\storage\\image_data.ppm"
+IMAGES_PATH = "..\\Images\\"
