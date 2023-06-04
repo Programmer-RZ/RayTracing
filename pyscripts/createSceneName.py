@@ -1,5 +1,5 @@
 import os
-from getNumImages import getNumImages
+from utils.getNumImages import getNumImages
 from globalconst import *
 
 if os.stat(SCENENAME_PATH).st_size == 0:

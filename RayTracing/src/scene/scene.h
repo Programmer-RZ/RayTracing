@@ -27,6 +27,14 @@ struct Sphere : public Entity {
 	int material_index = 0;
 };
 
+struct Cube : public Entity {
+	
+	glm::vec3 vmin = { 0,0,0 };
+	glm::vec3 vmax = { 1,1,1 };
+
+	int material_index = 0;
+};
+
 struct Scene {
 	std::string name = "Scene";
 
@@ -36,7 +44,10 @@ struct Scene {
 
 	glm::vec3 lightDir = glm::vec3(-0.546f, -0.722f, -0.425f);
 	glm::vec3 skycolor = glm::vec3(0.0f, 0.0f, 0.0f);
+
 	std::vector<Sphere> spheres = {};
+	std::vector<Cube> cubes = {};
+
 	std::vector<Material> materials = {};
 
 	void createNewSphere(glm::vec3 camera_pos, glm::vec3 camera_dir);

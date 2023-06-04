@@ -1,4 +1,5 @@
 #include "hittable.h"
+#include <iostream>
 
 
 void Hittable::TraceRay(const Ray& ray, const Scene* ActiveScene, int& closestObject, float& hitDist, Hittable*& object)
@@ -21,6 +22,7 @@ void SphereIntersection::TraceRay(const Ray& ray, const Scene* ActiveScene, int&
 	for (int i = 0; i < ActiveScene->spheres.size(); i++) {
 
 		const Sphere& sphere = ActiveScene->spheres[i];
+
 		glm::vec3 origin = ray.Origin - sphere.pos;
 
 		float a = glm::dot(ray.Direction, ray.Direction);
@@ -57,4 +59,14 @@ void SphereIntersection::ClosestHit(const Ray& ray, const Scene* scene, HitPaylo
 
 	payload.WorldPosition += closestSphere.pos;
 	payload.materialPtr = &(scene->materials[closestSphere.material_index]);
+}
+
+void CubeIntersection::TraceRay(const Ray& ray, const Scene* ActiveScene, int& closestObject, float& hitDist, Hittable*& object)
+{
+
+}
+
+void CubeIntersection::ClosestHit(const Ray& ray, const Scene* scene, HitPayload& payload)
+{
+
 }

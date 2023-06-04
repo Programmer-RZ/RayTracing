@@ -18,8 +18,10 @@ public:
 	RayTracing()
 		: camera(45.0f, 0.1f, 100.0f)
 	{
-		std::system(CREATESCENENAME_SCRIPT);
+		//std::system(CREATESCENENAME_SCRIPT);
+		std::system(GET_RAYT_CONTENTS);
 		this->sceneinfo.read(this->scene, this->camera, this->m_ViewportWidth, this->m_ViewportHeight, this->renderer.GetBrightness());
+		std::system(REZIP_RAYT);
 		
 		/*
 		Material& material0 = this->scene.materials.emplace_back();
@@ -34,6 +36,8 @@ public:
 		if (!this->renderer.GetRealisticRendering()) {
 			bool hasObjects = (
 				this->scene.spheres.size() != 0
+				||
+				this->scene.cubes.size() != 0
 			);
 			if (this->camera.OnUpdate(ts, hasObjects)) {
 				this->renderer.SetSceneMoved(true);
@@ -212,6 +216,8 @@ public:
 				if (ImGui::Selectable(this->scene.objects[n], isSelected)) {
 					this->scene.selected_object = this->scene.objects[n];
 					sceneMoved = true;
+
+					std::string currentObject = this->scene.selected_object;
 				}
 				if (isSelected) {
 					ImGui::SetItemDefaultFocus();
@@ -229,6 +235,7 @@ public:
 			if (static_cast<std::string>(this->scene.selected_object) == "Sphere") {
 				this->scene.createNewSphere(camera_pos, camera_dir);
 			}
+
 		}
 
 		// holds the indexes of sphere that the user deleted
@@ -392,7 +399,7 @@ private:
 
 	float last_render_time = 0;
 
-	// classes for saving the scene (jpg, png, ini, etc)
+	// external classes
 	Export exportScene = Export();
 	SceneInfo sceneinfo = SceneInfo();
 };

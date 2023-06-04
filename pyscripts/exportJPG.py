@@ -1,3 +1,3 @@
-from export import exportImg
+from utils.export import exportImg
 
 exportImg("jpg")

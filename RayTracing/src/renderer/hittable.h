@@ -29,3 +29,8 @@ struct SphereIntersection : public Hittable {
 	virtual void ClosestHit(const Ray& ray, const Scene* scene, HitPayload& payload) override;
 };
 
+struct CubeIntersection : public Hittable {
+	virtual void TraceRay(const Ray& ray, const Scene* ActiveScene, int& closestObject, float& hitDist, Hittable*& object) override;
+	virtual void ClosestHit(const Ray& ray, const Scene* scene, HitPayload& payload) override;
+};
+
