@@ -2,47 +2,51 @@
 #include <iostream>
 
 #include "../global.h"
+#include "../utils.h"
 
 SceneInfo::SceneInfo()
 	: inifile(INIFILE_PATH),
 	finishedSave(false)
 {
 	this->inifile.read(this->ini);
-}
-SceneInfo::~SceneInfo() {
-	this->close();
+
+	this->files = { 
+		SPHERENAME_PATH, 
+		MATERIALNAME_PATH, 
+		SCENENAME_PATH 
+	};
 }
 
-void SceneInfo::reopen() {
-	this->sphere_names.open(SPHERENAME_PATH);
-	this->material_names.open(MATERIALNAME_PATH);
+void SceneInfo::open() {
+	this->sphereNames.open(SPHERENAME_PATH);
+	this->materialNames.open(MATERIALNAME_PATH);
 	this->sceneName.open(SCENENAME_PATH);
 }
 
+void SceneInfo::close() {
+	this->sphereNames.close();
+	this->materialNames.close();
+	this->sceneName.close();
+}
+
 void SceneInfo::clear() {
-	this->sphere_names.open(SPHERENAME_PATH, std::ofstream::out | std::ofstream::trunc);
-	this->material_names.open(MATERIALNAME_PATH, std::ofstream::out | std::ofstream::trunc);
-	this->sceneName.open(SCENENAME_PATH, std::ofstream::out | std::ofstream::trunc);
-	this->ini.clear();
+	this->sphereNames.open(SPHERENAME_PATH, std::fstream::out | std::fstream::trunc);
+	this->materialNames.open(MATERIALNAME_PATH, std::fstream::out | std::fstream::trunc);
+	this->sceneName.open(SCENENAME_PATH, std::fstream::out | std::fstream::trunc);
 
 	this->close();
-}
-void SceneInfo::close() {
-	this->sphere_names.close();
-	this->material_names.close();
-	this->sceneName.close();
 }
 
 void SceneInfo::read(Scene& scene, Camera& camera, int& width, int& height, float& brightness) {
 
-	this->reopen();
+	this->open();
 
 	std::vector<std::string> sphere_names = {};
 	std::vector<std::string> material_names = {};
 	std::string current_name;
 
 	// read names of spheres
-	while (std::getline(this->sphere_names, current_name)) {
+	while (std::getline(this->sphereNames, current_name)) {
 		// check if name is not blank
 		if (!current_name.empty()) {
 			sphere_names.push_back(current_name);
@@ -50,7 +54,7 @@ void SceneInfo::read(Scene& scene, Camera& camera, int& width, int& height, floa
 	}
 
 	// read names of materials
-	while (std::getline(this->material_names, current_name)) {
+	while (std::getline(this->materialNames, current_name)) {
 		// check if name is not blank
 		if (!current_name.empty()) {
 			material_names.push_back(current_name);
@@ -143,12 +147,12 @@ void SceneInfo::write(Scene& scene, Camera& camera, int width, int height, float
 	// clear old data
 	this->clear();
 
-	this->reopen();
+	this->open();
 	
 	// spheres
 	for (Sphere sphere : scene.spheres) {
 		// write the name to sphere_names.txt
-		this->sphere_names << sphere.name << std::endl;
+		this->sphereNames << sphere.name << std::endl;
 
 		// write the sphere's info to scene_info.ini
 		this->ini[sphere.name]["x"]        = std::to_string(sphere.pos.x);
@@ -161,7 +165,7 @@ void SceneInfo::write(Scene& scene, Camera& camera, int width, int height, float
 	// materials
 	for (Material material : scene.materials) {
 		// write the name to material_names.txt
-		this->material_names << material.name << std::endl;
+		this->materialNames << material.name << std::endl;
 
 		// write the material's info to scene_info.ini
 		this->ini[material.name]["r"]         = std::to_string(material.Albedo.r);

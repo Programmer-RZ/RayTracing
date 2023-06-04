@@ -10,6 +10,4 @@ constexpr auto IMAGEDATA_PATH = "..\\storage\\temp\\image_data.ppm";
 constexpr auto EXPORTPNG_SCRIPT = "python ..\\pyscripts\\exportPNG.py";
 constexpr auto EXPORTJPG_SCRIPT = "python ..\\pyscripts\\exportJPG.py";
 constexpr auto CREATESCENENAME_SCRIPT = "python ..\\pyscripts\\createSceneName.py";
-constexpr auto GET_RAYT_CONTENTS = "python ..\\pyscripts\\get_rayt_contents.py";
-constexpr auto REZIP_RAYT = "python ..\\pyscripts\\rezip_rayt.py";
 

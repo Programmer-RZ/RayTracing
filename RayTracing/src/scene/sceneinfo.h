@@ -6,23 +6,25 @@
 #include "../renderer/camera.h"
 
 class SceneInfo {
-	std::fstream sphere_names;
-	std::fstream material_names;
-	std::fstream sceneName;
-	
+private:	
 	mINI::INIFile inifile;
 	mINI::INIStructure ini;
 
+	std::fstream sphereNames;
+	std::fstream materialNames;
+	std::fstream sceneName;
+
 	bool finishedSave;
 
+	std::vector<std::string> files;
+
 private:
-	void reopen();
-	void clear();
+	void open();
 	void close();
+	void clear();
 
 public:
 	SceneInfo();
-	~SceneInfo();
 
 	void read(Scene& scene, Camera& camera, int& width, int& height, float& brightness);
 	void write(Scene& scene, Camera& camera, int width, int height, float brightness);

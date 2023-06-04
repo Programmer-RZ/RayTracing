@@ -3,6 +3,8 @@
 #include "glm/glm.hpp"
 
 #include <vector>
+#include <fstream>
+#include <string>
 
 namespace Utils {
 	static uint32_t ConvertToRGBA(const glm::vec4& color) {

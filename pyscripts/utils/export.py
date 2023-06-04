@@ -2,7 +2,6 @@ from PIL import Image
 import numpy as np
 
 # other python files
-from date_time import getDateTime
 from globalconst import *
 from utils.getCurrentName import getCurrentName
 
