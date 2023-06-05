@@ -69,7 +69,7 @@ private:
 
 private:
 
-	glm::vec4 PerPixel(uint32_t x, uint32_t y, glm::vec3& lightDir, glm::vec3& skycolor);
+	glm::vec4 PerPixel(uint32_t x, uint32_t y, glm::vec3& lightDir, glm::vec3& skycolor, glm::vec3& lightPos);
 
 	HitPayload TraceRay(const Ray& ray);
 	HitPayload ClosestHit(const Ray& ray, float hitDist, int objectIndex, Hittable* object);

@@ -12,6 +12,8 @@ struct HitPayload {
 
 	int ObjectIndex;
 	const Material* materialPtr;
+
+	glm::vec3 pos;
 };
 
 struct Hittable {

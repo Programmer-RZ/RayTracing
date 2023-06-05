@@ -59,6 +59,8 @@ void SphereIntersection::ClosestHit(const Ray& ray, const Scene* scene, HitPaylo
 
 	payload.WorldPosition += closestSphere.pos;
 	payload.materialPtr = &(scene->materials[closestSphere.material_index]);
+
+	payload.pos = closestSphere.pos;
 }
 
 void CubeIntersection::TraceRay(const Ray& ray, const Scene* ActiveScene, int& closestObject, float& hitDist, Hittable*& object)

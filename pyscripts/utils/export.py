@@ -39,4 +39,4 @@ def exportImg(pictureFormat):
     #image.convert("RGB")
 
     image = Image.fromarray(pixel_data)
-    image.save(f"{IMAGES_PATH}{name}.{pictureFormat}")
+    image.save(f"{IMAGES_PATH}{name}.{pictureFormat}", pictureFormat.upper())

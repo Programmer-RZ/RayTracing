@@ -43,6 +43,7 @@ struct Scene {
 	char* selected_object = "Sphere";
 
 	glm::vec3 lightDir = glm::vec3(-0.546f, -0.722f, -0.425f);
+	glm::vec3 lightPos = glm::vec3(2.0f, 2.0f, 2.0f);
 	glm::vec3 skycolor = glm::vec3(0.0f, 0.0f, 0.0f);
 
 	std::vector<Sphere> spheres = {};

@@ -112,7 +112,7 @@ void Renderer::render(const Scene& scene, const Camera& camera, glm::vec3& light
 	}
 }
 
-glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, glm::vec3& lightDir, glm::vec3& skycolor)
+glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, glm::vec3& lightDir, glm::vec3& skycolor, glm::vec3& lightPos)
 {
 	Ray ray;
 	ray.Origin = ActiveCamera->GetPosition();
@@ -135,6 +135,7 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, glm::vec3& lightDir, glm::v
 		}
 
 		float lightIntensity = glm::max(glm::dot(payload.WorldNormal, -lightDir), 0.0f); // == cos(angle)
+		float lightIntensity /= std::abs(lightPos - payload.pos);
 
 		const Material* material = payload.materialPtr;
 
