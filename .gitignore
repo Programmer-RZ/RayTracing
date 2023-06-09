@@ -2,6 +2,7 @@
 .vs/
 Release-windows-x86_64/
 Release-windows-x86_64-int/
+__pycache__
 
 # Files
 *.vcxproj

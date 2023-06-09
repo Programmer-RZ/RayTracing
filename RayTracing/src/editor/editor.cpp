@@ -4,7 +4,7 @@ Editor::Editor()
 	: camera(45.0f, 0.1f, 100.0f)
 {
 	//std::system(CREATESCENENAME_SCRIPT);
-	this->sceneinfo.read(this->scene, this->camera, this->m_ViewportWidth, this->m_ViewportHeight, this->renderer.GetBrightness());
+	this->sceneinfo.read(this->scene, this->camera, this->m_ViewportWidth, this->m_ViewportHeight);
 
 	/*
 	Material& material0 = this->scene.materials.emplace_back();
@@ -134,6 +134,10 @@ void Editor::MaterialUI(bool& sceneMoved) {
 				sceneMoved = true;
 			}
 
+			if (ImGui::DragFloat("Emission Power", &material.EmissionPower, 0.05f, 0.0f, FLT_MAX)) {
+				sceneMoved = true;
+			}
+
 			if (ImGui::Button("Delete material")) {
 				sceneMoved = true;
 				materials_todelete.push_back(i);
@@ -173,12 +177,6 @@ void Editor::SceneUI(bool& sceneMoved) {
 
 	ImGui::Separator();
 	ImGui::Separator();
-
-	ImGui::Text("Light");
-	if (ImGui::DragFloat3("Light Direction", glm::value_ptr(this->scene.lightDir), 0.1f, -1.0f, 1.0f)) {
-		this->scene.lightDir = glm::normalize(this->scene.lightDir);
-		sceneMoved = true;
-	}
 
 	ImGui::Text("Background");
 	if (ImGui::ColorEdit3("Sky", glm::value_ptr(this->scene.skycolor))) {
@@ -277,13 +275,6 @@ void Editor::SettingsUI(bool& sceneMoved) {
 	ImGui::Separator();
 	ImGui::Separator();
 
-	if (ImGui::DragFloat("Bloom", &(this->renderer.GetBrightness()), 0.05f, 0.1f, 1.0f)) {
-		sceneMoved = true;
-	}
-
-	ImGui::Separator();
-	ImGui::Separator();
-
 	if (ImGui::DragInt("Width", &m_ViewportWidth, 1.0f, 200, 1500)) {
 		sceneMoved = true;
 	}
@@ -340,7 +331,7 @@ void Editor::OptionsUI() {
 		ImGui::Separator();
 
 		if (ImGui::Button("Save scene info")) {
-			this->sceneinfo.write(this->scene, this->camera, this->m_ViewportWidth, this->m_ViewportHeight, this->renderer.GetBrightness());
+			this->sceneinfo.write(this->scene, this->camera, this->m_ViewportWidth, this->m_ViewportHeight);
 		}
 		if (this->sceneinfo.GetFinishedSave()) {
 			ImGui::Text("Successfully saved scene");
@@ -367,7 +358,7 @@ void Editor::render() {
 
 		this->camera.OnResize(this->m_ViewportWidth, this->m_ViewportHeight);
 
-		this->renderer.render(this->scene, this->camera, this->scene.lightDir, this->scene.skycolor, this->scene.lightPos);
+		this->renderer.render(this->scene, this->camera, this->scene.skycolor);
 
 		last_render_time = timer.ElapsedMillis();
 	}

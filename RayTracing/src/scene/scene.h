@@ -12,10 +12,9 @@ struct Material {
 	float metallic = 0.0f;
 	int id;
 
-	glm::vec3 EmissionColor{ 0.0f };
 	float EmissionPower = 0.0f;
 
-	glm::vec3 GetEmission() const { return this->EmissionColor * this->EmissionPower; }
+	glm::vec3 GetEmission() const { return this->Albedo * this->EmissionPower; }
 };
 
 struct Entity {
@@ -47,8 +46,6 @@ struct Scene {
 	char* objects[1] = {"Sphere"};
 	char* selected_object = "Sphere";
 
-	glm::vec3 lightDir = glm::vec3(-0.546f, -0.722f, -0.425f);
-	glm::vec3 lightPos = glm::vec3(2.0f, 2.0f, 2.0f);
 	glm::vec3 skycolor = glm::vec3(0.0f, 0.0f, 0.0f);
 
 	std::vector<Sphere> spheres = {};

@@ -52,7 +52,7 @@ bool Renderer::on_resize(uint32_t width, uint32_t height) {
 	return true;
 }
 
-void Renderer::render(const Scene& scene, const Camera& camera, glm::vec3& lightDir, glm::vec3& skycolor, glm::vec3& lightPos) {
+void Renderer::render(const Scene& scene, const Camera& camera, glm::vec3& skycolor) {
 	if (!this->sceneMoved) {
 		// no need to calculate the image again
 		return;
@@ -71,7 +71,7 @@ void Renderer::render(const Scene& scene, const Camera& camera, glm::vec3& light
 	for (uint32_t y = 0; y < this->m_FinalImage->GetHeight(); y++) {
 		for (uint32_t x = this->coherence - 1; x < this->m_FinalImage->GetWidth(); x+=this->coherence) {
 
-			glm::vec4 color = this->PerPixel(x, y, lightDir, skycolor, lightPos);
+			glm::vec4 color = this->PerPixel(x, y, skycolor);
 			uint32_t RGBA;
 
 			if (this->realisticRendering) {
@@ -84,6 +84,7 @@ void Renderer::render(const Scene& scene, const Camera& camera, glm::vec3& light
 
 				accumulatedColor = glm::clamp(accumulatedColor, glm::vec4(0.0f), glm::vec4(1.0f));
 				RGBA = Utils::ConvertToRGBA(accumulatedColor);
+			
 			}
 			else {
 				color = glm::clamp(color, glm::vec4(0.0f), glm::vec4(1.0f));
@@ -112,14 +113,14 @@ void Renderer::render(const Scene& scene, const Camera& camera, glm::vec3& light
 	}
 }
 
-glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, glm::vec3& lightDir, glm::vec3& skycolor, glm::vec3& lightPos)
+glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, glm::vec3& skycolor)
 {
 	Ray ray;
 	ray.Origin = ActiveCamera->GetPosition();
 	ray.Direction = ActiveCamera->GetRayDirections()[x + y * this->m_FinalImage->GetWidth()];
 	
-	glm::vec3 color(0.0f, 0.0f, 0.0f);
-	float multiplier = 1.0f;
+	glm::vec3 light(0.0f, 0.0f, 0.0f);
+	glm::vec3 multiplier(1.0f);
 
 	for (int i = 0; i < this->bounces; i++) {
 		HitPayload payload = this->TraceRay(ray);
@@ -130,28 +131,27 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, glm::vec3& lightDir, glm::v
 		//std::cout << hitDist << std::endl;
 		
 		if (hitDist < 0.0f) {
-			color += skycolor * multiplier;
+			light += skycolor * multiplier;
 			break;
 		}
 
-		float lightIntensity = glm::max(glm::dot(payload.WorldNormal, -lightDir), 0.0f); // == cos(angle)
-		//float lightIntensity /= std::abs(lightPos - payload.pos);
-
 		const Material* material = payload.materialPtr;
 
+
 		glm::vec3 albedo = material->Albedo;
-		albedo *= lightIntensity;
 
-		color += albedo * multiplier;
-
-		multiplier *= this->brightness;
+		multiplier *= albedo;
+		light += material->GetEmission();
 
 		ray.Origin = payload.WorldPosition + payload.WorldNormal * 0.0001f;
-		ray.Direction = glm::reflect(ray.Direction, 
-			payload.WorldNormal + material->roughness * Walnut::Random::Vec3(-0.5f, 0.5f));
+
+		//ray.Direction = glm::reflect(ray.Direction, 
+		//	payload.WorldNormal + material->roughness * Walnut::Random::Vec3(-0.5f, 0.5f));
+
+		ray.Direction = glm::normalize(payload.WorldNormal + Walnut::Random::InUnitSphere());
 	}
 
-	return glm::vec4(color, 1.0f);
+	return glm::vec4(light, 1.0f);
 }
 
 HitPayload Renderer::ClosestHit(const Ray& ray, float hitDist, int objectIndex, Hittable* object)

@@ -17,7 +17,7 @@ public:
 
 	void resetFrameIndex() { this->frameIndex = 1; }
 
-	void render(const Scene& scene, const Camera& camera, glm::vec3& lightDir, glm::vec3& skycolor, glm::vec3& lightPos);
+	void render(const Scene& scene, const Camera& camera, glm::vec3& skycolor);
 
 	bool on_resize(uint32_t width, uint32_t height);
 
@@ -33,7 +33,6 @@ public:
 	bool GetSceneMoved() const { return this->sceneMoved; }
 	bool GetCameraMoved() const { return this->cameraMoved; }
 	int& GetBounces() { return this->bounces; }
-	float& GetBrightness() { return this->brightness; }
 
 	// setters
 	void SetFinishRealisticAndExport() { this->realisticRendering = false; this->finishedRealistic = false; this->coherence = 7; this->bounces = 2; }
@@ -61,15 +60,14 @@ private:
 	// realistic rendering
 	int bounces = 2;
 	int coherence = 5;
-	float brightness = 0.3f;
 	bool realisticRendering = false;
 	bool finishedRealistic = false;
 	int realisticCount = 0;
-	int maxRealisticCount = 50;
+	int maxRealisticCount = 100;
 
 private:
 
-	glm::vec4 PerPixel(uint32_t x, uint32_t y, glm::vec3& lightDir, glm::vec3& skycolor, glm::vec3& lightPos);
+	glm::vec4 PerPixel(uint32_t x, uint32_t y, glm::vec3& skycolor);
 
 	HitPayload TraceRay(const Ray& ray);
 	HitPayload ClosestHit(const Ray& ray, float hitDist, int objectIndex, Hittable* object);

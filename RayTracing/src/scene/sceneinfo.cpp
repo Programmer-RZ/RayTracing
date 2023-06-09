@@ -37,7 +37,7 @@ void SceneInfo::clear() {
 	this->close();
 }
 
-void SceneInfo::read(Scene& scene, Camera& camera, int& width, int& height, float& brightness) {
+void SceneInfo::read(Scene& scene, Camera& camera, int& width, int& height) {
 
 	this->open();
 
@@ -105,11 +105,6 @@ void SceneInfo::read(Scene& scene, Camera& camera, int& width, int& height, floa
 	}
 
 	// apperance
-	// lightdir
-	float ld_x     = static_cast<float>(std::stod(this->ini.get("lightdir").get("x")));
-	float ld_y     = static_cast<float>(std::stod(this->ini.get("lightdir").get("y")));
-	float ld_z     = static_cast<float>(std::stod(this->ini.get("lightdir").get("z")));
-	scene.lightDir = glm::vec3(ld_x, ld_y, ld_z);
 
 	// skycolor
 	float sc_r     = static_cast<float>(std::stod(this->ini.get("skycolor").get("r")));
@@ -120,7 +115,6 @@ void SceneInfo::read(Scene& scene, Camera& camera, int& width, int& height, floa
 	// settings
 	width      = static_cast<int>(std::stod(this->ini.get("settings").get("width")));
 	height     = static_cast<int>(std::stod(this->ini.get("settings").get("height")));
-	brightness = static_cast<float>(std::stod(this->ini.get("settings").get("brightness")));
 	
 	// camera
 	float px = static_cast<float>(std::stod(this->ini.get("camera").get("px")));
@@ -143,7 +137,7 @@ void SceneInfo::read(Scene& scene, Camera& camera, int& width, int& height, floa
 	this->close();
 }
 
-void SceneInfo::write(Scene& scene, Camera& camera, int width, int height, float brightness) {
+void SceneInfo::write(Scene& scene, Camera& camera, int width, int height) {
 	// clear old data
 	this->clear();
 
@@ -178,9 +172,6 @@ void SceneInfo::write(Scene& scene, Camera& camera, int width, int height, float
 	this->sceneName << scene.name;
 
 	// appearance
-	this->ini["lightdir"]["x"] = std::to_string(scene.lightDir.x);
-	this->ini["lightdir"]["y"] = std::to_string(scene.lightDir.y);
-	this->ini["lightdir"]["z"] = std::to_string(scene.lightDir.z);
 
 	this->ini["skycolor"]["r"] = std::to_string(scene.skycolor.r);
 	this->ini["skycolor"]["g"] = std::to_string(scene.skycolor.g);
@@ -189,7 +180,6 @@ void SceneInfo::write(Scene& scene, Camera& camera, int width, int height, float
 	// settings
 	this->ini["settings"]["width"]      = std::to_string(width);
 	this->ini["settings"]["height"]     = std::to_string(height);
-	this->ini["settings"]["brightness"] = std::to_string(brightness);
 
 	// camera
 	this->ini["camera"]["px"] = std::to_string(camera.GetPosition().x);

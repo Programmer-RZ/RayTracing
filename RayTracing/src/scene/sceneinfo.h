@@ -26,8 +26,8 @@ private:
 public:
 	SceneInfo();
 
-	void read(Scene& scene, Camera& camera, int& width, int& height, float& brightness);
-	void write(Scene& scene, Camera& camera, int width, int height, float brightness);
+	void read(Scene& scene, Camera& camera, int& width, int& height);
+	void write(Scene& scene, Camera& camera, int width, int height);
 
 	bool GetFinishedSave() const { return this->finishedSave; }
 	void SetFinishedSave(bool finished) { this->finishedSave = finished; }
