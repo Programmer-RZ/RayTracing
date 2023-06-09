@@ -59,7 +59,7 @@ private:
 
 	// realistic rendering
 	int bounces = 2;
-	int coherence = 5;
+	int coherence = 7;
 	bool realisticRendering = false;
 	bool finishedRealistic = false;
 	int realisticCount = 0;

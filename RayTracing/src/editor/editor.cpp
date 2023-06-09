@@ -35,7 +35,6 @@ void Editor::OnUpdate(float ts)
 
 	if (this->renderer.GetFinishedRealistic()) {
 		this->exportScene.reset();
-		this->exportScene.SetIsExport(true);
 		this->renderer.SetFinishRealisticAndExport();
 	}
 

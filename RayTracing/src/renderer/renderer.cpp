@@ -12,9 +12,11 @@ void Renderer::realisticRender() {
 	this->resetFrameIndex();
 
 	this->coherence = 1;
-	this->bounces = 50;
+	this->bounces = 10;
 	this->realisticRendering = true;
 	this->sceneMoved = true;
+
+	this->frameIndex = 1;
 }
 
 void Renderer::resetArray() {
