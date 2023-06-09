@@ -17,7 +17,7 @@ public:
 
 	void resetFrameIndex() { this->frameIndex = 1; }
 
-	void render(const Scene& scene, const Camera& camera, glm::vec3& lightDir, glm::vec3& skycolor);
+	void render(const Scene& scene, const Camera& camera, glm::vec3& lightDir, glm::vec3& skycolor, glm::vec3& lightPos);
 
 	bool on_resize(uint32_t width, uint32_t height);
 

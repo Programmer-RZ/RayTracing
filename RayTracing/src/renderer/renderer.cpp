@@ -52,7 +52,7 @@ bool Renderer::on_resize(uint32_t width, uint32_t height) {
 	return true;
 }
 
-void Renderer::render(const Scene& scene, const Camera& camera, glm::vec3& lightDir, glm::vec3& skycolor) {
+void Renderer::render(const Scene& scene, const Camera& camera, glm::vec3& lightDir, glm::vec3& skycolor, glm::vec3& lightPos) {
 	if (!this->sceneMoved) {
 		// no need to calculate the image again
 		return;
@@ -71,7 +71,7 @@ void Renderer::render(const Scene& scene, const Camera& camera, glm::vec3& light
 	for (uint32_t y = 0; y < this->m_FinalImage->GetHeight(); y++) {
 		for (uint32_t x = this->coherence - 1; x < this->m_FinalImage->GetWidth(); x+=this->coherence) {
 
-			glm::vec4 color = this->PerPixel(x, y, lightDir, skycolor);
+			glm::vec4 color = this->PerPixel(x, y, lightDir, skycolor, lightPos);
 			uint32_t RGBA;
 
 			if (this->realisticRendering) {
@@ -135,7 +135,7 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, glm::vec3& lightDir, glm::v
 		}
 
 		float lightIntensity = glm::max(glm::dot(payload.WorldNormal, -lightDir), 0.0f); // == cos(angle)
-		float lightIntensity /= std::abs(lightPos - payload.pos);
+		//float lightIntensity /= std::abs(lightPos - payload.pos);
 
 		const Material* material = payload.materialPtr;
 

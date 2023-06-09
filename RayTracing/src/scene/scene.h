@@ -11,6 +11,11 @@ struct Material {
 	float roughness = 1.0f;
 	float metallic = 0.0f;
 	int id;
+
+	glm::vec3 EmissionColor{ 0.0f };
+	float EmissionPower = 0.0f;
+
+	glm::vec3 GetEmission() const { return this->EmissionColor * this->EmissionPower; }
 };
 
 struct Entity {

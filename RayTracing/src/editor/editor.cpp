@@ -367,7 +367,7 @@ void Editor::render() {
 
 		this->camera.OnResize(this->m_ViewportWidth, this->m_ViewportHeight);
 
-		this->renderer.render(this->scene, this->camera, this->scene.lightDir, this->scene.skycolor);
+		this->renderer.render(this->scene, this->camera, this->scene.lightDir, this->scene.skycolor, this->scene.lightPos);
 
 		last_render_time = timer.ElapsedMillis();
 	}
