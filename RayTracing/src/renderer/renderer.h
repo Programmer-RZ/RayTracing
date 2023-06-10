@@ -62,8 +62,7 @@ private:
 	int coherence = 7;
 	bool realisticRendering = false;
 	bool finishedRealistic = false;
-	int realisticCount = 0;
-	int maxRealisticCount = 100;
+	int maxRealisticCount = 150;
 
 private:
 

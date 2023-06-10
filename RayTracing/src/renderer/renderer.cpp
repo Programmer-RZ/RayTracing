@@ -101,15 +101,12 @@ void Renderer::render(const Scene& scene, const Camera& camera, glm::vec3& skyco
 
 	this->m_FinalImage->SetData(this->imageData);
 
+
 	if (this->realisticRendering) {
 		this->frameIndex++;
-	}
 
-	if (this->realisticRendering) {
-		this->realisticCount++;
-
-		if (this->realisticCount >= this->maxRealisticCount) {
-			this->realisticCount = 0;
+		if (this->frameIndex > this->maxRealisticCount) {
+			this->frameIndex = 1;
 			this->finishedRealistic = true;
 		}
 	}
