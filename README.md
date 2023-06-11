@@ -2,7 +2,7 @@
 
 RayTracing editor where you can create 3D designs and hyper-realistic art! Currently in heavy development.
 
-![image](https://github.com/Programmer-RZ/RayTracing/assets/123858154/4976ac4e-7b41-46fa-961e-4a3e499f85dd)
+![image](https://github.com/Programmer-RZ/RayTracing/assets/123858154/7793102c-4f5d-411e-aa0e-4fe740a48ec3)
 
 
 # Requirements
@@ -12,17 +12,16 @@ RayTracing editor where you can create 3D designs and hyper-realistic art! Curre
 
 **Python**
 - Python (included in path)
-- Datetime
 - Numpy
 - PIL
 
 # Features
 **RayTracing**
 - Real-time Raytracing
-- Export as PNG
 - Realistic Rendering
 - Shading
 - Shadows
+- Emissive materials
 - Reflections
 - Path Tracing
 - Accumulation
@@ -30,6 +29,8 @@ RayTracing editor where you can create 3D designs and hyper-realistic art! Curre
 - Material/Scene Editor
 - Collapsing headers
 - UI
+- Export
+- Save
 
 **Optimizations**
 - Ray coherence
@@ -37,19 +38,11 @@ RayTracing editor where you can create 3D designs and hyper-realistic art! Curre
 - Only included accumulation in Realistic Rendering
 - Only renders new image when updated objects/position
 
-**Future features**
-- Logger
-- Box intersection
-
 # Dependencies
 - Walnut
 - ImGui
 - GLFW
 - GLM
-
-# Examples
-![2023-04-11_08-07-33](https://user-images.githubusercontent.com/123858154/231158230-e1971c1b-00ba-48c3-9c89-99461ee7bc43.png)
-
 
 # Credits
 - Thanks to [The Cherno](https://www.youtube.com/@TheCherno) for providing [RayTracing Tutorials](https://www.youtube.com/watch?v=gfW1Fhd9u9Q&list=PLlrATfBNZ98edc5GshdBtREv5asFW3yXl)
