@@ -1,3 +1,6 @@
 [submodule "Walnut"]
 	path = Walnut
 	url = https://github.com/TheCherno/Walnut
+[submodule "RayTracing/src/libs/mINI"]
+	path = RayTracing/src/libs/mINI
+	url = https://github.com/pulzed/mINI.git
