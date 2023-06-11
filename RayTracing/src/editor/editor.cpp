@@ -32,23 +32,18 @@ void Editor::OnUpdate(float ts)
 	}
 
 	if (this->renderer.GetFinishedRealistic()) {
-		this->exportScene.reset();
-		this->renderer.SetFinishRealisticAndExport();
+		this->renderer.SetFinishRealistic();
 	}
 
 	if (this->exportScene.GetIsExport()) {
-		// keep on writing to the ppm file
-		// until GetFinishedExport is true
-		if (!exportScene.GetFinishedExport()) {
-			this->exportScene.ExportImage(
-				this->renderer.GetImageData(),
-				this->renderer.GetImageWidth(),
-				this->renderer.GetImageHeight()
-			);
-		}
-		else {
-			this->exportScene.SetIsExport(false);
-		}
+		this->exportScene.ExportImage(
+			this->renderer.GetImageData(),
+			this->renderer.GetImageWidth(),
+			this->renderer.GetImageHeight(),
+			this->scene.name
+		);
+		this->exportScene.SetIsExport(false);
+		this->exportScene.SetFinishedExport(true);
 	}
 }
 
@@ -64,9 +59,10 @@ void Editor::OnUIRender()
 		sceneMoved = false;
 	}
 
-	this->OptionsUI();
+	if (!this->renderer.GetRealisticRendering()) {
+		// options
+		this->OptionsUI();
 
-	if (!this->renderer.GetRealisticRendering() && !this->exportScene.GetIsExport()) {
 		// settings
 		this->SettingsUI(sceneMoved);
 
@@ -99,6 +95,7 @@ void Editor::OnUIRender()
 		}
 
 		this->sceneinfo.SetFinishedSave(false);
+		this->exportScene.SetFinishedExport(false);
 	}
 
 	this->render();
@@ -291,59 +288,53 @@ void Editor::SettingsUI(bool& sceneMoved) {
 void Editor::OptionsUI() {
 	ImGui::Begin("Options");
 
-	// exportScene
 	if (this->renderer.GetRealisticRendering()) {
 		ImGui::Text("Rendering Realistic Image...");
 	}
 
-	if (!this->renderer.GetRealisticRendering() && !this->exportScene.GetIsExport()) {
-		if (ImGui::Button("Realistic Rendering")) {
-			this->renderer.realisticRender();
-		}
-
-		ImGui::Separator();
-		ImGui::Separator();
-
-		if (ImGui::BeginCombo("Format", this->exportScene.GetCurrentFormat())) {
-			char* allFormats[2];
-			char** formatsPtr = this->exportScene.GetFormats();
-
-			for (int i = 0; i < 2; i++) {
-				allFormats[i] = *(formatsPtr + i);
-			}
-
-			for (int n = 0; n < IM_ARRAYSIZE(allFormats); n++) {
-				bool isSelected = (this->exportScene.GetCurrentFormat() == this->exportScene.GetFormats()[n]);
-				if (ImGui::Selectable(this->exportScene.GetFormats()[n], isSelected)) {
-					this->exportScene.setFormat(this->exportScene.GetFormats()[n]);
-				}
-				if (isSelected) {
-					ImGui::SetItemDefaultFocus();
-				}
-			}
-			ImGui::EndCombo();
-		}
-
-		if (ImGui::Button("Export")) {
-			this->exportScene.reset();
-			this->exportScene.SetIsExport(true);
-		}
-
-		ImGui::Separator();
-		ImGui::Separator();
-
-		if (ImGui::Button("Save scene info")) {
-			this->sceneinfo.write(this->scene, this->camera, this->m_ViewportWidth, this->m_ViewportHeight);
-		}
-		if (this->sceneinfo.GetFinishedSave()) {
-			ImGui::Text("Successfully saved scene");
-		}
+	if (ImGui::Button("Realistic Rendering")) {
+		this->renderer.realisticRender();
 	}
 
-	if (this->exportScene.GetIsExport()) {
-		this->exportScene.updatePercentage(this->renderer.GetImageWidth(), this->renderer.GetImageHeight());
-		double percentage = this->exportScene.GetPercentage();
-		ImGui::Text("Exporting at %.2f", percentage);
+	ImGui::Separator();
+	ImGui::Separator();
+
+	if (ImGui::BeginCombo("Format", this->exportScene.GetCurrentFormat())) {
+
+		char* allFormats[1];
+		char** formatsPtr = this->exportScene.GetFormats();
+
+		for (int i = 0; i < 1; i++) {
+			allFormats[i] = *(formatsPtr + i);
+		}
+
+		for (int n = 0; n < IM_ARRAYSIZE(allFormats); n++) {
+			bool isSelected = (this->exportScene.GetCurrentFormat() == this->exportScene.GetFormats()[n]);
+			if (ImGui::Selectable(this->exportScene.GetFormats()[n], isSelected)) {
+				this->exportScene.setFormat(this->exportScene.GetFormats()[n]);
+			}
+			if (isSelected) {
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+	if (ImGui::Button("Export")) {
+		this->exportScene.SetIsExport(true);
+	}
+	if (this->exportScene.GetFinishedExport()) {
+		ImGui::Text("Successfully exported scene");
+	}
+
+	ImGui::Separator();
+	ImGui::Separator();
+
+	if (ImGui::Button("Save scene info")) {
+		this->sceneinfo.write(this->scene, this->camera, this->m_ViewportWidth, this->m_ViewportHeight);
+	}
+	if (this->sceneinfo.GetFinishedSave()) {
+		ImGui::Text("Successfully saved scene");
 	}
 
 	ImGui::End();

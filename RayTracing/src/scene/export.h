@@ -1,42 +1,28 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include <fstream>
 #include <string>
-
-#include "../utils.h"
 
 class Export {
 private:
-	int y_index;
-	int x_index;
-	bool finishedWrite;
-	bool finishedExport;
 	bool isExport;
-	std::ofstream data;
 
-	double percentage;
-
-	char* formats[2];
+	char* formats[1];
 	char* currentFormat;
+
+	bool finishedExport;
 
 public:
 	Export();
-	~Export();
 
-	bool GetFinishedExport() const { return this->finishedExport; }
 	bool GetIsExport() const { return this->isExport; }
-	double GetPercentage() const { return this->percentage; }
-	void SetIsExport(bool isexport) { this->isExport = isexport; }
+	bool GetFinishedExport() const { return this->finishedExport; }
 	char* GetCurrentFormat() { return this->currentFormat; }
 	char** GetFormats() { return this->formats; }
+
+	void SetIsExport(bool isexport) { this->isExport = isexport; }
+	void SetFinishedExport(bool finishedExport) { this->finishedExport = finishedExport; }
 	void setFormat(char* format) { this->currentFormat = format; }
 
-	void updatePercentage(int imageWidth, int imageHeight);
-
-	void reset();
-
-	void writeArray(uint32_t* imageData, int imageWidth, int imageHeight);
-
-	void ExportImage(uint32_t* imageData, int imageWidth, int imageHeight);
+	void ExportImage(uint32_t* imageData, int imageWidth, int imageHeight, std::string name);
 };
