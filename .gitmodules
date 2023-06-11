@@ -4,3 +4,6 @@
 [submodule "RayTracing/src/libs/mINI"]
 	path = RayTracing/src/libs/mINI
 	url = https://github.com/pulzed/mINI.git
+[submodule "RayTracing/src/libs/stb"]
+	path = RayTracing/src/libs/stb
+	url = https://github.com/nothings/stb.git
