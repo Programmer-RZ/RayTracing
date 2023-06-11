@@ -24,11 +24,9 @@ void Editor::OnUpdate(float ts)
 			this->scene.cubes.size() != 0
 			);
 		if (this->camera.OnUpdate(ts, hasObjects)) {
-			this->renderer.SetSceneMoved(true);
 			this->renderer.SetCameraMoved(true);
 		}
 		else {
-			this->renderer.SetSceneMoved(false);
 			this->renderer.SetCameraMoved(false);
 		}
 	}
@@ -56,7 +54,7 @@ void Editor::OnUpdate(float ts)
 
 void Editor::OnUIRender()
 {
-	bool sceneMoved = this->renderer.GetSceneMoved();
+	bool sceneMoved;
 	// if camera moved, scene moved is
 	// automatically set to true no matter what
 	if (this->renderer.GetCameraMoved() || this->renderer.GetRealisticRendering()) {
@@ -93,8 +91,13 @@ void Editor::OnUIRender()
 	ImGui::End();
 	ImGui::PopStyleVar();
 
-	this->renderer.SetSceneMoved(sceneMoved);
 	if (sceneMoved) {
+		if (!this->renderer.GetRealisticRendering()) {
+			// if realistic rendering
+			// do not interrupt the frame index
+			this->renderer.resetFrameIndex();
+		}
+
 		this->sceneinfo.SetFinishedSave(false);
 	}
 
@@ -351,9 +354,7 @@ void Editor::render() {
 
 		Walnut::Timer timer;
 
-		if (this->renderer.on_resize(this->m_ViewportWidth, this->m_ViewportHeight)) {
-			this->renderer.SetSceneMoved(true);
-		}
+		this->renderer.on_resize(this->m_ViewportWidth, this->m_ViewportHeight);
 
 		this->camera.OnResize(this->m_ViewportWidth, this->m_ViewportHeight);
 

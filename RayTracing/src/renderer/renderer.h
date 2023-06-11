@@ -30,13 +30,11 @@ public:
 	int GetImageHeight() const { return this->m_FinalImage->GetHeight(); }
 	bool GetRealisticRendering() const { return this->realisticRendering; }
 	bool GetFinishedRealistic() const { return this->finishedRealistic; }
-	bool GetSceneMoved() const { return this->sceneMoved; }
 	bool GetCameraMoved() const { return this->cameraMoved; }
 	int& GetBounces() { return this->bounces; }
 
 	// setters
 	void SetFinishRealisticAndExport() { this->realisticRendering = false; this->finishedRealistic = false; this->coherence = 7; this->bounces = 2; }
-	void SetSceneMoved(bool sceneMoved) { this->sceneMoved = sceneMoved; }
 	void SetCameraMoved(bool cameraMoved) { this->cameraMoved = cameraMoved; }
 
 private:
@@ -50,11 +48,11 @@ private:
 	// intersection formulas
 	SphereIntersection sphere_intersection = SphereIntersection();
 
-	// accumulation
+	// rendering
 	int frameIndex = 1;
+	int maxFrameIndex = 5;
 
 	// scene
-	bool sceneMoved = true;
 	bool cameraMoved = false;
 
 	// realistic rendering
@@ -62,7 +60,6 @@ private:
 	int coherence = 7;
 	bool realisticRendering = false;
 	bool finishedRealistic = false;
-	int maxRealisticCount = 150;
 
 private:
 
@@ -71,7 +68,4 @@ private:
 	HitPayload TraceRay(const Ray& ray);
 	HitPayload ClosestHit(const Ray& ray, float hitDist, int objectIndex, Hittable* object);
 	HitPayload Miss(const Ray& ray);
-
-private:
-	void resetArray();
 };

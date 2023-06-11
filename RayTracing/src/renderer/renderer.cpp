@@ -8,26 +8,14 @@
 #include "../utils.h"
 
 void Renderer::realisticRender() {
-	this->resetArray();
-	this->resetFrameIndex();
+	//this->resetFrameIndex();
 
 	this->coherence = 1;
 	this->bounces = 10;
 	this->realisticRendering = true;
-	this->sceneMoved = true;
+	this->maxFrameIndex = 150;
 
-	this->frameIndex = 1;
-}
-
-void Renderer::resetArray() {
-	uint32_t width = this->m_FinalImage->GetWidth();
-	uint32_t height = this->m_FinalImage->GetHeight();
-
-	delete[] this->imageData;
-	this->imageData = new uint32_t[width * height];
-
-	delete[] this->AccumulationData;
-	this->AccumulationData = new glm::vec4[width * height];
+	this->frameIndex = 2;
 }
 
 bool Renderer::on_resize(uint32_t width, uint32_t height) {
@@ -55,8 +43,11 @@ bool Renderer::on_resize(uint32_t width, uint32_t height) {
 }
 
 void Renderer::render(const Scene& scene, const Camera& camera, glm::vec3& skycolor) {
-	if (!this->sceneMoved) {
+	if (this->frameIndex > this->maxFrameIndex) {
 		// no need to calculate the image again
+		if (this->realisticRendering) {
+			this->finishedRealistic = true;
+		}
 		return;
 	}
 
@@ -64,10 +55,8 @@ void Renderer::render(const Scene& scene, const Camera& camera, glm::vec3& skyco
 	this->ActiveCamera = &camera;
 
 	// reset frame index if realistic rendering
-	if (this->realisticRendering) {
-		if (this->frameIndex == 1) {
-			memset(this->AccumulationData, 0, this->m_FinalImage->GetWidth() * this->m_FinalImage->GetHeight() * sizeof(glm::vec4));
-		}
+	if (this->frameIndex == 1) {
+		memset(this->AccumulationData, 0, this->m_FinalImage->GetWidth() * this->m_FinalImage->GetHeight() * sizeof(glm::vec4));
 	}
 
 	for (uint32_t y = 0; y < this->m_FinalImage->GetHeight(); y++) {
@@ -76,22 +65,15 @@ void Renderer::render(const Scene& scene, const Camera& camera, glm::vec3& skyco
 			glm::vec4 color = this->PerPixel(x, y, skycolor);
 			uint32_t RGBA;
 
-			if (this->realisticRendering) {
-				for (int c = 0; c < this->coherence; c++) {
-					this->AccumulationData[(x - c) + y * this->m_FinalImage->GetWidth()] += color;
-				}
-
-				glm::vec4 accumulatedColor = this->AccumulationData[x + y * this->m_FinalImage->GetWidth()];
-				accumulatedColor /= this->frameIndex;
-
-				accumulatedColor = glm::clamp(accumulatedColor, glm::vec4(0.0f), glm::vec4(1.0f));
-				RGBA = Utils::ConvertToRGBA(accumulatedColor);
-			
+			for (int c = 0; c < this->coherence; c++) {
+				this->AccumulationData[(x - c) + y * this->m_FinalImage->GetWidth()] += color;
 			}
-			else {
-				color = glm::clamp(color, glm::vec4(0.0f), glm::vec4(1.0f));
-				RGBA = Utils::ConvertToRGBA(color);
-			}
+
+			glm::vec4 accumulatedColor = this->AccumulationData[x + y * this->m_FinalImage->GetWidth()];
+			accumulatedColor /= this->frameIndex;
+
+			accumulatedColor = glm::clamp(accumulatedColor, glm::vec4(0.0f), glm::vec4(1.0f));
+			RGBA = Utils::ConvertToRGBA(accumulatedColor);
 
 			for (int c = 0; c < this->coherence; c++) {
 				this->imageData[(x - c) + y * this->m_FinalImage->GetWidth()] = RGBA;
@@ -101,15 +83,7 @@ void Renderer::render(const Scene& scene, const Camera& camera, glm::vec3& skyco
 
 	this->m_FinalImage->SetData(this->imageData);
 
-
-	if (this->realisticRendering) {
-		this->frameIndex++;
-
-		if (this->frameIndex > this->maxRealisticCount) {
-			this->frameIndex = 1;
-			this->finishedRealistic = true;
-		}
-	}
+	this->frameIndex++;
 }
 
 glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, glm::vec3& skycolor)
