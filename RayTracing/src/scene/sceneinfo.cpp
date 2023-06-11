@@ -96,10 +96,13 @@ void SceneInfo::read(Scene& scene, Camera& camera, int& width, int& height) {
 		float g         = static_cast<float>(std::stod(this->ini.get(name).get("g")));
 		float b         = static_cast<float>(std::stod(this->ini.get(name).get("b")));
 		float roughness = static_cast<float>(std::stod(this->ini.get(name).get("roughness")));
+		float emission = static_cast<float>(std::stod(this->ini.get(name).get("emission")));
 
 		Material material;
 		material.Albedo    = glm::vec3(r, g, b);
 		material.roughness = roughness;
+		material.EmissionPower = emission;
+		material.name = name;
 
 		scene.materials.push_back(material);
 	}
@@ -166,6 +169,7 @@ void SceneInfo::write(Scene& scene, Camera& camera, int width, int height) {
 		this->ini[material.name]["b"]         = std::to_string(material.Albedo.b);
 		this->ini[material.name]["g"]         = std::to_string(material.Albedo.g);
 		this->ini[material.name]["roughness"] = std::to_string(material.roughness);
+		this->ini[material.name]["emission"] = std::to_string(material.EmissionPower);
 	}
 
 	// scene name
