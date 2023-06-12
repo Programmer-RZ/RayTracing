@@ -171,20 +171,6 @@ void Editor::SceneUI(bool& sceneMoved) {
 	ImGui::Separator();
 	ImGui::Dummy(ImVec2(0, 25));
 
-	// appearance
-	ImGui::Text("Apperance");
-
-	ImGui::Separator();
-	ImGui::Separator();
-
-	ImGui::Text("Background");
-	if (ImGui::ColorEdit3("Sky", glm::value_ptr(this->scene.skycolor))) {
-		sceneMoved = true;
-	}
-
-	// blank space to seperate Appearance and Objects
-	ImGui::Dummy(ImVec2(0, 25));
-
 	// objects
 	ImGui::Text("Objects");
 	ImGui::Separator();
