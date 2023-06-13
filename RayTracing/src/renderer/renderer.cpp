@@ -110,12 +110,7 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, glm::vec3& skycolor)
 
 		const Material* material = payload.materialPtr;
 
-
-		glm::vec3 albedo = material->Albedo;
-
-		Lighting::diffuse(payload, material->GetEmission(), material->Albedo, light, multiplier, ray.Origin, ray.Direction);
-		//ray.Direction = glm::reflect(ray.Direction, 
-		//	payload.WorldNormal + material->roughness * Walnut::Random::Vec3(-0.5f, 0.5f));
+		Lighting::diffuse(payload, material, light, multiplier, ray.Origin, ray.Direction);
 	}
 
 	return glm::vec4(light, 1.0f);
