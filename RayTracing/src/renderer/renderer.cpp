@@ -1,11 +1,11 @@
 #include "renderer.h"
 
-#include "Walnut/Random.h"
-
 #include <iostream>
 #include <cmath>
 
 #include "../utils.h"
+
+#include "materialLighting.h"
 
 void Renderer::realisticRender() {
 	//this->resetFrameIndex();
@@ -113,15 +113,9 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, glm::vec3& skycolor)
 
 		glm::vec3 albedo = material->Albedo;
 
-		multiplier *= albedo;
-		light += material->GetEmission();
-
-		ray.Origin = payload.WorldPosition + payload.WorldNormal * 0.0001f;
-
+		Lighting::diffuse(payload, material->GetEmission(), material->Albedo, light, multiplier, ray.Origin, ray.Direction);
 		//ray.Direction = glm::reflect(ray.Direction, 
 		//	payload.WorldNormal + material->roughness * Walnut::Random::Vec3(-0.5f, 0.5f));
-
-		ray.Direction = glm::normalize(payload.WorldNormal + Walnut::Random::InUnitSphere());
 	}
 
 	return glm::vec4(light, 1.0f);
