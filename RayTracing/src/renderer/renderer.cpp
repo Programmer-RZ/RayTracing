@@ -1,11 +1,11 @@
-#include "renderer.h"
+#include "renderer.hpp"
 
 #include <iostream>
 #include <cmath>
 
-#include "../utils.h"
+#include "../utils.hpp"
 
-#include "materialLighting.h"
+#include "materialLighting.hpp"
 
 void Renderer::realisticRender() {
 	//this->resetFrameIndex();

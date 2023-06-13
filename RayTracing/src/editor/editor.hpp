@@ -5,10 +5,11 @@
 #include "Walnut/Image.h"
 #include "Walnut/Timer.h"
 
-#include "../renderer/renderer.h"
-#include "../renderer/camera.h"
-#include "../scene/export.h"
-#include "../scene/sceneinfo.h"
+#include "../renderer/renderer.hpp"
+#include "../renderer/camera.hpp"
+#include "../scene/export.hpp"
+#include "../scene/sceneinfo.hpp"
+#include "../scene/scene.hpp"
 #include "../global.h"
 
 #include <glm/gtc/type_ptr.hpp>

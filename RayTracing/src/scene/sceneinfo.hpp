@@ -2,8 +2,8 @@
 
 #include <fstream>
 #include "..\libs\mINI\src\mini\ini.h"
-#include "scene.h"
-#include "../renderer/camera.h"
+#include "scene.hpp"
+#include "../renderer/camera.hpp"
 
 class SceneInfo {
 private:	

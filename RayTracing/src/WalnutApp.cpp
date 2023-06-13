@@ -1,7 +1,7 @@
 #include "Walnut/Application.h"
 #include "Walnut/EntryPoint.h"
 
-#include "editor/editor.h"
+#include "editor/editor.hpp"
 
 class RayTracing : public Walnut::Layer
 {

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "glm/glm.hpp"
-#include "../scene/scene.h"
-#include "ray.h"
+#include "../scene/scene.hpp"
+#include "ray.hpp"
 
 struct HitPayload {
 	float HitDist;

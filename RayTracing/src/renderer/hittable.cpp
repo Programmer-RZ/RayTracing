@@ -1,4 +1,4 @@
-#include "hittable.h"
+#include "hittable.hpp"
 #include <iostream>
 
 

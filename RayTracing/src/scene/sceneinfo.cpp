@@ -1,8 +1,8 @@
-#include "sceneinfo.h"
+#include "sceneinfo.hpp"
 #include <iostream>
 
 #include "../global.h"
-#include "../utils.h"
+#include "../utils.hpp"
 
 SceneInfo::SceneInfo()
 	: inifile(INIFILE_PATH),

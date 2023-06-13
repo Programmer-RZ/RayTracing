@@ -1,4 +1,4 @@
-#include "editor.h"
+#include "editor.hpp"
 
 Editor::Editor()
 	: camera(45.0f, 0.1f, 100.0f)
