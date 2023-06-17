@@ -16,7 +16,7 @@ namespace Lighting {
 	}
 
 	static void scatter(HitPayload payload, const Material* material, glm::vec3& light, glm::vec3& multiplier, glm::vec3& rOrg, glm::vec3& rDir) {
-		light += material->Albedo * multiplier;
+		light += material->GetEmission() * multiplier;
 		multiplier *= 0.3f;
 
 		rOrg = payload.WorldPosition + payload.WorldNormal * 0.0001f;

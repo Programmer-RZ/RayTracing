@@ -7,12 +7,13 @@
 struct Material {
 	std::string name = "Material";
 
-	glm::vec3 Albedo{ 1.0f, 0.0f, 1.0f };
-	float roughness = 1.0f;
-	float metallic = 0.0f;
-	int id;
+	char* lighting = "reflect";
 
+	glm::vec3 Albedo{ 1.0f, 0.0f, 1.0f };
+	float roughness = 0.0f;
 	float EmissionPower = 0.0f;
+
+	int id = 0;
 
 	glm::vec3 GetEmission() const { return this->Albedo * this->EmissionPower; }
 };

@@ -110,7 +110,12 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, glm::vec3& skycolor)
 
 		const Material* material = payload.materialPtr;
 
-		Lighting::diffuse(payload, material, light, multiplier, ray.Origin, ray.Direction);
+		if (material->lighting == "diffuse") {
+			Lighting::diffuse(payload, material, light, multiplier, ray.Origin, ray.Direction);
+		}
+		else if (material->lighting == "reflect") {
+			Lighting::scatter(payload, material, light, multiplier, ray.Origin, ray.Direction);
+		}
 	}
 
 	return glm::vec4(light, 1.0f);

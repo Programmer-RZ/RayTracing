@@ -125,16 +125,25 @@ void Editor::MaterialUI(bool& sceneMoved) {
 
 		if (ImGui::CollapsingHeader(material.name.c_str())) {
 
-			if (ImGui::ColorEdit3("Color", glm::value_ptr(material.Albedo))) {
-				sceneMoved = true;
-			}
+			if (ImGui::ColorEdit3("Color", glm::value_ptr(material.Albedo))) { sceneMoved = true; }
 
-			if (ImGui::DragFloat("Roughness", &material.roughness, 0.1f, 0.0f, 1.0f)) {
-				sceneMoved = true;
-			}
+			if (ImGui::DragFloat("Roughness", &material.roughness, 0.1f, 0.0f, 1.0f)) { sceneMoved = true; }
 
-			if (ImGui::DragFloat("Emission Power", &material.EmissionPower, 0.05f, 0.0f, FLT_MAX)) {
-				sceneMoved = true;
+			if (ImGui::DragFloat("Emission Power", &material.EmissionPower, 0.05f, 0.0f, FLT_MAX)) { sceneMoved = true; }
+
+			if (ImGui::BeginCombo("Lighting", material.lighting)) {
+				char* lightingMethods[2] = { "diffuse", "reflect" };
+				for (int n = 0; n < 2; n++) {
+					bool isSelected = (material.lighting == lightingMethods[n]);
+					if (ImGui::Selectable(lightingMethods[n], isSelected)) {
+						material.lighting = lightingMethods[n];
+						sceneMoved = true;
+					}
+					if (isSelected) {
+						ImGui::SetItemDefaultFocus();
+					}
+				}
+				ImGui::EndCombo();
 			}
 
 			if (ImGui::Button("Delete material")) {
@@ -214,13 +223,9 @@ void Editor::SceneUI(bool& sceneMoved) {
 		Sphere& sphere = scene.spheres[i];
 
 		if (ImGui::CollapsingHeader(sphere.name.c_str())) {
-			if (ImGui::DragFloat3("Position", glm::value_ptr(sphere.pos), 0.1f)) {
-				sceneMoved = true;
-			}
+			if (ImGui::DragFloat3("Position", glm::value_ptr(sphere.pos), 0.1f)) { sceneMoved = true; }
 
-			if (ImGui::DragFloat("Radius", &sphere.radius, 0.1f, 0.0f)) {
-				sceneMoved = true;
-			}
+			if (ImGui::DragFloat("Radius", &sphere.radius, 0.1f, 0.0f)) { sceneMoved = true; }
 
 			if (ImGui::BeginCombo("Material", this->scene.materials[sphere.material_index].name.c_str())) {
 
@@ -260,13 +265,9 @@ void Editor::SettingsUI(bool& sceneMoved) {
 	ImGui::Separator();
 	ImGui::Separator();
 
-	if (ImGui::DragInt("Width", &m_ViewportWidth, 1.0f, 200, 1500)) {
-		sceneMoved = true;
-	}
+	if (ImGui::DragInt("Width", &m_ViewportWidth, 1.0f, 200, 1500)) { sceneMoved = true; }
 
-	if (ImGui::DragInt("Height", &m_ViewportHeight, 1.0f, 200, 1170)) {
-		sceneMoved = true;
-	}
+	if (ImGui::DragInt("Height", &m_ViewportHeight, 1.0f, 200, 1170)) { sceneMoved = true; }
 
 	ImGui::End();
 }
