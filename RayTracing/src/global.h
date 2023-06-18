@@ -1,12 +1,10 @@
 #pragma once
 
-constexpr auto INIFILE_PATH = "..\\storage\\temp\\scene\\sceneInfo.ini";
-constexpr auto SPHERENAME_PATH = "..\\storage\\temp\\scene\\sphere_names.txt";
-constexpr auto MATERIALNAME_PATH = "..\\storage\\temp\\scene\\material_names.txt";
-constexpr auto SCENENAME_PATH = "..\\storage\\temp\\currentSceneName.txt";
-constexpr auto IMAGES_PATH = "..\\Images\\";
+constexpr auto SCENEINFO = "..\\storage\\temp\\scene\\sceneInfo.ini";
+constexpr auto SPHEREINFO = "..\\storage\\temp\\scene\\sphereInfo.ini";
+constexpr auto MATERIALINFO = "..\\storage\\temp\\scene\\materialInfo.ini";
 
-constexpr auto CREATESCENENAME_SCRIPT = "python ..\\pyscripts\\createSceneName.py";
+constexpr auto IMAGES_PATH = "..\\Images\\";
 
 constexpr int CHANNEL_NUMBER = 4;
 

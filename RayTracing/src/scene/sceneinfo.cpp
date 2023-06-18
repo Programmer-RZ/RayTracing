@@ -5,106 +5,54 @@
 #include "../utils.hpp"
 
 SceneInfo::SceneInfo()
-	: inifile(INIFILE_PATH),
+	: scenefile(SCENEINFO),
+	spherefile(SPHEREINFO),
+	materialfile(MATERIALINFO),
 	finishedSave(false)
 {
-	this->inifile.read(this->ini);
-
-	this->files = { 
-		SPHERENAME_PATH, 
-		MATERIALNAME_PATH, 
-		SCENENAME_PATH 
-	};
-}
-
-void SceneInfo::open() {
-	this->sphereNames.open(SPHERENAME_PATH);
-	this->materialNames.open(MATERIALNAME_PATH);
-	this->sceneName.open(SCENENAME_PATH);
-}
-
-void SceneInfo::close() {
-	this->sphereNames.close();
-	this->materialNames.close();
-	this->sceneName.close();
+	this->scenefile.read(this->sceneini);
+	this->spherefile.read(this->sphereini);
+	this->materialfile.read(this->materialini);
 }
 
 void SceneInfo::clear() {
-	this->sphereNames.open(SPHERENAME_PATH, std::fstream::out | std::fstream::trunc);
-	this->materialNames.open(MATERIALNAME_PATH, std::fstream::out | std::fstream::trunc);
-	this->sceneName.open(SCENENAME_PATH, std::fstream::out | std::fstream::trunc);
-
-	this->close();
+	this->sceneini.clear();
+	this->sphereini.clear();
+	this->materialini.clear();
 }
 
 void SceneInfo::read(Scene& scene, Camera& camera, int& width, int& height) {
 
-	this->open();
-
-	std::vector<std::string> sphere_names = {};
-	std::vector<std::string> material_names = {};
-	std::string current_name;
-
-	// read names of spheres
-	while (std::getline(this->sphereNames, current_name)) {
-		// check if name is not blank
-		if (!current_name.empty()) {
-			sphere_names.push_back(current_name);
-		}
-	}
-
-	// read names of materials
-	while (std::getline(this->materialNames, current_name)) {
-		// check if name is not blank
-		if (!current_name.empty()) {
-			material_names.push_back(current_name);
-		}
-	}
-
-	// read scene name
-	while (std::getline(this->sceneName, scene.name)) {
-		continue;
-	}
-
-	// now use the sphere_names and material_names
-	// to find their corresponding data
-	// in sceneInfo.ini
-	if (this->ini.size() == 0) {
-		// ini is empty
-		return;
-	}
-
-	for (std::string name : sphere_names) {
-		// std::stod converts std::string to double
-		float x      = static_cast<float>(std::stod(this->ini.get(name).get("x")));
-		float y      = static_cast<float>(std::stod(this->ini.get(name).get("y")));
-		float z      = static_cast<float>(std::stod(this->ini.get(name).get("z")));
-		float radius = static_cast<float>(std::stod(this->ini.get(name).get("radius")));
-		int material = static_cast<int>(std::stod(this->ini.get(name).get("material")));
+	for (auto s : this->sphereini) {
+		float x = static_cast<float>(std::stod(s.second.get("x")));
+		float y = static_cast<float>(std::stod(s.second.get("y")));
+		float z = static_cast<float>(std::stod(s.second.get("z")));
+		float radius = static_cast<float>(std::stod(s.second.get("radius")));
+		int material = static_cast<int>(std::stod(s.second.get("material")));
 
 		Sphere sphere;
-		sphere.pos            = glm::vec3(x, y, z);
-		sphere.name           = name;
-		sphere.radius         = radius;
+		sphere.name = s.first;
+		sphere.pos = glm::vec3(x, y, z);
+		sphere.radius = radius;
 		sphere.material_index = material;
 
 		scene.spheres.push_back(sphere);
 	}
-	for (std::string name : material_names) {
-		// std::stod converts std::string to double
-		float r         = static_cast<float>(std::stod(this->ini.get(name).get("r")));
-		float g         = static_cast<float>(std::stod(this->ini.get(name).get("g")));
-		float b         = static_cast<float>(std::stod(this->ini.get(name).get("b")));
-		float roughness = static_cast<float>(std::stod(this->ini.get(name).get("roughness")));
-		float emission = static_cast<float>(std::stod(this->ini.get(name).get("emission")));
+	
+	for (auto m : this->materialini) {
+		float r = static_cast<float>(std::stod(m.second.get("r")));
+		float g = static_cast<float>(std::stod(m.second.get("g")));
+		float b = static_cast<float>(std::stod(m.second.get("b")));
+		float roughness = static_cast<float>(std::stod(m.second.get("roughness")));
+		float emission = static_cast<float>(std::stod(m.second.get("emission")));
 
 		Material material;
-		material.Albedo    = glm::vec3(r, g, b);
+		material.Albedo = glm::vec3(r, g, b);
 		material.roughness = roughness;
 		material.EmissionPower = emission;
-		material.name = name;
+		material.name = m.first;
 
-		material.lighting = this->ini.get(name).get("lighting");
+		material.lighting = m.second.get("lighting");
 
 		scene.materials.push_back(material);
 	}
@@ -112,100 +60,88 @@ void SceneInfo::read(Scene& scene, Camera& camera, int& width, int& height) {
 	// apperance
 
 	// skycolor
-	float sc_r     = static_cast<float>(std::stod(this->ini.get("skycolor").get("r")));
-	float sc_g     = static_cast<float>(std::stod(this->ini.get("skycolor").get("g")));
-	float sc_b     = static_cast<float>(std::stod(this->ini.get("skycolor").get("b")));
+	float sc_r     = static_cast<float>(std::stod(this->sceneini.get("skycolor").get("r")));
+	float sc_g     = static_cast<float>(std::stod(this->sceneini.get("skycolor").get("g")));
+	float sc_b     = static_cast<float>(std::stod(this->sceneini.get("skycolor").get("b")));
 	scene.skycolor = glm::vec3(sc_r, sc_g, sc_b);
 
 	// settings
-	width      = static_cast<int>(std::stod(this->ini.get("settings").get("width")));
-	height     = static_cast<int>(std::stod(this->ini.get("settings").get("height")));
+	width      = static_cast<int>(std::stod(this->sceneini.get("settings").get("width")));
+	height     = static_cast<int>(std::stod(this->sceneini.get("settings").get("height")));
 	
 	// camera
-	float px = static_cast<float>(std::stod(this->ini.get("camera").get("px")));
-	float py = static_cast<float>(std::stod(this->ini.get("camera").get("py")));
-	float pz = static_cast<float>(std::stod(this->ini.get("camera").get("pz")));
+	float px = static_cast<float>(std::stod(this->sceneini.get("camera").get("px")));
+	float py = static_cast<float>(std::stod(this->sceneini.get("camera").get("py")));
+	float pz = static_cast<float>(std::stod(this->sceneini.get("camera").get("pz")));
 	camera.SetPosition(glm::vec3(px, py, pz));
 
-	float dx = static_cast<float>(std::stod(this->ini.get("camera").get("dx")));
-	float dy = static_cast<float>(std::stod(this->ini.get("camera").get("dy")));
-	float dz = static_cast<float>(std::stod(this->ini.get("camera").get("dz")));
+	float dx = static_cast<float>(std::stod(this->sceneini.get("camera").get("dx")));
+	float dy = static_cast<float>(std::stod(this->sceneini.get("camera").get("dy")));
+	float dz = static_cast<float>(std::stod(this->sceneini.get("camera").get("dz")));
 	camera.SetDirection(glm::vec3(dx, dy, dz));
 
-	camera.SetVerticalFOV(static_cast<float>(std::stod(this->ini.get("camera").get("verticalFOV"))));
-	camera.SetNearClip(static_cast<float>(std::stod(this->ini.get("camera").get("nearClip"))));
-	camera.SetFarClip(static_cast<float>(std::stod(this->ini.get("camera").get("farClip"))));
+	camera.SetVerticalFOV(static_cast<float>(std::stod(this->sceneini.get("camera").get("verticalFOV"))));
+	camera.SetNearClip(static_cast<float>(std::stod(this->sceneini.get("camera").get("nearClip"))));
+	camera.SetFarClip(static_cast<float>(std::stod(this->sceneini.get("camera").get("farClip"))));
 
 	camera.RecalculateView();
 	camera.RecalculateRayDirections();
-
-	this->close();
 }
 
 void SceneInfo::write(Scene& scene, Camera& camera, int width, int height) {
 	// clear old data
 	this->clear();
-
-	this->open();
 	
 	// spheres
 	for (Sphere sphere : scene.spheres) {
-		// write the name to sphere_names.txt
-		this->sphereNames << sphere.name << std::endl;
-
-		// write the sphere's info to scene_info.ini
-		this->ini[sphere.name]["x"]        = std::to_string(sphere.pos.x);
-		this->ini[sphere.name]["y"]        = std::to_string(sphere.pos.y);
-		this->ini[sphere.name]["z"]        = std::to_string(sphere.pos.z);
-		this->ini[sphere.name]["radius"]   = std::to_string(sphere.radius);
-		this->ini[sphere.name]["material"] = std::to_string(sphere.material_index);
+		// write the sphere's info to sphereInfo.ini
+		this->sphereini[sphere.name]["x"]        = std::to_string(sphere.pos.x);
+		this->sphereini[sphere.name]["y"]        = std::to_string(sphere.pos.y);
+		this->sphereini[sphere.name]["z"]        = std::to_string(sphere.pos.z);
+		this->sphereini[sphere.name]["radius"]   = std::to_string(sphere.radius);
+		this->sphereini[sphere.name]["material"] = std::to_string(sphere.material_index);
 	}
 
 	// materials
 	for (Material material : scene.materials) {
-		// write the name to material_names.txt
-		this->materialNames << material.name << std::endl;
-		
-		// write the material's info to scene_info.ini
-		this->ini[material.name]["r"]         = std::to_string(material.Albedo.r);
-		this->ini[material.name]["b"]         = std::to_string(material.Albedo.b);
-		this->ini[material.name]["g"]         = std::to_string(material.Albedo.g);
-		this->ini[material.name]["roughness"] = std::to_string(material.roughness);
-		this->ini[material.name]["emission"] = std::to_string(material.EmissionPower);
-		this->ini[material.name]["lighting"] = material.lighting;
+		// write the material's info to materialInfo.ini
+		this->materialini[material.name]["r"]         = std::to_string(material.Albedo.r);
+		this->materialini[material.name]["b"]         = std::to_string(material.Albedo.b);
+		this->materialini[material.name]["g"]         = std::to_string(material.Albedo.g);
+		this->materialini[material.name]["roughness"] = std::to_string(material.roughness);
+		this->materialini[material.name]["emission"] = std::to_string(material.EmissionPower);
+		this->materialini[material.name]["lighting"] = material.lighting;
 	}
-
-	// scene name
-	this->sceneName << scene.name;
 
 	// appearance
 
-	this->ini["skycolor"]["r"] = std::to_string(scene.skycolor.r);
-	this->ini["skycolor"]["g"] = std::to_string(scene.skycolor.g);
-	this->ini["skycolor"]["b"] = std::to_string(scene.skycolor.b);
+	this->sceneini["skycolor"]["r"] = std::to_string(scene.skycolor.r);
+	this->sceneini["skycolor"]["g"] = std::to_string(scene.skycolor.g);
+	this->sceneini["skycolor"]["b"] = std::to_string(scene.skycolor.b);
 
 	// settings
-	this->ini["settings"]["width"]      = std::to_string(width);
-	this->ini["settings"]["height"]     = std::to_string(height);
+	this->sceneini["settings"]["width"]      = std::to_string(width);
+	this->sceneini["settings"]["height"]     = std::to_string(height);
 
 	// camera
-	this->ini["camera"]["px"] = std::to_string(camera.GetPosition().x);
-	this->ini["camera"]["py"] = std::to_string(camera.GetPosition().y);
-	this->ini["camera"]["pz"] = std::to_string(camera.GetPosition().z);
+	this->sceneini["camera"]["px"] = std::to_string(camera.GetPosition().x);
+	this->sceneini["camera"]["py"] = std::to_string(camera.GetPosition().y);
+	this->sceneini["camera"]["pz"] = std::to_string(camera.GetPosition().z);
 	
-	this->ini["camera"]["dx"] = std::to_string(camera.GetDirection().x);
-	this->ini["camera"]["dy"] = std::to_string(camera.GetDirection().y);
-	this->ini["camera"]["dz"] = std::to_string(camera.GetDirection().z);
+	this->sceneini["camera"]["dx"] = std::to_string(camera.GetDirection().x);
+	this->sceneini["camera"]["dy"] = std::to_string(camera.GetDirection().y);
+	this->sceneini["camera"]["dz"] = std::to_string(camera.GetDirection().z);
 
-	this->ini["camera"]["verticalFOV"] = std::to_string(camera.GetVerticalFOV());
-	this->ini["camera"]["nearClip"]    = std::to_string(camera.GetNearClip());
-	this->ini["camera"]["farClip"]     = std::to_string(camera.GetFarClip());
+	this->sceneini["camera"]["verticalFOV"] = std::to_string(camera.GetVerticalFOV());
+	this->sceneini["camera"]["nearClip"]    = std::to_string(camera.GetNearClip());
+	this->sceneini["camera"]["farClip"]     = std::to_string(camera.GetFarClip());
 	
 	// write all the contents
-	this->inifile.write(this->ini, true);
-	this->finishedSave = true;
+	this->scenefile.write(this->sceneini, true);
+	this->spherefile.write(this->sphereini, true);
+	this->materialfile.write(this->materialini, true);
 
-	this->close();
+	this->finishedSave = true;
 }
 
 

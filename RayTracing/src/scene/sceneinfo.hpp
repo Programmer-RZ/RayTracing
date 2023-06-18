@@ -7,20 +7,18 @@
 
 class SceneInfo {
 private:	
-	mINI::INIFile inifile;
-	mINI::INIStructure ini;
+	mINI::INIFile scenefile;
+	mINI::INIStructure sceneini;
 
-	std::fstream sphereNames;
-	std::fstream materialNames;
-	std::fstream sceneName;
+	mINI::INIFile spherefile;
+	mINI::INIStructure sphereini;
+
+	mINI::INIFile materialfile;
+	mINI::INIStructure materialini;
 
 	bool finishedSave;
 
-	std::vector<std::string> files;
-
 private:
-	void open();
-	void close();
 	void clear();
 
 public:
