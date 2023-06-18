@@ -131,12 +131,12 @@ void Editor::MaterialUI(bool& sceneMoved) {
 
 			if (ImGui::DragFloat("Emission Power", &material.EmissionPower, 0.05f, 0.0f, FLT_MAX)) { sceneMoved = true; }
 
-			if (ImGui::BeginCombo("Lighting", material.lighting)) {
+			if (ImGui::BeginCombo("Lighting", material.lighting.c_str())) {
 				char* lightingMethods[2] = { "diffuse", "reflect" };
 				for (int n = 0; n < 2; n++) {
 					bool isSelected = (material.lighting == lightingMethods[n]);
 					if (ImGui::Selectable(lightingMethods[n], isSelected)) {
-						material.lighting = lightingMethods[n];
+						material.lighting = std::string(lightingMethods[n]);
 						sceneMoved = true;
 					}
 					if (isSelected) {

@@ -1,0 +1,1 @@
+**Run the batch file if you need to recreate the Visual Studio files**

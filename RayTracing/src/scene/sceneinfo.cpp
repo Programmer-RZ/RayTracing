@@ -104,6 +104,8 @@ void SceneInfo::read(Scene& scene, Camera& camera, int& width, int& height) {
 		material.EmissionPower = emission;
 		material.name = name;
 
+		material.lighting = this->ini.get(name).get("lighting");
+
 		scene.materials.push_back(material);
 	}
 
@@ -163,13 +165,14 @@ void SceneInfo::write(Scene& scene, Camera& camera, int width, int height) {
 	for (Material material : scene.materials) {
 		// write the name to material_names.txt
 		this->materialNames << material.name << std::endl;
-
+		
 		// write the material's info to scene_info.ini
 		this->ini[material.name]["r"]         = std::to_string(material.Albedo.r);
 		this->ini[material.name]["b"]         = std::to_string(material.Albedo.b);
 		this->ini[material.name]["g"]         = std::to_string(material.Albedo.g);
 		this->ini[material.name]["roughness"] = std::to_string(material.roughness);
 		this->ini[material.name]["emission"] = std::to_string(material.EmissionPower);
+		this->ini[material.name]["lighting"] = material.lighting;
 	}
 
 	// scene name

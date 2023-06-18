@@ -7,7 +7,7 @@
 struct Material {
 	std::string name = "Material";
 
-	char* lighting = "reflect";
+	std::string lighting = "reflect";
 
 	glm::vec3 Albedo{ 1.0f, 0.0f, 1.0f };
 	float roughness = 0.0f;
