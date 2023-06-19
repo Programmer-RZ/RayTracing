@@ -32,10 +32,14 @@ struct Sphere : public Entity {
 	int material_index = 0;
 };
 
-struct Cube : public Entity {
+struct Box : public Entity {
 	
-	glm::vec3 vmin = { 0,0,0 };
-	glm::vec3 vmax = { 1,1,1 };
+	glm::vec3 corner{ 0.0f, 0.0f, 0.0f };
+	float width = 0.5f;
+	float length = 0.5f;
+	float height = 0.5f;
+
+	std::string name = "Box";
 
 	int material_index = 0;
 };
@@ -50,7 +54,7 @@ struct Scene {
 	glm::vec3 skycolor = glm::vec3(0.0f, 0.0f, 0.0f);
 
 	std::vector<Sphere> spheres = {};
-	std::vector<Cube> cubes = {};
+	std::vector<Box> boxes = {};
 
 	std::vector<Material> materials = {};
 

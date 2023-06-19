@@ -11,7 +11,7 @@ void Renderer::realisticRender() {
 	//this->resetFrameIndex();
 
 	this->coherence = 1;
-	this->bounces = 10;
+	this->bounces = 5;
 	this->realisticRendering = true;
 	this->maxFrameIndex = 150;
 
@@ -114,20 +114,20 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, glm::vec3& skycolor)
 			Lighting::diffuse(payload, material, light, multiplier, ray.Origin, ray.Direction);
 		}
 		else if (material->lighting == "reflect") {
-			Lighting::scatter(payload, material, light, multiplier, ray.Origin, ray.Direction);
+			Lighting::reflect(payload, material, light, multiplier, ray.Origin, ray.Direction);
 		}
 	}
 
 	return glm::vec4(light, 1.0f);
 }
 
-HitPayload Renderer::ClosestHit(const Ray& ray, float hitDist, int objectIndex, Hittable* object)
+HitPayload Renderer::ClosestHit(const Ray& ray, float hitDist, int objectIndex)
 {
 	HitPayload payload;
 	payload.HitDist = hitDist;
 	payload.ObjectIndex = objectIndex;
 
-	object->ClosestHit(ray, this->ActiveScene, payload);
+	this->objectPtr->ClosestHit(ray, this->ActiveScene, payload);
 
 	return payload;
 }
@@ -146,14 +146,13 @@ HitPayload Renderer::TraceRay(const Ray& ray)
 	float hitDist = std::numeric_limits<float>::max();
 
 	// default no object in scene
-	Hittable noObj = Hittable();
-	Hittable* object = &noObj;
+	this->objectPtr = &this->noObj;
 
-	this->sphere_intersection.TraceRay(ray, this->ActiveScene, closestObject, hitDist, object);
+	this->sphere_intersection.TraceRay(ray, this->ActiveScene, closestObject, hitDist, this->objectPtr);
 	
 	if (closestObject < 0) {
 		return this->Miss(ray);
 	}
 
-	return this->ClosestHit(ray, hitDist, closestObject, object);
+	return this->ClosestHit(ray, hitDist, closestObject);
 }

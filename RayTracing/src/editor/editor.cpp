@@ -3,16 +3,7 @@
 Editor::Editor()
 	: camera(45.0f, 0.1f, 100.0f)
 {
-	//std::system(CREATESCENENAME_SCRIPT);
 	this->sceneinfo.read(this->scene, this->camera, this->m_ViewportWidth, this->m_ViewportHeight);
-
-	/*
-	Material& material0 = this->scene.materials.emplace_back();
-	material0.Albedo = { 0.2f, 0.3f, 1.0f };
-	material0.roughness = 0.1f;
-	material0.name = "Material0";
-	material0.id = 0;
-	*/
 }
 
 void Editor::OnUpdate(float ts) 
@@ -21,8 +12,9 @@ void Editor::OnUpdate(float ts)
 		bool hasObjects = (
 			this->scene.spheres.size() != 0
 			||
-			this->scene.cubes.size() != 0
+			this->scene.boxes.size() != 0
 			);
+
 		if (this->camera.OnUpdate(ts, hasObjects)) {
 			this->renderer.SetCameraMoved(true);
 		}

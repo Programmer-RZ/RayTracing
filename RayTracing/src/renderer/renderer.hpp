@@ -34,7 +34,7 @@ public:
 	int& GetBounces() { return this->bounces; }
 
 	// setters
-	void SetFinishRealistic() { this->realisticRendering = false; this->finishedRealistic = false; this->coherence = 7; this->bounces = 2; }
+	void SetFinishRealistic() { this->realisticRendering = false; this->finishedRealistic = false; this->coherence = 7; this->bounces = 2; this->maxFrameIndex = 3; }
 	void SetCameraMoved(bool cameraMoved) { this->cameraMoved = cameraMoved; }
 
 private:
@@ -47,16 +47,18 @@ private:
 
 	// intersection formulas
 	SphereIntersection sphere_intersection = SphereIntersection();
+	Hittable noObj = Hittable();
+	Hittable* objectPtr = nullptr;
 
 	// rendering
 	int frameIndex = 1;
-	int maxFrameIndex = 5;
+	int maxFrameIndex = 3;
 
 	// scene
 	bool cameraMoved = false;
 
 	// realistic rendering
-	int bounces = 2;
+	int bounces = 3;
 	int coherence = 7;
 	bool realisticRendering = false;
 	bool finishedRealistic = false;
@@ -66,6 +68,6 @@ private:
 	glm::vec4 PerPixel(uint32_t x, uint32_t y, glm::vec3& skycolor);
 
 	HitPayload TraceRay(const Ray& ray);
-	HitPayload ClosestHit(const Ray& ray, float hitDist, int objectIndex, Hittable* object);
+	HitPayload ClosestHit(const Ray& ray, float hitDist, int objectIndex);
 	HitPayload Miss(const Ray& ray);
 };
