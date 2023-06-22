@@ -1,6 +1,6 @@
 #include "scene.hpp"
 
-void Scene::createNewSphere(glm::vec3 camera_pos, glm::vec3 camera_dir) {
+std::string Scene::createNewSphere(glm::vec3 camera_pos, glm::vec3 camera_dir) {
 	Sphere sphere;
 	sphere.name = "Sphere " + std::to_string(this->spheres.size());
 	sphere.pos = {
@@ -12,4 +12,6 @@ void Scene::createNewSphere(glm::vec3 camera_pos, glm::vec3 camera_dir) {
 	sphere.material_index = 0;
 
 	this->spheres.push_back(sphere);
+
+	return sphere.name;
 }

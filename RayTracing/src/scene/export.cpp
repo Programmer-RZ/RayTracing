@@ -6,7 +6,6 @@
 #include "../libs/stb/stb_image_write.h"
 
 Export::Export() 
-	: isExport(false), finishedExport(false)
 {
 	this->formats[0] = "png";
 

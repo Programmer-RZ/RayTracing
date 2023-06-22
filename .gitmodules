@@ -7,3 +7,6 @@
 [submodule "RayTracing/src/libs/stb"]
 	path = RayTracing/src/libs/stb
 	url = https://github.com/nothings/stb.git
+[submodule "RayTracing/src/libs/spdlog"]
+	path = RayTracing/src/libs/spdlog
+	url = https://github.com/gabime/spdlog.git

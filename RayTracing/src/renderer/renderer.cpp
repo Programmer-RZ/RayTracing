@@ -5,7 +5,7 @@
 
 #include "../utils.hpp"
 
-#include "materialLighting.hpp"
+#include "lighting.hpp"
 
 void Renderer::realisticRender() {
 	//this->resetFrameIndex();

@@ -42,7 +42,8 @@ RayTracing editor where you can create 3D designs and hyper-realistic art! Curre
 - GLFW
 - GLM
 - mINI
-- STB
+- stb
+- spdlog
 
 # Examples
 ![image](https://github.com/Programmer-RZ/RayTracing/assets/123858154/009b7939-3126-4ffc-8f66-65c42245a9a1)

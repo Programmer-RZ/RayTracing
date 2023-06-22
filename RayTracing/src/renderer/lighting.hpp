@@ -7,8 +7,8 @@
 
 namespace Lighting {
 	static void diffuse(HitPayload payload, const Material* material, glm::vec3& light, glm::vec3& multiplier, glm::vec3& rOrg, glm::vec3& rDir) {
-		multiplier *= material->Albedo;
 		light += material->GetEmission();
+		multiplier *= material->Albedo;
 
 		rOrg = payload.WorldPosition + payload.WorldNormal * 0.0001f;
 
@@ -16,8 +16,8 @@ namespace Lighting {
 	}
 
 	static void reflect(HitPayload payload, const Material* material, glm::vec3& light, glm::vec3& multiplier, glm::vec3& rOrg, glm::vec3& rDir) {
-		light += material->Albedo * multiplier;
-		multiplier *= 0.3f;
+		light += material->GetEmission() * multiplier;
+		multiplier *= material->Albedo;
 
 		rOrg = payload.WorldPosition + payload.WorldNormal * 0.0001f;
 

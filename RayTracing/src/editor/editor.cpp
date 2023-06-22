@@ -1,5 +1,7 @@
 #include "editor.hpp"
 
+#include "spdlog/spdlog.h"
+
 Editor::Editor()
 	: camera(45.0f, 0.1f, 100.0f)
 {
@@ -25,17 +27,6 @@ void Editor::OnUpdate(float ts)
 
 	if (this->renderer.GetFinishedRealistic()) {
 		this->renderer.SetFinishRealistic();
-	}
-
-	if (this->exportScene.GetIsExport()) {
-		this->exportScene.ExportImage(
-			this->renderer.GetImageData(),
-			this->renderer.GetImageWidth(),
-			this->renderer.GetImageHeight(),
-			this->scene.name
-		);
-		this->exportScene.SetIsExport(false);
-		this->exportScene.SetFinishedExport(true);
 	}
 }
 
@@ -85,9 +76,6 @@ void Editor::OnUIRender()
 			// do not interrupt the frame index
 			this->renderer.resetFrameIndex();
 		}
-
-		this->sceneinfo.SetFinishedSave(false);
-		this->exportScene.SetFinishedExport(false);
 	}
 
 	this->render();
@@ -105,6 +93,8 @@ void Editor::MaterialUI(bool& sceneMoved) {
 		material.id = this->scene.materials.size() - 1;
 
 		sceneMoved = true;
+
+		spdlog::info("Add new material {}", material.name);
 	}
 
 	// holds the indexes of material that the user deleted
@@ -149,9 +139,11 @@ void Editor::MaterialUI(bool& sceneMoved) {
 	for (int index : materials_todelete) {
 		// if materials only has one element
 		// cannot delete it
+		std::string name = this->scene.materials[index].name;
 		if (this->scene.materials.size() > 1 || this->scene.spheres.size() == 0) {
 			this->scene.materials.erase(this->scene.materials.begin() + index);
 		}
+		spdlog::warn("Delete material {}", name);
 	}
 	// check if any spheres hold the materials
 	// if they do, set the sphere's material to the prev one
@@ -185,7 +177,7 @@ void Editor::SceneUI(bool& sceneMoved) {
 				this->scene.selected_object = this->scene.objects[n];
 				sceneMoved = true;
 
-				std::string currentObject = this->scene.selected_object;
+				spdlog::info("Set current object to {}", this->scene.selected_object);
 			}
 			if (isSelected) {
 				ImGui::SetItemDefaultFocus();
@@ -198,12 +190,14 @@ void Editor::SceneUI(bool& sceneMoved) {
 
 		glm::vec3 camera_pos = this->camera.GetPosition();
 		glm::vec3 camera_dir = this->camera.GetDirection();
-		sceneMoved = true;
+		std::string name = "";
 
 		if (static_cast<std::string>(this->scene.selected_object) == "Sphere") {
-			this->scene.createNewSphere(camera_pos, camera_dir);
+			name = this->scene.createNewSphere(camera_pos, camera_dir);
 		}
 
+		sceneMoved = true;
+		spdlog::info("Add new object {}", name);
 	}
 
 	// holds the indexes of sphere that the user deleted
@@ -244,7 +238,10 @@ void Editor::SceneUI(bool& sceneMoved) {
 	}
 
 	for (int index : spheres_todelete) {
+		std::string name = this->scene.spheres[index].name;
 		this->scene.spheres.erase(this->scene.spheres.begin() + index);
+
+		spdlog::warn("Delete object {}", name);
 	}
 
 	ImGui::End();
@@ -273,6 +270,7 @@ void Editor::OptionsUI() {
 
 	if (ImGui::Button("Realistic Rendering")) {
 		this->renderer.realisticRender();
+		spdlog::info("Initialize realistic rendering");
 	}
 
 	ImGui::Separator();
@@ -291,6 +289,7 @@ void Editor::OptionsUI() {
 			bool isSelected = (this->exportScene.GetCurrentFormat() == this->exportScene.GetFormats()[n]);
 			if (ImGui::Selectable(this->exportScene.GetFormats()[n], isSelected)) {
 				this->exportScene.setFormat(this->exportScene.GetFormats()[n]);
+				spdlog::info("Set current format to {}", this->exportScene.GetCurrentFormat());
 			}
 			if (isSelected) {
 				ImGui::SetItemDefaultFocus();
@@ -300,10 +299,13 @@ void Editor::OptionsUI() {
 	}
 
 	if (ImGui::Button("Export")) {
-		this->exportScene.SetIsExport(true);
-	}
-	if (this->exportScene.GetFinishedExport()) {
-		ImGui::Text("Successfully exported scene");
+		this->exportScene.ExportImage(
+			this->renderer.GetImageData(),
+			this->renderer.GetImageWidth(),
+			this->renderer.GetImageHeight(),
+			this->scene.name
+		);
+		spdlog::info("Finished export");
 	}
 
 	ImGui::Separator();
@@ -311,25 +313,20 @@ void Editor::OptionsUI() {
 
 	if (ImGui::Button("Save scene info")) {
 		this->sceneinfo.write(this->scene, this->camera, this->m_ViewportWidth, this->m_ViewportHeight);
-	}
-	if (this->sceneinfo.GetFinishedSave()) {
-		ImGui::Text("Successfully saved scene");
+		spdlog::info("Saved scene");
 	}
 
 	ImGui::End();
 }
 
 void Editor::render() {
-	if (!this->exportScene.GetIsExport()) {
+	Walnut::Timer timer;
 
-		Walnut::Timer timer;
+	this->renderer.on_resize(this->m_ViewportWidth, this->m_ViewportHeight);
 
-		this->renderer.on_resize(this->m_ViewportWidth, this->m_ViewportHeight);
+	this->camera.OnResize(this->m_ViewportWidth, this->m_ViewportHeight);
 
-		this->camera.OnResize(this->m_ViewportWidth, this->m_ViewportHeight);
+	this->renderer.render(this->scene, this->camera, this->scene.skycolor);
 
-		this->renderer.render(this->scene, this->camera, this->scene.skycolor);
-
-		last_render_time = timer.ElapsedMillis();
-	}
+	last_render_time = timer.ElapsedMillis();
 }

@@ -16,8 +16,6 @@ private:
 	mINI::INIFile materialfile;
 	mINI::INIStructure materialini;
 
-	bool finishedSave;
-
 private:
 	void clear();
 
@@ -26,7 +24,4 @@ public:
 
 	void read(Scene& scene, Camera& camera, int& width, int& height);
 	void write(Scene& scene, Camera& camera, int width, int height);
-
-	bool GetFinishedSave() const { return this->finishedSave; }
-	void SetFinishedSave(bool finished) { this->finishedSave = finished; }
 };

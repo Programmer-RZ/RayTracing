@@ -58,5 +58,5 @@ struct Scene {
 
 	std::vector<Material> materials = {};
 
-	void createNewSphere(glm::vec3 camera_pos, glm::vec3 camera_dir);
+	std::string createNewSphere(glm::vec3 camera_pos, glm::vec3 camera_dir);
 };

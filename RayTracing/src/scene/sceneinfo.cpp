@@ -4,11 +4,12 @@
 #include "../global.h"
 #include "../utils.hpp"
 
+#include "spdlog/spdlog.h"
+
 SceneInfo::SceneInfo()
 	: scenefile(SCENEINFO),
 	spherefile(SPHEREINFO),
-	materialfile(MATERIALINFO),
-	finishedSave(false)
+	materialfile(MATERIALINFO)
 {
 	this->scenefile.read(this->sceneini);
 	this->spherefile.read(this->sphereini);
@@ -38,6 +39,8 @@ void SceneInfo::read(Scene& scene, Camera& camera, int& width, int& height) {
 
 		scene.spheres.push_back(sphere);
 	}
+
+	spdlog::info("Read sphereInfo.ini");
 	
 	for (auto m : this->materialini) {
 		float r = static_cast<float>(std::stod(m.second.get("r")));
@@ -56,6 +59,8 @@ void SceneInfo::read(Scene& scene, Camera& camera, int& width, int& height) {
 
 		scene.materials.push_back(material);
 	}
+
+	spdlog::info("Read materialInfo.ini");
 
 	// apperance
 
@@ -86,6 +91,8 @@ void SceneInfo::read(Scene& scene, Camera& camera, int& width, int& height) {
 
 	camera.RecalculateView();
 	camera.RecalculateRayDirections();
+
+	spdlog::info("Read sceneInfo.ini");
 }
 
 void SceneInfo::write(Scene& scene, Camera& camera, int width, int height) {
@@ -140,8 +147,6 @@ void SceneInfo::write(Scene& scene, Camera& camera, int width, int height) {
 	this->scenefile.write(this->sceneini, true);
 	this->spherefile.write(this->sphereini, true);
 	this->materialfile.write(this->materialini, true);
-
-	this->finishedSave = true;
 }
 
 
