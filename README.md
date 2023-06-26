@@ -15,15 +15,14 @@ RayTracing editor where you can create 3D designs and hyper-realistic art! Curre
 
 # Features
 **RayTracing**
-- Real-time Raytracing
-- Realistic Rendering
 - Shading
-- Shadows
 - Emissive materials
 - Reflections
 - Path Tracing
 - Accumulation
-- Sphere intersection
+- Sphere Intersection
+- Box Intersection
+
 - Material/Scene Editor
 - Collapsing headers
 - UI

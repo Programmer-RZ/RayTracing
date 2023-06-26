@@ -6,6 +6,8 @@ Editor::Editor()
 	: camera(45.0f, 0.1f, 100.0f)
 {
 	this->sceneinfo.read(this->scene, this->camera, this->m_ViewportWidth, this->m_ViewportHeight);
+	Material& material = this->scene.materials.emplace_back();
+	Box& box = this->scene.boxes.emplace_back();
 }
 
 void Editor::OnUpdate(float ts) 

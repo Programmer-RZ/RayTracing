@@ -40,7 +40,6 @@ void SceneInfo::read(Scene& scene, Camera& camera, int& width, int& height) {
 		scene.spheres.push_back(sphere);
 	}
 
-	spdlog::info("Read sphereInfo.ini");
 	
 	for (auto m : this->materialini) {
 		float r = static_cast<float>(std::stod(m.second.get("r")));
@@ -59,8 +58,6 @@ void SceneInfo::read(Scene& scene, Camera& camera, int& width, int& height) {
 
 		scene.materials.push_back(material);
 	}
-
-	spdlog::info("Read materialInfo.ini");
 
 	// apperance
 
@@ -92,7 +89,7 @@ void SceneInfo::read(Scene& scene, Camera& camera, int& width, int& height) {
 	camera.RecalculateView();
 	camera.RecalculateRayDirections();
 
-	spdlog::info("Read sceneInfo.ini");
+	spdlog::info("Update scene");
 }
 
 void SceneInfo::write(Scene& scene, Camera& camera, int width, int height) {

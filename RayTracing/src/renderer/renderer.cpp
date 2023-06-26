@@ -98,12 +98,10 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, glm::vec3& skycolor)
 	for (int i = 0; i < this->bounces; i++) {
 		HitPayload payload = this->TraceRay(ray);
 
-		float hitDist = payload.HitDist;
-
 		//hitDist = std::round(hitDist * 1000) / 1000;
 		//std::cout << hitDist << std::endl;
 		
-		if (hitDist < 0.0f) {
+		if (payload.miss) {
 			light += skycolor * multiplier;
 			break;
 		}
@@ -121,38 +119,14 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, glm::vec3& skycolor)
 	return glm::vec4(light, 1.0f);
 }
 
-HitPayload Renderer::ClosestHit(const Ray& ray, float hitDist, int objectIndex)
-{
-	HitPayload payload;
-	payload.HitDist = hitDist;
-	payload.ObjectIndex = objectIndex;
-
-	this->objectPtr->ClosestHit(ray, this->ActiveScene, payload);
-
-	return payload;
-}
-
-HitPayload Renderer::Miss(const Ray& ray)
-{
-	HitPayload payload;
-	payload.HitDist = -1.0f;
-
-	return payload;
-}
 
 HitPayload Renderer::TraceRay(const Ray& ray)
 {
-	int closestObject = -1;
-	float hitDist = std::numeric_limits<float>::max();
+	HitPayload payload;
+	payload.HitDist = std::numeric_limits<float>::max();
 
-	// default no object in scene
-	this->objectPtr = &this->noObj;
+	SphereIntersection::TraceRay(ray, this->ActiveScene, payload);
+	BoxIntersection::TraceRay(ray, this->ActiveScene, payload);
 
-	this->sphere_intersection.TraceRay(ray, this->ActiveScene, closestObject, hitDist, this->objectPtr);
-	
-	if (closestObject < 0) {
-		return this->Miss(ray);
-	}
-
-	return this->ClosestHit(ray, hitDist, closestObject);
+	return payload;
 }

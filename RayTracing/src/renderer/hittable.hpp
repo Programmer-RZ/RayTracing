@@ -5,31 +5,26 @@
 #include "ray.hpp"
 
 struct HitPayload {
-	float HitDist;
+	float HitDist = 0.0f;
+	bool miss = true;
 
-	glm::vec3 WorldPosition;
-	glm::vec3 WorldNormal;
+	glm::vec3 WorldPosition = { 0.0f, 0.0f, 0.0f };
+	glm::vec3 WorldNormal = { 0.0f, 0.0f, 0.0f };
 
-	int ObjectIndex;
 	const Material* materialPtr;
-
-	glm::vec3 pos;
-};
-
-struct Hittable {
-
-	Hittable() = default;
-
-	virtual void TraceRay(const Ray& ray, const Scene* ActiveScene, int& closestObject, float& hitDist, Hittable*& object);
-	virtual void ClosestHit(const Ray& ray, const Scene* scene, HitPayload& payload);
 };
 
 
-
-struct SphereIntersection : public Hittable {
-	virtual void TraceRay(const Ray& ray, const Scene* ActiveScene, int& closestObject, float& hitDist, Hittable*& object) override;
-	virtual void ClosestHit(const Ray& ray, const Scene* scene, HitPayload& payload) override;
+namespace SphereIntersection {
+	void TraceRay(const Ray& ray, const Scene* ActiveScene, HitPayload& payload);
 };
+
+namespace BoxIntersection {
+	void TraceRay(const Ray& ray, const Scene* ActiveScene, HitPayload& payload);
+	void xyrect_TraceRay(const Ray& ray, const Scene* ActiveScene, xy_rect& xyrect, HitPayload& payload);
+	void xzrect_TraceRay(const Ray& ray, const Scene* ActiveScene, xz_rect& xzrect, HitPayload& payload);
+	void yzrect_TraceRay(const Ray& ray, const Scene* ActiveScene, yz_rect& xzrect, HitPayload& payload);
+}
 
 
 

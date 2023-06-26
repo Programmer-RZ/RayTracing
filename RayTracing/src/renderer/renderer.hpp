@@ -45,11 +45,6 @@ private:
 	const Scene* ActiveScene = nullptr;
 	const Camera* ActiveCamera = nullptr;
 
-	// intersection formulas
-	SphereIntersection sphere_intersection = SphereIntersection();
-	Hittable noObj = Hittable();
-	Hittable* objectPtr = nullptr;
-
 	// rendering
 	int frameIndex = 1;
 	int maxFrameIndex = 3;
@@ -68,6 +63,4 @@ private:
 	glm::vec4 PerPixel(uint32_t x, uint32_t y, glm::vec3& skycolor);
 
 	HitPayload TraceRay(const Ray& ray);
-	HitPayload ClosestHit(const Ray& ray, float hitDist, int objectIndex);
-	HitPayload Miss(const Ray& ray);
 };
