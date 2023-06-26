@@ -42,7 +42,7 @@ void SphereIntersection::TraceRay(const Ray& ray, const Scene* ActiveScene, int&
 		// float t0 = (-b + glm::sqrt(discriminent)) / (2.0f * a);
 		float closestT = (-b - glm::sqrt(discriminent)) / (2.0f * a);
 
-		if (closestT > 0.0f && closestT < hitDist) {
+		if (closestT < 0.0f && closestT > hitDist) {
 			hitDist = closestT;
 			closestObject = i;
 			object = this;
@@ -63,12 +63,3 @@ void SphereIntersection::ClosestHit(const Ray& ray, const Scene* scene, HitPaylo
 	payload.pos = closestSphere.pos;
 }
 
-void CubeIntersection::TraceRay(const Ray& ray, const Scene* ActiveScene, int& closestObject, float& hitDist, Hittable*& object)
-{
-
-}
-
-void CubeIntersection::ClosestHit(const Ray& ray, const Scene* scene, HitPayload& payload)
-{
-
-}
