@@ -6,8 +6,6 @@ Editor::Editor()
 	: camera(45.0f, 0.1f, 100.0f)
 {
 	this->sceneinfo.read(this->scene, this->camera, this->m_ViewportWidth, this->m_ViewportHeight);
-	Material& material = this->scene.materials.emplace_back();
-	Box& box = this->scene.boxes.emplace_back();
 }
 
 void Editor::OnUpdate(float ts) 
@@ -29,6 +27,7 @@ void Editor::OnUpdate(float ts)
 
 	if (this->renderer.GetFinishedRealistic()) {
 		this->renderer.SetFinishRealistic();
+		spdlog::info("Finished realistic rendering");
 	}
 }
 
@@ -88,15 +87,20 @@ void Editor::MaterialUI(bool& sceneMoved) {
 
 	if (ImGui::Button("New Material")) {
 
-		Material& material = this->scene.materials.emplace_back();
-		material.Albedo = { 0.2f, 0.3f, 1.0f };
-		material.roughness = 1.0f;
-		material.name = "Material" + std::to_string(this->scene.materials.size() - 1);
-		material.id = this->scene.materials.size() - 1;
+		glm::vec3 Albedo = { 0.2f, 0.3f, 1.0f };
+		float roughness = 0.0f;
+		float EmissionPower = 1.0f;
+
+		int id = this->scene.materials.size();
+		std::string name = "Material" + std::to_string(id);
+
+		Material material = Material(Albedo, roughness, EmissionPower, id, "diffuse", name);
+
+		this->scene.materials.push_back(material);
 
 		sceneMoved = true;
 
-		spdlog::info("Add new material {}", material.name);
+		spdlog::info("Add new material {}", name);
 	}
 
 	// holds the indexes of material that the user deleted
@@ -147,12 +151,21 @@ void Editor::MaterialUI(bool& sceneMoved) {
 		}
 		spdlog::warn("Delete material {}", name);
 	}
+
 	// check if any spheres hold the materials
-	// if they do, set the sphere's material to the prev one
 	for (int i = 0; i < this->scene.spheres.size(); i++) {
 		Sphere& sphere = this->scene.spheres[i];
 		if (sphere.material_index > this->scene.materials.size() - 1) {
 			sphere.material_index = this->scene.materials.size() - 1;
+			sceneMoved = true;
+		}
+	}
+
+	// check if any boxes hold the materials
+	for (int i = 0; i < this->scene.boxes.size(); i++) {
+		Box& box = this->scene.boxes[i];
+		if (box.material_index > this->scene.materials.size() - 1) {
+			box.material_index = this->scene.materials.size() - 1;
 			sceneMoved = true;
 		}
 	}
@@ -197,18 +210,24 @@ void Editor::SceneUI(bool& sceneMoved) {
 		if (static_cast<std::string>(this->scene.selected_object) == "Sphere") {
 			name = this->scene.createNewSphere(camera_pos, camera_dir);
 		}
+		if (static_cast<std::string>(this->scene.selected_object) == "Box") {
+			name = this->scene.createNewBox(camera_pos, camera_dir);
+		}
 
 		sceneMoved = true;
 		spdlog::info("Add new object {}", name);
 	}
 
-	// holds the indexes of sphere that the user deleted
+	// holds the indexes of objects the user deleted
 	std::vector<int> spheres_todelete = {};
-	for (int i = 0; i < scene.spheres.size(); i++) {
+	std::vector<int> boxes_todelete = {};
+
+	// sphere's ui
+	for (int i = 0; i < this->scene.spheres.size(); i++) {
 		ImGui::PushID(i);
 		ImGui::Separator();
 
-		Sphere& sphere = scene.spheres[i];
+		Sphere& sphere = this->scene.spheres[i];
 
 		if (ImGui::CollapsingHeader(sphere.name.c_str())) {
 			if (ImGui::DragFloat3("Position", glm::value_ptr(sphere.pos), 0.1f)) { sceneMoved = true; }
@@ -239,9 +258,58 @@ void Editor::SceneUI(bool& sceneMoved) {
 		ImGui::PopID();
 	}
 
+	// box's ui
+	for (int i = 0; i < this->scene.boxes.size(); i++) {
+		ImGui::PushID(i);
+		ImGui::Separator();
+
+		Box& box = this->scene.boxes[i];
+
+		if (ImGui::CollapsingHeader(box.name.c_str())) {
+			bool updateSides = false;
+
+			if (ImGui::DragFloat3("Corner 1", glm::value_ptr(box.box_min), 0.1f)) { sceneMoved = true; updateSides = true; }
+
+			if (ImGui::DragFloat3("Corner 2", glm::value_ptr(box.box_max), 0.1f)) { sceneMoved = true; updateSides = true; }
+
+			if (ImGui::BeginCombo("Material", this->scene.materials[box.material_index].name.c_str())) {
+
+				for (int n = 0; n < this->scene.materials.size(); n++) {
+					bool isSelected = (this->scene.materials[box.material_index].id == this->scene.materials[n].id);
+					if (ImGui::Selectable(this->scene.materials[n].name.c_str(), isSelected)) {
+						box.material_index = n;
+						sceneMoved = true;
+						updateSides = true;
+					}
+					if (isSelected) {
+						ImGui::SetItemDefaultFocus();
+					}
+				}
+				ImGui::EndCombo();
+			}
+
+			if (updateSides) {
+				box.updateSides();
+			}
+
+
+			if (ImGui::Button("Delete Box")) {
+				boxes_todelete.push_back(i);
+				sceneMoved = true;
+			}
+		}
+		ImGui::PopID();
+	}
+
 	for (int index : spheres_todelete) {
 		std::string name = this->scene.spheres[index].name;
 		this->scene.spheres.erase(this->scene.spheres.begin() + index);
+
+		spdlog::warn("Delete object {}", name);
+	}
+	for (int index : boxes_todelete) {
+		std::string name = this->scene.boxes[index].name;
+		this->scene.boxes.erase(this->scene.boxes.begin() + index);
 
 		spdlog::warn("Delete object {}", name);
 	}

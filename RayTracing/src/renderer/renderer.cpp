@@ -8,14 +8,12 @@
 #include "lighting.hpp"
 
 void Renderer::realisticRender() {
-	//this->resetFrameIndex();
+	this->resetFrameIndex();
 
 	this->coherence = 1;
 	this->bounces = 5;
 	this->realisticRendering = true;
-	this->maxFrameIndex = 150;
-
-	this->frameIndex = 2;
+	this->maxFrameIndex = 50;
 }
 
 bool Renderer::on_resize(uint32_t width, uint32_t height) {

@@ -31,30 +31,21 @@ void SceneInfo::read(Scene& scene, Camera& camera, int& width, int& height) {
 		float radius = static_cast<float>(std::stod(s.second.get("radius")));
 		int material = static_cast<int>(std::stod(s.second.get("material")));
 
-		Sphere sphere;
-		sphere.name = s.first;
-		sphere.pos = glm::vec3(x, y, z);
-		sphere.radius = radius;
-		sphere.material_index = material;
-
+		Sphere sphere = Sphere(glm::vec3(x, y, z), radius, s.first, material);
 		scene.spheres.push_back(sphere);
 	}
 
 	
 	for (auto m : this->materialini) {
+		int id = std::stoi(m.second.get("id"));
 		float r = static_cast<float>(std::stod(m.second.get("r")));
 		float g = static_cast<float>(std::stod(m.second.get("g")));
 		float b = static_cast<float>(std::stod(m.second.get("b")));
 		float roughness = static_cast<float>(std::stod(m.second.get("roughness")));
 		float emission = static_cast<float>(std::stod(m.second.get("emission")));
+		std::string lighting = m.second.get("lighting");
 
-		Material material;
-		material.Albedo = glm::vec3(r, g, b);
-		material.roughness = roughness;
-		material.EmissionPower = emission;
-		material.name = m.first;
-
-		material.lighting = m.second.get("lighting");
+		Material material = Material(glm::vec3{r, g, b}, roughness, emission, id, lighting, m.first);
 
 		scene.materials.push_back(material);
 	}
@@ -89,7 +80,7 @@ void SceneInfo::read(Scene& scene, Camera& camera, int& width, int& height) {
 	camera.RecalculateView();
 	camera.RecalculateRayDirections();
 
-	spdlog::info("Update scene");
+	spdlog::info("Read scene from disk");
 }
 
 void SceneInfo::write(Scene& scene, Camera& camera, int width, int height) {
@@ -109,6 +100,7 @@ void SceneInfo::write(Scene& scene, Camera& camera, int width, int height) {
 	// materials
 	for (Material material : scene.materials) {
 		// write the material's info to materialInfo.ini
+		this->materialini[material.name]["id"] 		  = std::to_string(material.id);
 		this->materialini[material.name]["r"]         = std::to_string(material.Albedo.r);
 		this->materialini[material.name]["b"]         = std::to_string(material.Albedo.b);
 		this->materialini[material.name]["g"]         = std::to_string(material.Albedo.g);
