@@ -1,5 +1,8 @@
 #include "editor.hpp"
 
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include "imgui_internal.h"
+
 #include "spdlog/spdlog.h"
 
 Editor::Editor()
@@ -64,6 +67,8 @@ void Editor::OnUIRender()
 
 	auto image = this->renderer.get_final_image();
 	if (image) {
+		ImGui::SetCursorPos((ImGui::GetWindowSize() - ImVec2(float(image->GetWidth()), float(image->GetHeight()))) * 0.5f);
+		
 		ImGui::Image(image->GetDescriptorSet(), { float(image->GetWidth()), float(image->GetHeight()) },
 			ImVec2(0, 1), ImVec2(1, 0));
 	}
