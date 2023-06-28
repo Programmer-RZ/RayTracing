@@ -89,12 +89,12 @@ void Editor::MaterialUI(bool& sceneMoved) {
 
 		glm::vec3 Albedo = { 0.2f, 0.3f, 1.0f };
 		float roughness = 0.0f;
-		float EmissionPower = 1.0f;
+		float EmissionPower = 0.0f;
 
 		int id = this->scene.materials.size();
 		std::string name = "Material" + std::to_string(id);
 
-		Material material = Material(Albedo, roughness, EmissionPower, id, "diffuse", name);
+		Material material = Material(Albedo, roughness, EmissionPower, id, "lambertian", name);
 
 		this->scene.materials.push_back(material);
 
@@ -114,14 +114,16 @@ void Editor::MaterialUI(bool& sceneMoved) {
 		if (ImGui::CollapsingHeader(material.name.c_str())) {
 
 			if (ImGui::ColorEdit3("Color", glm::value_ptr(material.Albedo))) { sceneMoved = true; }
-
-			if (ImGui::DragFloat("Roughness", &material.roughness, 0.1f, 0.0f, 1.0f)) { sceneMoved = true; }
-
-			if (ImGui::DragFloat("Emission Power", &material.EmissionPower, 0.05f, 0.0f, FLT_MAX)) { sceneMoved = true; }
+			
+			if (material.lighting == "reflect")
+			{ if (ImGui::DragFloat("Roughness", &material.roughness, 0.1f, 0.0f, 1.0f)) { sceneMoved = true; } }
+			
+			if (material.lighting == "diffuse light")
+			{ if (ImGui::DragFloat("Emission Power", &material.EmissionPower, 0.05f, 0.0f, FLT_MAX)) { sceneMoved = true; } }
 
 			if (ImGui::BeginCombo("Lighting", material.lighting.c_str())) {
-				char* lightingMethods[2] = { "diffuse", "reflect" };
-				for (int n = 0; n < 2; n++) {
+				char* lightingMethods[3] = { "lambertian", "reflect" , "diffuse light" };
+				for (int n = 0; n < 3; n++) {
 					bool isSelected = (material.lighting == lightingMethods[n]);
 					if (ImGui::Selectable(lightingMethods[n], isSelected)) {
 						material.lighting = std::string(lightingMethods[n]);
@@ -223,82 +225,90 @@ void Editor::SceneUI(bool& sceneMoved) {
 	std::vector<int> boxes_todelete = {};
 
 	// sphere's ui
-	for (int i = 0; i < this->scene.spheres.size(); i++) {
-		ImGui::PushID(i);
-		ImGui::Separator();
+	if (this->scene.selected_object == this->scene.objects[0])
+	{
+		for (int i = 0; i < this->scene.spheres.size(); i++) {
+			ImGui::PushID(i);
+			ImGui::Separator();
 
-		Sphere& sphere = this->scene.spheres[i];
+			Sphere& sphere = this->scene.spheres[i];
 
-		if (ImGui::CollapsingHeader(sphere.name.c_str())) {
-			if (ImGui::DragFloat3("Position", glm::value_ptr(sphere.pos), 0.1f)) { sceneMoved = true; }
+			if (ImGui::CollapsingHeader(sphere.name.c_str())) {
+				if (ImGui::DragFloat3("Position", glm::value_ptr(sphere.pos), 0.1f)) { sceneMoved = true; }
 
-			if (ImGui::DragFloat("Radius", &sphere.radius, 0.1f, 0.0f)) { sceneMoved = true; }
+				if (ImGui::DragFloat("Radius", &sphere.radius, 0.1f, 0.0f)) { sceneMoved = true; }
 
-			if (ImGui::BeginCombo("Material", this->scene.materials[sphere.material_index].name.c_str())) {
+				if (ImGui::BeginCombo("Material", this->scene.materials[sphere.material_index].name.c_str())) {
 
-				for (int n = 0; n < this->scene.materials.size(); n++) {
-					bool isSelected = (this->scene.materials[sphere.material_index].id == this->scene.materials[n].id);
-					if (ImGui::Selectable(this->scene.materials[n].name.c_str(), isSelected)) {
-						sphere.material_index = n;
-						sceneMoved = true;
+					for (int n = 0; n < this->scene.materials.size(); n++) {
+						bool isSelected = (this->scene.materials[sphere.material_index].id == this->scene.materials[n].id);
+						if (ImGui::Selectable(this->scene.materials[n].name.c_str(), isSelected)) {
+							sphere.material_index = n;
+							sceneMoved = true;
+						}
+						if (isSelected) {
+							ImGui::SetItemDefaultFocus();
+						}
 					}
-					if (isSelected) {
-						ImGui::SetItemDefaultFocus();
-					}
+					ImGui::EndCombo();
 				}
-				ImGui::EndCombo();
-			}
 
 
-			if (ImGui::Button("Delete Sphere")) {
-				spheres_todelete.push_back(i);
-				sceneMoved = true;
+				if (ImGui::Button("Delete Sphere")) {
+					spheres_todelete.push_back(i);
+					sceneMoved = true;
+				}
 			}
+			ImGui::PopID();
 		}
-		ImGui::PopID();
 	}
 
 	// box's ui
-	for (int i = 0; i < this->scene.boxes.size(); i++) {
-		ImGui::PushID(i);
-		ImGui::Separator();
+	else if (this->scene.selected_object == this->scene.objects[1])
+	{
+		for (int i = 0; i < this->scene.boxes.size(); i++) {
+			ImGui::PushID(i);
+			ImGui::Separator();
 
-		Box& box = this->scene.boxes[i];
+			Box& box = this->scene.boxes[i];
 
-		if (ImGui::CollapsingHeader(box.name.c_str())) {
-			bool updateSides = false;
+			if (ImGui::CollapsingHeader(box.name.c_str())) {
+				bool updateSides = false;
 
-			if (ImGui::DragFloat3("Corner 1", glm::value_ptr(box.box_min), 0.1f)) { sceneMoved = true; updateSides = true; }
+				if (ImGui::DragFloat3("Corner 1", glm::value_ptr(box.box_min), 0.1f)) { sceneMoved = true; updateSides = true; }
 
-			if (ImGui::DragFloat3("Corner 2", glm::value_ptr(box.box_max), 0.1f)) { sceneMoved = true; updateSides = true; }
+				if (ImGui::DragFloat("Length", &box.length, 0.1f, 0.0f)) { sceneMoved = true; updateSides = true; }
+				if (ImGui::DragFloat("Width", &box.width, 0.1f, 0.0f)) { sceneMoved = true; updateSides = true; }
+				if (ImGui::DragFloat("Height", &box.height, 0.1f, 0.0f)) { sceneMoved = true; updateSides = true; }
 
-			if (ImGui::BeginCombo("Material", this->scene.materials[box.material_index].name.c_str())) {
+				if (ImGui::BeginCombo("Material", this->scene.materials[box.material_index].name.c_str())) {
 
-				for (int n = 0; n < this->scene.materials.size(); n++) {
-					bool isSelected = (this->scene.materials[box.material_index].id == this->scene.materials[n].id);
-					if (ImGui::Selectable(this->scene.materials[n].name.c_str(), isSelected)) {
-						box.material_index = n;
-						sceneMoved = true;
-						updateSides = true;
+					for (int n = 0; n < this->scene.materials.size(); n++) {
+						bool isSelected = (this->scene.materials[box.material_index].id == this->scene.materials[n].id);
+						if (ImGui::Selectable(this->scene.materials[n].name.c_str(), isSelected)) {
+							box.material_index = n;
+							sceneMoved = true;
+							updateSides = true;
+						}
+						if (isSelected) {
+							ImGui::SetItemDefaultFocus();
+						}
 					}
-					if (isSelected) {
-						ImGui::SetItemDefaultFocus();
-					}
+					ImGui::EndCombo();
 				}
-				ImGui::EndCombo();
-			}
 
-			if (updateSides) {
-				box.updateSides();
-			}
+				if (updateSides) {
+					box.updateSides();
+				}
 
 
-			if (ImGui::Button("Delete Box")) {
-				boxes_todelete.push_back(i);
-				sceneMoved = true;
+				if (ImGui::Button("Delete Box")) {
+					boxes_todelete.push_back(i);
+					sceneMoved = true;
+				}
 			}
+			ImGui::PopID();
 		}
-		ImGui::PopID();
 	}
 
 	for (int index : spheres_todelete) {

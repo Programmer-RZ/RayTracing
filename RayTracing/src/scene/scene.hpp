@@ -66,7 +66,11 @@ struct Box {
 		side3(box_min.x, box_max.x, box_min.z, box_max.z, box_max.y, material_index),
 		side4(box_min.x, box_max.x, box_min.z, box_max.z, box_min.y, material_index),
 		side5(box_min.y, box_max.y, box_min.z, box_max.z, box_max.x, material_index),
-		side6(box_min.y, box_max.y, box_min.z, box_max.z, box_min.x, material_index)
+		side6(box_min.y, box_max.y, box_min.z, box_max.z, box_min.x, material_index),
+		
+		length(box_max.x-box_min.x),
+		width(box_max.y-box_min.y),
+		height(box_max.z-box_min.z)
 	{}
 
 	std::string name;
@@ -74,6 +78,7 @@ struct Box {
 	
 	glm::vec3 box_min;
 	glm::vec3 box_max;
+	float length, width, height;
 
 	xy_rect side1;
 	xy_rect side2;
@@ -93,7 +98,7 @@ struct Scene {
 
 	const int num_of_avail_obj = 2;
 	char* objects[2] = { "Sphere", "Box" };
-	char* selected_object = "Sphere";
+	char* selected_object = objects[0];
 
 	glm::vec3 skycolor = glm::vec3(0.0f, 0.0f, 0.0f);
 

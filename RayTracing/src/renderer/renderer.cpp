@@ -92,6 +92,8 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, glm::vec3& skycolor)
 	
 	glm::vec3 light(0.0f, 0.0f, 0.0f);
 	glm::vec3 multiplier(1.0f);
+	
+	bool no_scatter;
 
 	for (int i = 0; i < this->bounces; i++) {
 		HitPayload payload = this->TraceRay(ray);
@@ -106,11 +108,18 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, glm::vec3& skycolor)
 
 		const Material* material = payload.materialPtr;
 
-		if (material->lighting == "diffuse") {
-			Lighting::diffuse(payload, material, light, multiplier, ray.Origin, ray.Direction);
+		if (material->lighting == "lambertian") {
+			Lighting::lambertian(payload, material, light, multiplier, ray.Origin, ray.Direction, no_scatter);
 		}
 		else if (material->lighting == "reflect") {
-			Lighting::reflect(payload, material, light, multiplier, ray.Origin, ray.Direction);
+			Lighting::reflect(payload, material, light, multiplier, ray.Origin, ray.Direction, no_scatter);
+		}
+		else if (material->lighting == "diffuse light") {
+			Lighting::diffuse_light(payload, material, light, multiplier, ray.Origin, ray.Direction, no_scatter);
+		}
+		
+		if (no_scatter) {
+			break;
 		}
 	}
 

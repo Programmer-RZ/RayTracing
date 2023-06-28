@@ -34,7 +34,7 @@ public:
 	int& GetBounces() { return this->bounces; }
 
 	// setters
-	void SetFinishRealistic() { this->realisticRendering = false; this->finishedRealistic = false; this->coherence = 7; this->bounces = 3; this->maxFrameIndex = 3; }
+	void SetFinishRealistic() { this->realisticRendering = false; this->finishedRealistic = false; this->coherence = 9; this->bounces = 2; this->maxFrameIndex = 3; }
 	void SetCameraMoved(bool cameraMoved) { this->cameraMoved = cameraMoved; }
 
 private:
@@ -47,14 +47,14 @@ private:
 
 	// rendering
 	int frameIndex = 1;
-	int maxFrameIndex = 3;
+	int maxFrameIndex = 3;	
+	int bounces = 2;
+	int coherence = 9;
 
 	// scene
 	bool cameraMoved = false;
 
 	// realistic rendering
-	int bounces = 3;
-	int coherence = 9;
 	bool realisticRendering = false;
 	bool finishedRealistic = false;
 
