@@ -9,6 +9,7 @@ __pycache__
 *.vcxproj.user
 *.vcxproj.filters
 *.sln
+*.png
 
 # Exclude
 !vendor/bin
