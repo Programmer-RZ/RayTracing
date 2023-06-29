@@ -13,7 +13,7 @@ Editor::Editor()
 
 void Editor::OnUpdate(float ts) 
 {
-	if (!this->renderer.GetRealisticRendering()) {
+	if (!this->renderer.IsRenderingFinalImage()) {
 		bool hasObjects = (
 			this->scene.spheres.size() != 0
 			||
@@ -28,25 +28,29 @@ void Editor::OnUpdate(float ts)
 		}
 	}
 
-	if (this->renderer.GetFinishedRealistic()) {
-		this->renderer.SetFinishRealistic();
-		spdlog::info("Finished realistic rendering");
+	if (this->renderer.IsFinishedFinalImage()) {
+		spdlog::info("Final image - rendered");
+
+		this->exportScene.ExportImage(
+			this->renderer.GetImageData(),
+			this->renderer.GetImageWidth(),
+			this->renderer.GetImageHeight(),
+			this->scene.name
+		);
+
+		this->renderer.SetFinishedFinalImage();
+		spdlog::info("Final image - exported");
+		
+		// reset scale
+		this->scale = 0.5f;
 	}
 }
 
 void Editor::OnUIRender()
 {
-	bool sceneMoved;
-	// if camera moved, scene moved is
-	// automatically set to true no matter what
-	if (this->renderer.GetCameraMoved() || this->renderer.GetRealisticRendering()) {
-		sceneMoved = true;
-	}
-	else {
-		sceneMoved = false;
-	}
+	bool sceneMoved = false;
 
-	if (!this->renderer.GetRealisticRendering()) {
+	if (!this->renderer.IsRenderingFinalImage()) {
 		// options
 		this->OptionsUI();
 
@@ -59,6 +63,10 @@ void Editor::OnUIRender()
 		// materials
 		this->MaterialUI(sceneMoved);
 
+		if (this->renderer.IsCameraMoved()) {
+			sceneMoved = true;
+		}
+
 	}
 
 	// viewport
@@ -67,21 +75,16 @@ void Editor::OnUIRender()
 
 	auto image = this->renderer.get_final_image();
 	if (image) {
-		ImGui::SetCursorPos((ImGui::GetWindowSize() - ImVec2(float(image->GetWidth()), float(image->GetHeight()))) * 0.5f);
-		
-		ImGui::Image(image->GetDescriptorSet(), { float(image->GetWidth()), float(image->GetHeight()) },
-			ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::SetCursorPos((ImGui::GetWindowSize() - ImVec2(static_cast<float>(image->GetWidth())/this->scale, static_cast<float>(image->GetHeight())/this->scale)) * 0.5f);
+		ImGui::Image(image->GetDescriptorSet(), { static_cast<float>(image->GetWidth())/this->scale, static_cast<float>(image->GetHeight())/this->scale },
+			ImVec2(0, 1), ImVec2(1, 0)); // flip the image
 	}
 
 	ImGui::End();
 	ImGui::PopStyleVar();
 
 	if (sceneMoved) {
-		if (!this->renderer.GetRealisticRendering()) {
-			// if realistic rendering
-			// do not interrupt the frame index
-			this->renderer.resetFrameIndex();
-		}
+		this->renderer.resetFrameIndex();
 	}
 
 	this->render();
@@ -349,13 +352,18 @@ void Editor::SettingsUI(bool& sceneMoved) {
 void Editor::OptionsUI() {
 	ImGui::Begin("Options");
 
-	if (this->renderer.GetRealisticRendering()) {
-		ImGui::Text("Rendering Realistic Image...");
+	if (this->renderer.IsRenderingFinalImage()) {
+		ImGui::Text("Rendering Final Image...");
 	}
 
-	if (ImGui::Button("Realistic Rendering")) {
-		this->renderer.realisticRender();
-		spdlog::info("Initialize realistic rendering");
+	if (ImGui::Button("Render and export final image")) {
+		this->renderer.SetupFinalImage();
+
+		// make the scale higher
+		// to increase quality
+		this->scale = 1.0f;
+
+		spdlog::info("Initialize final image render");
 	}
 
 	ImGui::Separator();
@@ -390,7 +398,7 @@ void Editor::OptionsUI() {
 			this->renderer.GetImageHeight(),
 			this->scene.name
 		);
-		spdlog::info("Finished export");
+		spdlog::info("Scene exported as {}", this->exportScene.GetCurrentFormat());
 	}
 
 	ImGui::Separator();
@@ -407,9 +415,9 @@ void Editor::OptionsUI() {
 void Editor::render() {
 	Walnut::Timer timer;
 
-	this->renderer.on_resize(this->m_ViewportWidth, this->m_ViewportHeight);
+	this->renderer.on_resize(this->m_ViewportWidth*this->scale, this->m_ViewportHeight*this->scale);
 
-	this->camera.OnResize(this->m_ViewportWidth, this->m_ViewportHeight);
+	this->camera.OnResize(this->m_ViewportWidth*this->scale, this->m_ViewportHeight*this->scale);
 
 	this->renderer.render(this->scene, this->camera, this->scene.skycolor);
 

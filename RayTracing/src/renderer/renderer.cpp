@@ -7,13 +7,13 @@
 
 #include "lighting.hpp"
 
-void Renderer::realisticRender() {
+void Renderer::SetupFinalImage() {
 	this->resetFrameIndex();
 
 	this->coherence = 1;
 	this->bounces = 5;
-	this->realisticRendering = true;
-	this->maxFrameIndex = 50;
+	this->renderingFinalImage = true;
+	this->maxFrameIndex = 10;
 }
 
 bool Renderer::on_resize(uint32_t width, uint32_t height) {
@@ -43,8 +43,8 @@ bool Renderer::on_resize(uint32_t width, uint32_t height) {
 void Renderer::render(const Scene& scene, const Camera& camera, glm::vec3& skycolor) {
 	if (this->frameIndex > this->maxFrameIndex) {
 		// no need to calculate the image again
-		if (this->realisticRendering) {
-			this->finishedRealistic = true;
+		if (this->renderingFinalImage) {
+			this->finishedFinalImage = true;
 		}
 		return;
 	}
@@ -93,7 +93,7 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, glm::vec3& skycolor)
 	glm::vec3 light(0.0f, 0.0f, 0.0f);
 	glm::vec3 multiplier(1.0f);
 	
-	bool no_scatter;
+	bool no_scatter = false;
 
 	for (int i = 0; i < this->bounces; i++) {
 		HitPayload payload = this->TraceRay(ray);

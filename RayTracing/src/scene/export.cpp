@@ -1,9 +1,14 @@
 #include "export.hpp"
 #include "../global.h"
+#include "../utils.hpp"
+
 #include <string>
+
+#include "spdlog/spdlog.h"
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "../libs/stb/stb_image_write.h"
+
 
 Export::Export() 
 {
@@ -21,5 +26,9 @@ void Export::ExportImage(uint32_t* imageData, int imageWidth, int imageHeight, s
 		// flip vertically so image is not flipped
 		stbi_flip_vertically_on_write(true);
 		stbi_write_png(path.c_str(), imageWidth, imageHeight, CHANNEL_NUMBER, imageData, imageWidth*CHANNEL_NUMBER);
+		
+		// open the image in photo viewer
+		std::string opencommand = "start" + path;
+		system(opencommand.c_str());
 	}
 }
