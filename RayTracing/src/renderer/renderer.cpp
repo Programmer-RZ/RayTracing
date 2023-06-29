@@ -65,6 +65,9 @@ void Renderer::render(const Scene& scene, const Camera& camera, glm::vec3& skyco
 			ray.Direction = this->ActiveCamera->CalculateRayDirection(x, y);
 			
 			glm::vec4 color = this->PerPixel(x, y, ray);
+			color.r = sqrt(color.r);
+			color.g = sqrt(color.g);
+			color.b = sqrt(color.b);
 		
 			
 			uint32_t RGBA;
@@ -93,9 +96,8 @@ void Renderer::render(const Scene& scene, const Camera& camera, glm::vec3& skyco
 glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, Ray& ray)
 {
 	
-	glm::vec3 light(0.0f, 0.0f, 0.0f);
+	glm::vec3 light(1.0f, 1.0f, 1.0f);
 	glm::vec3 multiplier(1.0f);
-	glm::vec3 skycolor = this->ActiveScene->skycolor;
 	
 	bool scatter = true;
 
@@ -103,7 +105,11 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, Ray& ray)
 		HitPayload payload = this->TraceRay(ray);
 		
 		if (payload.miss) {
-			light += skycolor * multiplier;
+			glm::vec3 unit_direction = glm::normalize(ray.Direction);
+			glm::vec3 t = glm::vec3(0.5f*(unit_direction.y + 1.0f));
+			
+			light *= multiplier * (glm::vec3(1.0f)-t)*glm::vec3(1.0f, 1.0f, 1.0f) + t*glm::vec3(0.4f, 0.7f, 1.0f);
+			
 			break;
 		}
 

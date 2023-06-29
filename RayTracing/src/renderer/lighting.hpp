@@ -6,18 +6,20 @@
 #include "Walnut/Random.h"
 
 namespace Scatter {
-	static bool lambertian(HitPayload payload, const Material* material, glm::vec3& light, glm::vec3& multiplier, glm::vec3& rDir) {
-		light += material->Albedo * multiplier;
-		multiplier *= material->Albedo;
-
+	static bool lambertian(HitPayload payload, const Material* material, glm::vec3& light, glm::vec3& multiplier, glm::vec3& rDir) {		
+		multiplier = material->Albedo;
+		
+		light *= material->Albedo * multiplier;
+		
 		rDir = payload.WorldNormal + glm::normalize(Walnut::Random::InUnitSphere());
 		
 		return true;
 	}
 
 	static bool reflect(HitPayload payload, const Material* material, glm::vec3& light, glm::vec3& multiplier, glm::vec3& rDir) {
-		light += material->Albedo * multiplier;
-		multiplier *= material->Albedo;
+		multiplier = material->Albedo;
+		
+		light *= material->Albedo * multiplier;
 
 		rDir = glm::reflect(rDir, payload.WorldNormal + material->roughness * Walnut::Random::InUnitSphere());
 		
@@ -25,8 +27,9 @@ namespace Scatter {
 	}
 	
 	static bool diffuse_light(HitPayload payload, const Material* material, glm::vec3& light, glm::vec3& multiplier, glm::vec3& rDir) {
-		light += material->GetEmission();
-		multiplier *= material->Albedo;
+		multiplier = material->Albedo;
+
+		light *= material->GetEmission();
 		
 		return false;
 	}
