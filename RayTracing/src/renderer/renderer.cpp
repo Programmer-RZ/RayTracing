@@ -97,13 +97,10 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, Ray& ray)
 	glm::vec3 multiplier(1.0f);
 	glm::vec3 skycolor = this->ActiveScene->skycolor;
 	
-	bool no_scatter = false;
+	bool scatter = true;
 
 	for (int i = 0; i < this->bounces; i++) {
 		HitPayload payload = this->TraceRay(ray);
-
-		//hitDist = std::round(hitDist * 1000) / 1000;
-		//std::cout << hitDist << std::endl;
 		
 		if (payload.miss) {
 			light += skycolor * multiplier;
@@ -111,20 +108,19 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, Ray& ray)
 		}
 
 		const Material* material = payload.materialPtr;
+		ray.Origin = payload.WorldPosition + payload.WorldNormal * 0.0001f;
 
 		if (material->lighting == "lambertian") {
-			Lighting::lambertian(payload, material, light, multiplier, ray.Origin, ray.Direction, no_scatter);
+			scatter = Scatter::lambertian(payload, material, light, multiplier, ray.Direction);
 		}
 		else if (material->lighting == "reflect") {
-			Lighting::reflect(payload, material, light, multiplier, ray.Origin, ray.Direction, no_scatter);
+			scatter = Scatter::reflect(payload, material, light, multiplier, ray.Direction);
 		}
 		else if (material->lighting == "diffuse light") {
-			Lighting::diffuse_light(payload, material, light, multiplier, ray.Origin, ray.Direction, no_scatter);
+			scatter = Scatter::diffuse_light(payload, material, light, multiplier, ray.Direction);
 		}
 		
-		if (no_scatter) {
-			break;
-		}
+		if (!scatter) { break; }
 	}
 
 	return glm::vec4(light, 1.0f);
