@@ -78,7 +78,6 @@ void SceneInfo::read(Scene& scene, Camera& camera, int& width, int& height) {
 	camera.SetFarClip(static_cast<float>(std::stod(this->sceneini.get("camera").get("farClip"))));
 
 	camera.RecalculateView();
-	camera.RecalculateRayDirections();
 
 	spdlog::info("Read scene from disk");
 }

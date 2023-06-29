@@ -59,8 +59,14 @@ void Renderer::render(const Scene& scene, const Camera& camera, glm::vec3& skyco
 
 	for (uint32_t y = 0; y < this->m_FinalImage->GetHeight(); y++) {
 		for (uint32_t x = this->coherence - 1; x < this->m_FinalImage->GetWidth(); x+=this->coherence) {
-
-			glm::vec4 color = this->PerPixel(x, y, skycolor);
+			
+			Ray ray;
+			ray.Origin = this->ActiveCamera->GetPosition();
+			ray.Direction = this->ActiveCamera->CalculateRayDirection(x, y);
+			
+			glm::vec4 color = this->PerPixel(x, y, ray);
+		
+			
 			uint32_t RGBA;
 
 			for (int c = 0; c < this->coherence; c++) {
@@ -84,14 +90,12 @@ void Renderer::render(const Scene& scene, const Camera& camera, glm::vec3& skyco
 	this->frameIndex++;
 }
 
-glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, glm::vec3& skycolor)
+glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, Ray& ray)
 {
-	Ray ray;
-	ray.Origin = ActiveCamera->GetPosition();
-	ray.Direction = ActiveCamera->GetRayDirections()[x + y * this->m_FinalImage->GetWidth()];
 	
 	glm::vec3 light(0.0f, 0.0f, 0.0f);
 	glm::vec3 multiplier(1.0f);
+	glm::vec3 skycolor = this->ActiveScene->skycolor;
 	
 	bool no_scatter = false;
 

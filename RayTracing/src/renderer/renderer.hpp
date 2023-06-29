@@ -50,7 +50,7 @@ private:
 	int maxFrameIndex = 3;	
 	int bounces = 2;
 	int coherence = 5;
-
+	
 	// scene
 	bool cameraMoved = false;
 
@@ -60,7 +60,7 @@ private:
 
 private:
 
-	glm::vec4 PerPixel(uint32_t x, uint32_t y, glm::vec3& skycolor);
+	glm::vec4 PerPixel(uint32_t x, uint32_t y, Ray& ray);
 
 	HitPayload TraceRay(const Ray& ray);
 };

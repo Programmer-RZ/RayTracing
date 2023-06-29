@@ -12,7 +12,8 @@ public:
 	void OnResize(uint32_t width, uint32_t height);
 	void RecalculateProjection();
 	void RecalculateView();
-	void RecalculateRayDirections();
+	
+	glm::vec3 CalculateRayDirection(uint32_t u, uint32_t v) const;
 
 	const glm::mat4& GetProjection() const { return m_Projection; }
 	const glm::mat4& GetInverseProjection() const { return m_InverseProjection; }
@@ -21,8 +22,6 @@ public:
 
 	const glm::vec3& GetPosition() const { return m_Position; }
 	const glm::vec3& GetDirection() const { return m_ForwardDirection; }
-
-	const std::vector<glm::vec3>& GetRayDirections() const { return m_RayDirections; }
 
 	const float GetVerticalFOV() const { return m_VerticalFOV; }
 	const float GetNearClip() const { return m_NearClip; }
@@ -48,9 +47,6 @@ private:
 
 	glm::vec3 m_Position{ 0.0f, 0.0f, 0.0f };
 	glm::vec3 m_ForwardDirection{ 0.0f, 0.0f, 0.0f };
-
-	// Cached ray directions
-	std::vector<glm::vec3> m_RayDirections;
 
 	glm::vec2 m_LastMousePosition{ 0.0f, 0.0f };
 
