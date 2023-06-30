@@ -7,6 +7,7 @@
 struct HitPayload {
 	float HitDist = 0.0f;
 	bool miss = true;
+	bool front_face;
 
 	glm::vec3 WorldPosition = { 0.0f, 0.0f, 0.0f };
 	glm::vec3 WorldNormal = { 0.0f, 0.0f, 0.0f };

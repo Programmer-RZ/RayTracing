@@ -13,7 +13,11 @@ struct Material {
 	std::string lighting;
 
 	glm::vec3 Albedo;
+	
+	// metal material
 	float roughness;
+	
+	// diffuse light
 	float EmissionPower;
 
 	int id;

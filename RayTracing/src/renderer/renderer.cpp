@@ -100,10 +100,15 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, Ray& ray)
 	
 	glm::vec3 light(1.0f, 1.0f, 1.0f);
 	glm::vec3 attenuation(1.0f);
+	uint32_t seed = x + y * this->m_FinalImage->GetWidth();
+	seed *= this->frameIndex;
 	
 	bool scatter = true;
 
 	for (int i = 0; i < this->bounces; i++) {
+		seed += i;
+		
+		
 		HitPayload payload = this->TraceRay(ray);
 		
 		if (payload.miss) {
@@ -116,13 +121,13 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, Ray& ray)
 		ray.Origin = payload.WorldPosition + payload.WorldNormal * 0.0001f;
 
 		if (material->lighting == "lambertian") {
-			scatter = Scatter::lambertian(payload, material, light, attenuation, ray.Direction);
+			scatter = Scatter::lambertian(payload, material, light, attenuation, ray.Direction, seed);
 		}
 		else if (material->lighting == "reflect") {
-			scatter = Scatter::reflect(payload, material, light, attenuation, ray.Direction);
+			scatter = Scatter::reflect(payload, material, light, attenuation, ray.Direction, seed);
 		}
 		else if (material->lighting == "diffuse light") {
-			scatter = Scatter::diffuse_light(payload, material, light, attenuation, ray.Direction);
+			scatter = Scatter::diffuse_light(payload, material, light, attenuation, ray.Direction, seed);
 		}
 		
 		if (!scatter) { break; }

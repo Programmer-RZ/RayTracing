@@ -41,7 +41,9 @@ void SphereIntersection::TraceRay(const Ray& ray, const Scene* ActiveScene, HitP
 		payload.miss = false;
 
 		payload.WorldPosition = origin + ray.Direction * payload.HitDist;
-		payload.WorldNormal = glm::normalize(payload.WorldPosition);
+		
+		payload.front_face = glm::dot(ray.Direction, glm::normalize(payload.WorldPosition)) < 0;
+		payload.WorldNormal = payload.front_face ? glm::normalize(payload.WorldPosition) : -glm::normalize(payload.WorldPosition);
 
 		payload.WorldPosition += sphere.pos;
 		payload.materialPtr = &(ActiveScene->materials[sphere.material_index]);
@@ -93,8 +95,8 @@ void BoxIntersection::xyrect_TraceRay(const Ray& ray, const Scene* ActiveScene, 
 
 	payload.WorldPosition = ray.Origin + ray.Direction * payload.HitDist;
 
-	bool front_face = glm::dot(ray.Direction, glm::vec3{ 0, 0, 1 }) < 0;
-	payload.WorldNormal = front_face ? glm::vec3{ 0, 0, 1 } : -glm::vec3{ 0, 0, 1 };
+	payload.front_face = glm::dot(ray.Direction, glm::vec3{ 0, 0, 1 }) < 0;
+	payload.WorldNormal = payload.front_face ? glm::vec3{ 0, 0, 1 } : -glm::vec3{ 0, 0, 1 };
 
 	payload.materialPtr = &(ActiveScene->materials[xyrect.material_index]);
 }
@@ -119,8 +121,8 @@ void BoxIntersection::xzrect_TraceRay(const Ray& ray, const Scene* ActiveScene, 
 
 	payload.WorldPosition = ray.Origin + ray.Direction * payload.HitDist;
 
-	bool front_face = glm::dot(ray.Direction, glm::vec3{ 0, 1, 0 }) < 0;
-	payload.WorldNormal = front_face ? glm::vec3{ 0, 1, 0 } : -glm::vec3{ 0, 1, 0 };
+	payload.front_face = glm::dot(ray.Direction, glm::vec3{ 0, 1, 0 }) < 0;
+	payload.WorldNormal = payload.front_face ? glm::vec3{ 0, 1, 0 } : -glm::vec3{ 0, 1, 0 };
 
 	payload.materialPtr = &(ActiveScene->materials[xzrect.material_index]);
 }
@@ -145,8 +147,8 @@ void BoxIntersection::yzrect_TraceRay(const Ray& ray, const Scene* ActiveScene, 
 
 	payload.WorldPosition = ray.Origin + ray.Direction * payload.HitDist;
 
-	bool front_face = glm::dot(ray.Direction, glm::vec3{ 1, 0, 0 }) < 0;
-	payload.WorldNormal = front_face ? glm::vec3{ 1, 0, 0 } : -glm::vec3{ 1, 0, 0 };
+	payload.front_face = glm::dot(ray.Direction, glm::vec3{ 1, 0, 0 }) < 0;
+	payload.WorldNormal = payload.front_face ? glm::vec3{ 1, 0, 0 } : -glm::vec3{ 1, 0, 0 };
 
 	payload.materialPtr = &(ActiveScene->materials[xzrect.material_index]);
 }
