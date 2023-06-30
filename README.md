@@ -42,7 +42,9 @@ RayTracing editor where you can create 3D designs and hyper-realistic art! Curre
 - spdlog
 
 # Examples
-![image](https://github.com/Programmer-RZ/RayTracing/assets/123858154/009b7939-3126-4ffc-8f66-65c42245a9a1)
+## Cornell's Box on steroids
+![image](https://github.com/Programmer-RZ/RayTracing/assets/123858154/ac410e5e-964d-4de4-97ec-f058ba9a4cf6)
+
 
 # Credits
 - Thanks to [The Cherno](https://www.youtube.com/@TheCherno) for [RayTracing Tutorials](https://www.youtube.com/watch?v=gfW1Fhd9u9Q&list=PLlrATfBNZ98edc5GshdBtREv5asFW3yXl)

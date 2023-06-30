@@ -37,6 +37,9 @@ void Editor::OnUpdate(float ts)
 			this->renderer.GetImageHeight(),
 			this->scene.name
 		);
+		
+		this->m_ViewportWidth /= 2;
+		this->m_ViewportHeight /= 2;
 
 		this->renderer.SetFinishedFinalImage();
 		spdlog::info("Final image - exported");
@@ -358,6 +361,9 @@ void Editor::OptionsUI() {
 
 	if (ImGui::Button("Render and export final image")) {
 		this->renderer.SetupFinalImage();
+		
+		this->m_ViewportWidth *= 2;
+		this->m_ViewportHeight *= 2;
 
 		spdlog::info("Initialize final image render");
 	}
