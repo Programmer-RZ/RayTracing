@@ -37,7 +37,7 @@ std::string Scene::createNewBox(glm::vec3 camera_pos, glm::vec3 camera_dir) {
 }
 
 void Box::updateSides() {
-	this->box_max = this->box_min + glm::vec3(this->length, this->width, this->height);
+	this->box_max = this->box_min + glm::vec3(this->length, this->height, this->width);
 	
 	glm::vec3 bmin = this->box_min;
 	glm::vec3 bmax = this->box_max;

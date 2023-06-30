@@ -9,16 +9,19 @@
 SceneInfo::SceneInfo()
 	: scenefile(SCENEINFO),
 	spherefile(SPHEREINFO),
+	boxfile(BOXINFO),
 	materialfile(MATERIALINFO)
 {
 	this->scenefile.read(this->sceneini);
 	this->spherefile.read(this->sphereini);
+	this->boxfile.read(this->boxini);
 	this->materialfile.read(this->materialini);
 }
 
 void SceneInfo::clear() {
 	this->sceneini.clear();
 	this->sphereini.clear();
+	this->boxini.clear();
 	this->materialini.clear();
 }
 
@@ -33,6 +36,24 @@ void SceneInfo::read(Scene& scene, Camera& camera, int& width, int& height) {
 
 		Sphere sphere = Sphere(glm::vec3(x, y, z), radius, s.first, material);
 		scene.spheres.push_back(sphere);
+	}
+	
+	for (auto b : this->boxini) {
+		glm::vec3 boxmin = {
+			static_cast<float>(std::stod(b.second.get("boxminx"))),
+			static_cast<float>(std::stod(b.second.get("boxminy"))),
+			static_cast<float>(std::stod(b.second.get("boxminz"))),
+		};
+		glm::vec3 boxmax = {
+			static_cast<float>(std::stod(b.second.get("boxmaxx"))),
+			static_cast<float>(std::stod(b.second.get("boxmaxy"))),
+			static_cast<float>(std::stod(b.second.get("boxmaxz"))),
+		};
+		
+		int material = static_cast<int>(std::stod(b.second.get("material")));
+
+		Box box = Box(boxmin, boxmax, b.first, material);
+		scene.boxes.push_back(box);
 	}
 
 	
@@ -95,6 +116,18 @@ void SceneInfo::write(Scene& scene, Camera& camera, int width, int height) {
 		this->sphereini[sphere.name]["radius"]   = std::to_string(sphere.radius);
 		this->sphereini[sphere.name]["material"] = std::to_string(sphere.material_index);
 	}
+	
+	// boxes
+	for (Box box : scene.boxes) {
+		// write the box's info to boxInfo.ini
+		this->boxini[box.name]["boxminx"]  = std::to_string(box.box_min.x);
+		this->boxini[box.name]["boxminy"]  = std::to_string(box.box_min.y);
+		this->boxini[box.name]["boxminz"]  = std::to_string(box.box_min.z);
+		this->boxini[box.name]["boxmaxx"]  = std::to_string(box.box_max.x);
+		this->boxini[box.name]["boxmaxy"]  = std::to_string(box.box_max.y);
+		this->boxini[box.name]["boxmaxz"]  = std::to_string(box.box_max.z);
+		this->boxini[box.name]["material"] = std::to_string(box.material_index);
+	}
 
 	// materials
 	for (Material material : scene.materials) {
@@ -134,6 +167,7 @@ void SceneInfo::write(Scene& scene, Camera& camera, int width, int height) {
 	// write all the contents
 	this->scenefile.write(this->sceneini, true);
 	this->spherefile.write(this->sphereini, true);
+	this->boxfile.write(this->boxini, true);
 	this->materialfile.write(this->materialini, true);
 }
 

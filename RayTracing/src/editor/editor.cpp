@@ -40,9 +40,6 @@ void Editor::OnUpdate(float ts)
 
 		this->renderer.SetFinishedFinalImage();
 		spdlog::info("Final image - exported");
-		
-		// reset scale
-		this->scale = 0.5f;
 	}
 }
 
@@ -75,8 +72,8 @@ void Editor::OnUIRender()
 
 	auto image = this->renderer.get_final_image();
 	if (image) {
-		ImGui::SetCursorPos((ImGui::GetWindowSize() - ImVec2(static_cast<float>(image->GetWidth())/this->scale, static_cast<float>(image->GetHeight())/this->scale)) * 0.5f);
-		ImGui::Image(image->GetDescriptorSet(), { static_cast<float>(image->GetWidth())/this->scale, static_cast<float>(image->GetHeight())/this->scale },
+		ImGui::SetCursorPos((ImGui::GetWindowSize() - ImVec2(static_cast<float>(image->GetWidth())*2.0f, static_cast<float>(image->GetHeight())*2.0f)) * 0.5f);
+		ImGui::Image(image->GetDescriptorSet(), { static_cast<float>(image->GetWidth())*2.0f, static_cast<float>(image->GetHeight())*2.0f },
 			ImVec2(0, 1), ImVec2(1, 0)); // flip the image
 	}
 
@@ -95,18 +92,16 @@ void Editor::MaterialUI(bool& sceneMoved) {
 
 	if (ImGui::Button("New Material")) {
 
-		glm::vec3 Albedo = { 0.2f, 0.3f, 1.0f };
+		glm::vec3 Albedo = { 0.8f, 0.8f, 0.8f };
 		float roughness = 0.0f;
 		float EmissionPower = 0.0f;
 
 		int id = this->scene.materials.size();
-		std::string name = "Material" + std::to_string(id);
+		std::string name = "material" + std::to_string(id);
 
 		Material material = Material(Albedo, roughness, EmissionPower, id, "lambertian", name);
 
 		this->scene.materials.push_back(material);
-
-		sceneMoved = true;
 
 		spdlog::info("Add new material {}", name);
 	}
@@ -186,8 +181,13 @@ void Editor::MaterialUI(bool& sceneMoved) {
 void Editor::SceneUI(bool& sceneMoved) {
 	ImGui::Begin("Scene");
 	ImGui::Text(scene.name.c_str());
-	ImGui::Separator();
-	ImGui::Dummy(ImVec2(0, 25));
+	
+	ImGui::Dummy(ImVec2(0, 10));
+	
+	// sky color
+	if (ImGui::ColorEdit3("Sky Color", glm::value_ptr(this->scene.skycolor))) { sceneMoved = true; }
+	
+	ImGui::Dummy(ImVec2(0, 10));
 
 	// objects
 	ImGui::Text("Objects");
@@ -359,10 +359,6 @@ void Editor::OptionsUI() {
 	if (ImGui::Button("Render and export final image")) {
 		this->renderer.SetupFinalImage();
 
-		// make the scale higher
-		// to increase quality
-		this->scale = 1.0f;
-
 		spdlog::info("Initialize final image render");
 	}
 
@@ -415,9 +411,9 @@ void Editor::OptionsUI() {
 void Editor::render() {
 	Walnut::Timer timer;
 
-	this->renderer.on_resize(this->m_ViewportWidth*this->scale, this->m_ViewportHeight*this->scale);
+	this->renderer.on_resize(this->m_ViewportWidth, this->m_ViewportHeight);
 
-	this->camera.OnResize(this->m_ViewportWidth*this->scale, this->m_ViewportHeight*this->scale);
+	this->camera.OnResize(this->m_ViewportWidth, this->m_ViewportHeight);
 
 	this->renderer.render(this->scene, this->camera, this->scene.skycolor);
 

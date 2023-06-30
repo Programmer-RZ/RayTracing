@@ -11,9 +11,9 @@ void Renderer::SetupFinalImage() {
 	this->resetFrameIndex();
 
 	this->coherence = 1;
-	this->bounces = 5;
+	this->bounces = 3;
 	this->renderingFinalImage = true;
-	this->maxFrameIndex = 10;
+	this->maxFrameIndex = 20;
 }
 
 bool Renderer::on_resize(uint32_t width, uint32_t height) {
@@ -65,6 +65,8 @@ void Renderer::render(const Scene& scene, const Camera& camera, glm::vec3& skyco
 			ray.Direction = this->ActiveCamera->CalculateRayDirection(x, y);
 			
 			glm::vec4 color = this->PerPixel(x, y, ray);
+			
+			// gamma correction
 			color.r = sqrt(color.r);
 			color.g = sqrt(color.g);
 			color.b = sqrt(color.b);
@@ -97,7 +99,7 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, Ray& ray)
 {
 	
 	glm::vec3 light(1.0f, 1.0f, 1.0f);
-	glm::vec3 multiplier(1.0f);
+	glm::vec3 attenuation(1.0f);
 	
 	bool scatter = true;
 
@@ -105,10 +107,7 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, Ray& ray)
 		HitPayload payload = this->TraceRay(ray);
 		
 		if (payload.miss) {
-			glm::vec3 unit_direction = glm::normalize(ray.Direction);
-			glm::vec3 t = glm::vec3(0.5f*(unit_direction.y + 1.0f));
-			
-			light *= multiplier * (glm::vec3(1.0f)-t)*glm::vec3(1.0f, 1.0f, 1.0f) + t*glm::vec3(0.4f, 0.7f, 1.0f);
+			light *= attenuation * this->ActiveScene->skycolor;
 			
 			break;
 		}
@@ -117,13 +116,13 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, Ray& ray)
 		ray.Origin = payload.WorldPosition + payload.WorldNormal * 0.0001f;
 
 		if (material->lighting == "lambertian") {
-			scatter = Scatter::lambertian(payload, material, light, multiplier, ray.Direction);
+			scatter = Scatter::lambertian(payload, material, light, attenuation, ray.Direction);
 		}
 		else if (material->lighting == "reflect") {
-			scatter = Scatter::reflect(payload, material, light, multiplier, ray.Direction);
+			scatter = Scatter::reflect(payload, material, light, attenuation, ray.Direction);
 		}
 		else if (material->lighting == "diffuse light") {
-			scatter = Scatter::diffuse_light(payload, material, light, multiplier, ray.Direction);
+			scatter = Scatter::diffuse_light(payload, material, light, attenuation, ray.Direction);
 		}
 		
 		if (!scatter) { break; }

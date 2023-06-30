@@ -15,6 +15,9 @@ private:
 
 	mINI::INIFile materialfile;
 	mINI::INIStructure materialini;
+	
+	mINI::INIFile boxfile;
+	mINI::INIStructure boxini;
 
 private:
 	void clear();

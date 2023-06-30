@@ -35,11 +35,7 @@ private:
 	Camera camera;
 	Scene scene;
 
-	int m_ViewportWidth = 1200, m_ViewportHeight = 900;
-	
-	// set the scale to be smaller when doing the real time
-	// when doing final image render, set scale to 1.0f
-	float scale = 0.5f;
+	int m_ViewportWidth = 600, m_ViewportHeight = 400;
 
 	float last_render_time = 0;
 

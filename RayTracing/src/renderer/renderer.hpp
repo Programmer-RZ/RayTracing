@@ -47,7 +47,7 @@ private:
 
 	// rendering
 	int frameIndex = 1;
-	int maxFrameIndex = 3;	
+	int maxFrameIndex = 3;
 	int bounces = 2;
 	int coherence = 5;
 	

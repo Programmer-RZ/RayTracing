@@ -69,8 +69,8 @@ struct Box {
 		side6(box_min.y, box_max.y, box_min.z, box_max.z, box_min.x, material_index),
 		
 		length(box_max.x-box_min.x),
-		width(box_max.y-box_min.y),
-		height(box_max.z-box_min.z)
+		width(box_max.z-box_min.z),
+		height(box_max.y-box_min.y)
 	{}
 
 	std::string name;
