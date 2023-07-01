@@ -312,7 +312,7 @@ void Editor::SceneUI(bool& sceneMoved) {
 			strcat_s(tmp, "###");
 			strcat_s(tmp, std::to_string(i).c_str());
 
-			if (ImGui::CollapsingHeader(box.name.c_str())) {
+			if (ImGui::CollapsingHeader(tmp)) {
 				ImGui::PushID(i);
 				bool updateSides = false;
 
