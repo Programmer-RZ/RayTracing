@@ -5,7 +5,7 @@
 
 #include "../utils.hpp"
 
-#include "lighting.hpp"
+#include "scatter.hpp"
 
 void Renderer::SetupFinalImage() {
 	this->resetFrameIndex();

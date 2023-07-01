@@ -4,8 +4,6 @@
 #include "../global.h"
 #include "../utils.hpp"
 
-#include "spdlog/spdlog.h"
-
 SceneInfo::SceneInfo()
 	: scenefile(SCENEINFO),
 	spherefile(SPHEREINFO),
@@ -99,8 +97,6 @@ void SceneInfo::read(Scene& scene, Camera& camera, int& width, int& height) {
 	camera.SetFarClip(static_cast<float>(std::stod(this->sceneini.get("camera").get("farClip"))));
 
 	camera.RecalculateView();
-
-	spdlog::info("Read scene from disk");
 }
 
 void SceneInfo::write(Scene& scene, Camera& camera, int width, int height) {

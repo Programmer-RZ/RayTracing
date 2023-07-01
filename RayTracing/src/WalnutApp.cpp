@@ -3,8 +3,6 @@
 
 #include "editor/editor.hpp"
 
-#include "spdlog/spdlog.h"
-
 class RayTracing : public Walnut::Layer
 {
 public:
@@ -26,8 +24,6 @@ Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
 {
 	Walnut::ApplicationSpecification spec;
 	spec.Name = "Realistic 3D Art";
-
-	spdlog::info("Initialized application {}", spec.Name);
 
 	Walnut::Application* app = new Walnut::Application(spec);
 	app->PushLayer<RayTracing>();

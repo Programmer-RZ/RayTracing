@@ -3,7 +3,8 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui_internal.h"
 
-#include "spdlog/spdlog.h"
+// material/object max name length
+#define MAX_NAME_LENGTH 100
 
 Editor::Editor()
 	: camera(45.0f, 0.1f, 100.0f)
@@ -29,7 +30,6 @@ void Editor::OnUpdate(float ts)
 	}
 
 	if (this->renderer.IsFinishedFinalImage()) {
-		spdlog::info("Final image - rendered");
 
 		this->exportScene.ExportImage(
 			this->renderer.GetImageData(),
@@ -38,11 +38,9 @@ void Editor::OnUpdate(float ts)
 			this->scene.name
 		);
 		
-		this->m_ViewportWidth /= 2;
-		this->m_ViewportHeight /= 2;
+		this->imageScale = 0.5f;
 
 		this->renderer.SetFinishedFinalImage();
-		spdlog::info("Final image - exported");
 	}
 }
 
@@ -75,8 +73,8 @@ void Editor::OnUIRender()
 
 	auto image = this->renderer.get_final_image();
 	if (image) {
-		ImGui::SetCursorPos((ImGui::GetWindowSize() - ImVec2(static_cast<float>(image->GetWidth())*2.0f, static_cast<float>(image->GetHeight())*2.0f)) * 0.5f);
-		ImGui::Image(image->GetDescriptorSet(), { static_cast<float>(image->GetWidth())*2.0f, static_cast<float>(image->GetHeight())*2.0f },
+		ImGui::SetCursorPos((ImGui::GetWindowSize() - ImVec2(static_cast<float>(image->GetWidth())/this->imageScale, static_cast<float>(image->GetHeight())/this->imageScale)) * 0.5f);
+		ImGui::Image(image->GetDescriptorSet(), { static_cast<float>(image->GetWidth())/this->imageScale, static_cast<float>(image->GetHeight())/this->imageScale },
 			ImVec2(0, 1), ImVec2(1, 0)); // flip the image
 	}
 
@@ -105,19 +103,32 @@ void Editor::MaterialUI(bool& sceneMoved) {
 		Material material = Material(Albedo, roughness, EmissionPower, id, "lambertian", name);
 
 		this->scene.materials.push_back(material);
-
-		spdlog::info("Add new material {}", name);
 	}
 
 	// holds the indexes of material that the user deleted
 	std::vector<int> materials_todelete = {};
 	for (int i = 0; i < this->scene.materials.size(); i++) {
-		ImGui::PushID(i);
 		ImGui::Separator();
 
 		Material& material = this->scene.materials[i];
 
-		if (ImGui::CollapsingHeader(material.name.c_str())) {
+		char tmp[MAX_NAME_LENGTH] = "";
+		strcat_s(tmp, material.name.c_str());
+
+		strcat_s(tmp, "###");
+		strcat_s(tmp, std::to_string(material.id).c_str());
+
+		if (ImGui::CollapsingHeader(tmp)) {
+			ImGui::PushID(material.id);
+
+			char newname[MAX_NAME_LENGTH] = "";
+			strcat_s(newname, material.name.c_str());
+			ImGui::InputText("Name", newname, 20);
+
+			if (newname[0] != 0) {
+				// newname is not empty
+				material.name = newname;
+			}
 
 			if (ImGui::ColorEdit3("Color", glm::value_ptr(material.Albedo))) { sceneMoved = true; }
 			
@@ -146,8 +157,8 @@ void Editor::MaterialUI(bool& sceneMoved) {
 				sceneMoved = true;
 				materials_todelete.push_back(i);
 			}
+			ImGui::PopID();
 		}
-		ImGui::PopID();
 	}
 	// delete all the materials
 	for (int index : materials_todelete) {
@@ -157,7 +168,6 @@ void Editor::MaterialUI(bool& sceneMoved) {
 		if (this->scene.materials.size() > 1 || this->scene.spheres.size() == 0) {
 			this->scene.materials.erase(this->scene.materials.begin() + index);
 		}
-		spdlog::warn("Delete material {}", name);
 	}
 
 	// check if any spheres hold the materials
@@ -204,8 +214,6 @@ void Editor::SceneUI(bool& sceneMoved) {
 			if (ImGui::Selectable(this->scene.objects[n], isSelected)) {
 				this->scene.selected_object = this->scene.objects[n];
 				sceneMoved = true;
-
-				spdlog::info("Set current object to {}", this->scene.selected_object);
 			}
 			if (isSelected) {
 				ImGui::SetItemDefaultFocus();
@@ -228,7 +236,6 @@ void Editor::SceneUI(bool& sceneMoved) {
 		}
 
 		sceneMoved = true;
-		spdlog::info("Add new object {}", name);
 	}
 
 	// holds the indexes of objects the user deleted
@@ -239,12 +246,28 @@ void Editor::SceneUI(bool& sceneMoved) {
 	if (this->scene.selected_object == this->scene.objects[0])
 	{
 		for (int i = 0; i < this->scene.spheres.size(); i++) {
-			ImGui::PushID(i);
 			ImGui::Separator();
 
 			Sphere& sphere = this->scene.spheres[i];
 
-			if (ImGui::CollapsingHeader(sphere.name.c_str())) {
+			char tmp[MAX_NAME_LENGTH] = "";
+			strcat_s(tmp, sphere.name.c_str());
+
+			strcat_s(tmp, "###");
+			strcat_s(tmp, std::to_string(i).c_str());
+
+			if (ImGui::CollapsingHeader(tmp)) {
+				ImGui::PushID(i);
+
+				char newname[MAX_NAME_LENGTH] = "";
+				strcat_s(newname, sphere.name.c_str());
+				ImGui::InputText("Name", newname, 20);
+
+				if (newname[0] != 0) {
+					// newname is not empty
+					sphere.name = newname;
+				}
+
 				if (ImGui::DragFloat3("Position", glm::value_ptr(sphere.pos), 0.1f)) { sceneMoved = true; }
 
 				if (ImGui::DragFloat("Radius", &sphere.radius, 0.1f, 0.0f)) { sceneMoved = true; }
@@ -253,6 +276,7 @@ void Editor::SceneUI(bool& sceneMoved) {
 
 					for (int n = 0; n < this->scene.materials.size(); n++) {
 						bool isSelected = (this->scene.materials[sphere.material_index].id == this->scene.materials[n].id);
+
 						if (ImGui::Selectable(this->scene.materials[n].name.c_str(), isSelected)) {
 							sphere.material_index = n;
 							sceneMoved = true;
@@ -269,8 +293,8 @@ void Editor::SceneUI(bool& sceneMoved) {
 					spheres_todelete.push_back(i);
 					sceneMoved = true;
 				}
+				ImGui::PopID();
 			}
-			ImGui::PopID();
 		}
 	}
 
@@ -278,13 +302,28 @@ void Editor::SceneUI(bool& sceneMoved) {
 	else if (this->scene.selected_object == this->scene.objects[1])
 	{
 		for (int i = 0; i < this->scene.boxes.size(); i++) {
-			ImGui::PushID(i);
 			ImGui::Separator();
 
 			Box& box = this->scene.boxes[i];
 
+			char tmp[MAX_NAME_LENGTH] = "";
+			strcat_s(tmp, box.name.c_str());
+
+			strcat_s(tmp, "###");
+			strcat_s(tmp, std::to_string(i).c_str());
+
 			if (ImGui::CollapsingHeader(box.name.c_str())) {
+				ImGui::PushID(i);
 				bool updateSides = false;
+
+				char newname[MAX_NAME_LENGTH] = "";
+				strcat_s(newname, box.name.c_str());
+				ImGui::InputText("Name", newname, 20);
+
+				if (newname[0] != 0) {
+					// newname is not empty
+					box.name = newname;
+				}
 
 				if (ImGui::DragFloat3("Corner 1", glm::value_ptr(box.box_min), 0.1f)) { sceneMoved = true; updateSides = true; }
 
@@ -317,8 +356,8 @@ void Editor::SceneUI(bool& sceneMoved) {
 					boxes_todelete.push_back(i);
 					sceneMoved = true;
 				}
+				ImGui::PopID();
 			}
-			ImGui::PopID();
 		}
 	}
 
@@ -326,13 +365,11 @@ void Editor::SceneUI(bool& sceneMoved) {
 		std::string name = this->scene.spheres[index].name;
 		this->scene.spheres.erase(this->scene.spheres.begin() + index);
 
-		spdlog::warn("Delete object {}", name);
 	}
 	for (int index : boxes_todelete) {
 		std::string name = this->scene.boxes[index].name;
 		this->scene.boxes.erase(this->scene.boxes.begin() + index);
 
-		spdlog::warn("Delete object {}", name);
 	}
 
 	ImGui::End();
@@ -362,10 +399,7 @@ void Editor::OptionsUI() {
 	if (ImGui::Button("Render and export final image")) {
 		this->renderer.SetupFinalImage();
 		
-		this->m_ViewportWidth *= 2;
-		this->m_ViewportHeight *= 2;
-
-		spdlog::info("Initialize final image render");
+		this->imageScale = 1.0f;
 	}
 
 	ImGui::Separator();
@@ -384,7 +418,6 @@ void Editor::OptionsUI() {
 			bool isSelected = (this->exportScene.GetCurrentFormat() == this->exportScene.GetFormats()[n]);
 			if (ImGui::Selectable(this->exportScene.GetFormats()[n], isSelected)) {
 				this->exportScene.setFormat(this->exportScene.GetFormats()[n]);
-				spdlog::info("Set current format to {}", this->exportScene.GetCurrentFormat());
 			}
 			if (isSelected) {
 				ImGui::SetItemDefaultFocus();
@@ -400,7 +433,6 @@ void Editor::OptionsUI() {
 			this->renderer.GetImageHeight(),
 			this->scene.name
 		);
-		spdlog::info("Scene exported as {}", this->exportScene.GetCurrentFormat());
 	}
 
 	ImGui::Separator();
@@ -408,7 +440,6 @@ void Editor::OptionsUI() {
 
 	if (ImGui::Button("Save scene info")) {
 		this->sceneinfo.write(this->scene, this->camera, this->m_ViewportWidth, this->m_ViewportHeight);
-		spdlog::info("Saved scene");
 	}
 
 	ImGui::End();
@@ -417,9 +448,9 @@ void Editor::OptionsUI() {
 void Editor::render() {
 	Walnut::Timer timer;
 
-	this->renderer.on_resize(this->m_ViewportWidth, this->m_ViewportHeight);
+	this->renderer.on_resize(this->m_ViewportWidth*this->imageScale, this->m_ViewportHeight*this->imageScale);
 
-	this->camera.OnResize(this->m_ViewportWidth, this->m_ViewportHeight);
+	this->camera.OnResize(this->m_ViewportWidth*this->imageScale, this->m_ViewportHeight*this->imageScale);
 
 	this->renderer.render(this->scene, this->camera, this->scene.skycolor);
 

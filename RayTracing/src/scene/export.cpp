@@ -4,8 +4,6 @@
 
 #include <string>
 
-#include "spdlog/spdlog.h"
-
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "../libs/stb/stb_image_write.h"
 

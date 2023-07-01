@@ -35,7 +35,9 @@ private:
 	Camera camera;
 	Scene scene;
 
-	int m_ViewportWidth = 600, m_ViewportHeight = 400;
+	int m_ViewportWidth = 1200, m_ViewportHeight = 800;
+	
+	float imageScale = 0.5f;
 
 	float last_render_time = 0;
 
