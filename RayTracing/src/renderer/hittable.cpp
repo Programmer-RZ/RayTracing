@@ -40,12 +40,12 @@ void SphereIntersection::TraceRay(const Ray& ray, const Scene* ActiveScene, HitP
 		payload.HitDist = closestT;
 		payload.miss = false;
 
-		payload.WorldPosition = origin + ray.Direction * payload.HitDist;
+		payload.WorldPosition = ray.Origin + ray.Direction * payload.HitDist;
 		
-		payload.front_face = glm::dot(ray.Direction, glm::normalize(payload.WorldPosition)) < 0;
-		payload.WorldNormal = payload.front_face ? glm::normalize(payload.WorldPosition) : -glm::normalize(payload.WorldPosition);
+		glm::vec3 outwardnormal = glm::vec3((payload.WorldPosition-sphere.pos)/sphere.radius);
+		payload.front_face = glm::dot(ray.Direction, outwardnormal) < 0;
+		payload.WorldNormal = payload.front_face ? outwardnormal : -outwardnormal;
 
-		payload.WorldPosition += sphere.pos;
 		payload.materialPtr = &(ActiveScene->materials[sphere.material_index]);
 	}
 }

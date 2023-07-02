@@ -97,6 +97,7 @@ void Editor::MaterialUI(bool& sceneMoved) {
 		float roughness = 0.0f;
 		float EmissionPower = 0.0f;
 
+
 		int id = this->scene.materials.size();
 		std::string name = "material" + std::to_string(id);
 

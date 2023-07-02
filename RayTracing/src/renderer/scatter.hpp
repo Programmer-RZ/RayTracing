@@ -7,7 +7,7 @@
 #include "../utils.hpp"
 
 namespace Scatter {
-	static bool lambertian(HitPayload payload, const Material* material, glm::vec3& light, glm::vec3& attenuation, glm::vec3& rDir, uint32_t& seed) {		
+	static bool lambertian(HitPayload payload, const Material* material, glm::vec3 skycolor, glm::vec3& light, glm::vec3& attenuation, glm::vec3& rDir, uint32_t& seed) {		
 		attenuation = material->Albedo;
 		
 		light *= material->Albedo * attenuation;
@@ -21,7 +21,7 @@ namespace Scatter {
 		return true;
 	}
 
-	static bool reflect(HitPayload payload, const Material* material, glm::vec3& light, glm::vec3& attenuation, glm::vec3& rDir, uint32_t& seed) {
+	static bool reflect(HitPayload payload, const Material* material, glm::vec3 skycolor, glm::vec3& light, glm::vec3& attenuation, glm::vec3& rDir, uint32_t& seed) {
 		attenuation = material->Albedo;
 		
 		light *= material->Albedo * attenuation;
@@ -31,7 +31,7 @@ namespace Scatter {
 		return (glm::dot(rDir, payload.WorldNormal) > 0);
 	}
 	
-	static bool diffuse_light(HitPayload payload, const Material* material, glm::vec3& light, glm::vec3& attenuation, glm::vec3& rDir, uint32_t& seed) {
+	static bool diffuse_light(HitPayload payload, const Material* material, glm::vec3 skycolor, glm::vec3& light, glm::vec3& attenuation, glm::vec3& rDir, uint32_t& seed) {
 		attenuation = material->Albedo;
 
 		light *= material->GetEmission();

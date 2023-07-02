@@ -13,7 +13,7 @@ void Renderer::SetupFinalImage() {
 	this->coherence = 1;
 	this->bounces = 3;
 	this->renderingFinalImage = true;
-	this->maxFrameIndex = 20;
+	this->maxFrameIndex = 30;
 }
 
 bool Renderer::on_resize(uint32_t width, uint32_t height) {
@@ -121,13 +121,13 @@ glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, Ray& ray)
 		ray.Origin = payload.WorldPosition + payload.WorldNormal * 0.0001f;
 
 		if (material->lighting == "lambertian") {
-			scatter = Scatter::lambertian(payload, material, light, attenuation, ray.Direction, seed);
+			scatter = Scatter::lambertian(payload, material, this->ActiveScene->skycolor, light, attenuation, ray.Direction, seed);
 		}
 		else if (material->lighting == "reflect") {
-			scatter = Scatter::reflect(payload, material, light, attenuation, ray.Direction, seed);
+			scatter = Scatter::reflect(payload, material, this->ActiveScene->skycolor, light, attenuation, ray.Direction, seed);
 		}
 		else if (material->lighting == "diffuse light") {
-			scatter = Scatter::diffuse_light(payload, material, light, attenuation, ray.Direction, seed);
+			scatter = Scatter::diffuse_light(payload, material, this->ActiveScene->skycolor, light, attenuation, ray.Direction, seed);
 		}
 		
 		if (!scatter) { break; }
