@@ -40,6 +40,7 @@ RayTracing editor where you can create 3D designs and hyper-realistic art! Curre
 - mINI
 - stb
 - spdlog
+- nativefiledialog
 
 # Examples
 ## Cornell's Box on steroids

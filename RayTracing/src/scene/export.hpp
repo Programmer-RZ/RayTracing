@@ -1,21 +1,12 @@
 #pragma once
 
-#include <glm/glm.hpp>
-#include <string>
+#include "../global.h"
 
-class Export {
-private:
+// file dialog
+#include "nfd.h"
 
-	char* formats[1];
-	char* currentFormat;
+#include "glm/glm.hpp"
 
-public:
-	Export();
-
-	char* GetCurrentFormat() { return this->currentFormat; }
-	char** GetFormats() { return this->formats; }
-
-	void setFormat(char* format) { this->currentFormat = format; }
-
-	void ExportImage(uint32_t* imageData, int imageWidth, int imageHeight, std::string name);
-};
+namespace Export {
+	void ExportImage(uint32_t* imageData, int imageWidth, int imageHeight);
+}
