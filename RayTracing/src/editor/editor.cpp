@@ -117,7 +117,7 @@ void Editor::MaterialUI(bool& sceneMoved) {
 		strcat_s(tmp, material.name.c_str());
 
 		strcat_s(tmp, "###");
-		strcat_s(tmp, std::to_string(material.id).c_str());
+		strcat_s(tmp, std::to_string(i).c_str());
 
 		if (ImGui::CollapsingHeader(tmp)) {
 			ImGui::PushID(material.id);
