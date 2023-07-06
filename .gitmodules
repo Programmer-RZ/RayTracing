@@ -7,3 +7,6 @@
 [submodule "RayTracing/src/libs/stb"]
 	path = RayTracing/src/libs/stb
 	url = https://github.com/nothings/stb.git
+[submodule "RayTracing/src/libs/nativefiledialog-extended"]
+	path = RayTracing/src/libs/nativefiledialog-extended
+	url = https://github.com/btzy/nativefiledialog-extended.git
