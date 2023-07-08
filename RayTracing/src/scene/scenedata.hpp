@@ -26,7 +26,7 @@ private:
 	mINI::INIStructure boxini;
 	*/
 
-	nfdchar_t* path;
+	std::filesystem::path path;
 
 	std::filesystem::path sceneDataFileName;
 	std::filesystem::path sphereDataFileName;

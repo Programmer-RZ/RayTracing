@@ -4,8 +4,7 @@
 #include "../utils.hpp"
 
 SceneData::SceneData()
-	: path(nullptr),
-	sceneDataFileName("sceneData.ini"),
+	: sceneDataFileName("sceneData.ini"),
 	sphereDataFileName("sphereData.ini"),
 	boxDataFileName("boxData.ini"),
 	materialDataFileName("materialData.ini")
@@ -13,19 +12,20 @@ SceneData::SceneData()
 
 void SceneData::read(Scene& scene, Camera& camera, int& width, int& height) {
 
-	nfdresult_t result = NFD_PickFolder(NULL, &(this->path));
+	nfdchar_t* outpath = nullptr;
+	nfdresult_t result = NFD_PickFolder(NULL, &(outpath));
 
 	if (result == NFD_CANCEL || result == NFD_ERROR) {
 		return;
 	}
 
-	std::filesystem::path dir(this->path);
+	this->path = std::filesystem::path(outpath);
 
 	// full paths
-	std::filesystem::path SceneDataPath = dir / this->sceneDataFileName;
-	std::filesystem::path SphereDataPath = dir / this->sphereDataFileName;
-	std::filesystem::path BoxDataPath = dir / this->boxDataFileName;
-	std::filesystem::path MaterialDataPath = dir / this->materialDataFileName;
+	std::filesystem::path SceneDataPath = this->path / this->sceneDataFileName;
+	std::filesystem::path SphereDataPath = this->path / this->sphereDataFileName;
+	std::filesystem::path BoxDataPath = this->path / this->boxDataFileName;
+	std::filesystem::path MaterialDataPath = this->path / this->materialDataFileName;
 
 	mINI::INIFile scenefile(SceneDataPath.string());
 	mINI::INIStructure sceneini;
@@ -123,24 +123,23 @@ void SceneData::read(Scene& scene, Camera& camera, int& width, int& height) {
 
 void SceneData::write(Scene& scene, Camera& camera, int width, int height) {
 
-	if (this->path == nullptr) {
-		this->saveas(scene, camera, width, height);
-	}
-	else {
+	if (this->path.string() != "") {
 		// save
 		this->save(scene, camera, width, height);
+	}
+	else {
+		// saveas
+		this->saveas(scene, camera, width, height);
 	}
 	
 }
 
 void SceneData::save(Scene& scene, Camera& camera, int width, int height) {
-	std::filesystem::path dir(this->path);
-
 	// full paths
-	std::filesystem::path SceneDataPath = dir / this->sceneDataFileName;
-	std::filesystem::path SphereDataPath = dir / this->sphereDataFileName;
-	std::filesystem::path BoxDataPath = dir / this->boxDataFileName;
-	std::filesystem::path MaterialDataPath = dir / this->materialDataFileName;
+	std::filesystem::path SceneDataPath = this->path / this->sceneDataFileName;
+	std::filesystem::path SphereDataPath = this->path / this->sphereDataFileName;
+	std::filesystem::path BoxDataPath = this->path / this->boxDataFileName;
+	std::filesystem::path MaterialDataPath = this->path / this->materialDataFileName;
 
 	mINI::INIFile scenefile(SceneDataPath.string());
 	mINI::INIStructure sceneini;
@@ -223,6 +222,25 @@ void SceneData::save(Scene& scene, Camera& camera, int width, int height) {
 }
 
 void SceneData::saveas(Scene& scene, Camera& camera, int width, int height) {
-	return;
+	nfdchar_t* parentdirectory = nullptr;
+	nfdresult_t result = NFD_PickFolder(NULL, &(parentdirectory));
+
+	if (result == NFD_CANCEL || result == NFD_ERROR) {
+		return;
+	}
+
+	this->path = std::filesystem::path(parentdirectory) / std::filesystem::path(scene.name);
+
+	// create the directory
+	std::filesystem::create_directory(this->path);
+
+	// create the files
+	std::ofstream newSceneDataFile(this->path / this->sceneDataFileName); newSceneDataFile.close();
+	std::ofstream newSphereDataFile(this->path / this->sphereDataFileName); newSphereDataFile.close();
+	std::ofstream newBoxDataFile(this->path / this->boxDataFileName); newBoxDataFile.close();
+	std::ofstream newMaterialDataFile(this->path / this->materialDataFileName); newMaterialDataFile.close();
+
+	// save
+	this->save(scene, camera, width, height);
 }
 

@@ -308,7 +308,7 @@ void Editor::OptionsUI() {
 	ImGui::Separator();
 	ImGui::Separator();
 
-	if (ImGui::Button("Save")) {
+	if (ImGui::Button("Save / Save to")) {
 		this->scenedata.write(this->scene, this->camera, this->ViewportWidth, this->ViewportHeight);
 	}
 
