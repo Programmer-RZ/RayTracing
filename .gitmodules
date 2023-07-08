@@ -10,6 +10,3 @@
 [submodule "RayTracing/src/libs/nativefiledialog"]
 	path = RayTracing/src/libs/nativefiledialog
 	url = https://github.com/mlabbe/nativefiledialog.git
-[submodule "RayTracing/src/libs/zlib"]
-	path = RayTracing/src/libs/zlib
-	url = https://github.com/madler/zlib.git
