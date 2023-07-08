@@ -6,12 +6,6 @@
 // material/object max name length
 #define MAX_NAME_LENGTH 100
 
-Editor::Editor()
-	: camera(45.0f, 0.1f, 100.0f)
-{
-	this->sceneinfo.read(this->scene, this->camera, this->m_ViewportWidth, this->m_ViewportHeight);
-}
-
 void Editor::OnUpdate(float ts) 
 {
 	if (!this->renderer.IsRenderingFinalImage()) {
@@ -239,15 +233,16 @@ void Editor::SceneUI(bool& sceneMoved) {
 	std::vector<int> spheres_todelete = {};
 	std::vector<int> boxes_todelete = {};
 
+
 	// sphere's ui
-	if (this->scene.selected_object == this->scene.objects[1]) {
+	if (this->scene.selected_object == this->scene.objects[0]) {
 		this->SphereUI(sceneMoved, spheres_todelete);
 	}
-	
 	// box's ui
 	else if (this->scene.selected_object == this->scene.objects[1]) {
 		this->BoxUI(sceneMoved, boxes_todelete);
 	}
+	
 
 	// delete the spheres
 	for (int index : spheres_todelete) {
@@ -272,9 +267,9 @@ void Editor::SettingsUI(bool& sceneMoved) {
 	ImGui::Separator();
 	ImGui::Separator();
 
-	if (ImGui::DragInt("Width", &m_ViewportWidth, 1.0f, 200, 1500)) { sceneMoved = true; }
+	if (ImGui::DragInt("Width", &(this->ViewportWidth), 1.0f, 200, 1500)) { sceneMoved = true; }
 
-	if (ImGui::DragInt("Height", &m_ViewportHeight, 1.0f, 200, 1170)) { sceneMoved = true; }
+	if (ImGui::DragInt("Height", &(this->ViewportHeight), 1.0f, 200, 1170)) { sceneMoved = true; }
 
 	ImGui::End();
 }
@@ -295,6 +290,12 @@ void Editor::OptionsUI() {
 	ImGui::Separator();
 	ImGui::Separator();
 
+	if (ImGui::Button("Import")) {
+		this->scenedata.read(this->scene, this->camera, this->ViewportWidth, this->ViewportHeight);
+		this->renderer.resetFrameIndex();
+		this->render();
+	}
+
 	if (ImGui::Button("Export")) {
 
 		Export::ExportImage(
@@ -307,8 +308,8 @@ void Editor::OptionsUI() {
 	ImGui::Separator();
 	ImGui::Separator();
 
-	if (ImGui::Button("Save scene info")) {
-		this->sceneinfo.write(this->scene, this->camera, this->m_ViewportWidth, this->m_ViewportHeight);
+	if (ImGui::Button("Save")) {
+		this->scenedata.write(this->scene, this->camera, this->ViewportWidth, this->ViewportHeight);
 	}
 
 	ImGui::End();
@@ -317,9 +318,9 @@ void Editor::OptionsUI() {
 void Editor::render() {
 	Walnut::Timer timer;
 
-	this->renderer.on_resize(this->m_ViewportWidth*this->imageScale, this->m_ViewportHeight*this->imageScale);
+	this->renderer.on_resize(this->ViewportWidth*this->imageScale, this->ViewportHeight*this->imageScale);
 
-	this->camera.OnResize(this->m_ViewportWidth*this->imageScale, this->m_ViewportHeight*this->imageScale);
+	this->camera.OnResize(this->ViewportWidth*this->imageScale, this->ViewportHeight*this->imageScale);
 
 	this->renderer.render(this->scene, this->camera, this->scene.skycolor);
 
@@ -328,59 +329,56 @@ void Editor::render() {
 
 void Editor::SphereUI(bool& sceneMoved, std::vector<int>& spheres_todelete) {
 	// spheres ui in Scene tab
-	if (this->scene.selected_object == this->scene.objects[0])
-	{
-		for (int i = 0; i < this->scene.spheres.size(); i++) {
-			ImGui::Separator();
+	for (int i = 0; i < this->scene.spheres.size(); i++) {
+		ImGui::Separator();
 
-			Sphere& sphere = this->scene.spheres[i];
+		Sphere& sphere = this->scene.spheres[i];
 
-			std::string tmp = sphere.name;
-			// add the ###i
-			// so when editing the name
-			// it doesn't collapse
-			tmp += "###";
-			tmp += i;
+		std::string tmp = sphere.name;
+		// add the ###i
+		// so when editing the name
+		// it doesn't collapse
+		tmp += "###";
+		tmp += i;
 
-			if (ImGui::CollapsingHeader(tmp.c_str())) {
-				ImGui::PushID(i);
+		if (ImGui::CollapsingHeader(tmp.c_str())) {
+			ImGui::PushID(i);
 
-				char newname[MAX_NAME_LENGTH] = "";
-				strcat_s(newname, sphere.name.c_str());
-				ImGui::InputText("Name", newname, MAX_NAME_LENGTH);
+			char newname[MAX_NAME_LENGTH] = "";
+			strcat_s(newname, sphere.name.c_str());
+			ImGui::InputText("Name", newname, MAX_NAME_LENGTH);
 
-				if (newname[0] != 0) {
-					// newname is not empty
-					sphere.name = newname;
-				}
-
-				if (ImGui::DragFloat3("Position", glm::value_ptr(sphere.pos), 0.1f)) { sceneMoved = true; }
-
-				if (ImGui::DragFloat("Radius", &sphere.radius, 0.1f, 0.0f)) { sceneMoved = true; }
-
-				if (ImGui::BeginCombo("Material", this->scene.materials[sphere.material_index].name.c_str())) {
-
-					for (int n = 0; n < this->scene.materials.size(); n++) {
-						bool isSelected = (this->scene.materials[sphere.material_index].id == this->scene.materials[n].id);
-
-						if (ImGui::Selectable(this->scene.materials[n].name.c_str(), isSelected)) {
-							sphere.material_index = n;
-							sceneMoved = true;
-						}
-						if (isSelected) {
-							ImGui::SetItemDefaultFocus();
-						}
-					}
-					ImGui::EndCombo();
-				}
-
-
-				if (ImGui::Button("Delete Sphere")) {
-					spheres_todelete.push_back(i);
-					sceneMoved = true;
-				}
-				ImGui::PopID();
+			if (newname[0] != 0) {
+				// newname is not empty
+				sphere.name = newname;
 			}
+
+			if (ImGui::DragFloat3("Position", glm::value_ptr(sphere.pos), 0.1f)) { sceneMoved = true; }
+
+			if (ImGui::DragFloat("Radius", &sphere.radius, 0.1f, 0.0f)) { sceneMoved = true; }
+
+			if (ImGui::BeginCombo("Material", this->scene.materials[sphere.material_index].name.c_str())) {
+
+				for (int n = 0; n < this->scene.materials.size(); n++) {
+					bool isSelected = (this->scene.materials[sphere.material_index].id == this->scene.materials[n].id);
+
+					if (ImGui::Selectable(this->scene.materials[n].name.c_str(), isSelected)) {
+						sphere.material_index = n;
+						sceneMoved = true;
+					}
+					if (isSelected) {
+						ImGui::SetItemDefaultFocus();
+					}
+				}
+				ImGui::EndCombo();
+			}
+
+
+			if (ImGui::Button("Delete Sphere")) {
+				spheres_todelete.push_back(i);
+				sceneMoved = true;
+			}
+			ImGui::PopID();
 		}
 	}
 }

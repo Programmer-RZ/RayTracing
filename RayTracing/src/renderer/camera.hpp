@@ -6,7 +6,7 @@
 class Camera
 {
 public:
-	Camera(float verticalFOV, float nearClip, float farClip);
+	Camera() = default;
 
 	bool OnUpdate(float ts, bool hasObjects);
 	void OnResize(uint32_t width, uint32_t height);
@@ -46,7 +46,7 @@ private:
 	float m_FarClip = 100.0f;
 
 	glm::vec3 m_Position{ 0.0f, 0.0f, 0.0f };
-	glm::vec3 m_ForwardDirection{ 0.0f, 0.0f, 0.0f };
+	glm::vec3 m_ForwardDirection{ 0.0f, 0.0f, -1.0f };
 
 	glm::vec2 m_LastMousePosition{ 0.0f, 0.0f };
 

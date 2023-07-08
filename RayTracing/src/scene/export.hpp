@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../global.h"
-
 // file dialog
 #include "nfd.h"
 

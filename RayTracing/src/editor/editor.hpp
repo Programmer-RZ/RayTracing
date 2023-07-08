@@ -7,7 +7,7 @@
 
 #include "../renderer/renderer.hpp"
 #include "../renderer/camera.hpp"
-#include "../scene/sceneinfo.hpp"
+#include "../scene/scenedata.hpp"
 #include "../scene/scene.hpp"
 #include "../scene/export.hpp"
 #include "../global.h"
@@ -17,7 +17,7 @@
 class Editor {
 	
 public:
-	Editor();
+	Editor() = default;
 
 	void OnUIRender();
 	void OnUpdate(float ts);
@@ -40,12 +40,12 @@ private:
 	Camera camera;
 	Scene scene;
 
-	int m_ViewportWidth = 1200, m_ViewportHeight = 800;
+	int ViewportWidth = 1200, ViewportHeight = 800;
 	
 	float imageScale = 0.25f;
 
 	float last_render_time = 0;
 
 	// external classes
-	SceneInfo sceneinfo = SceneInfo();
+	SceneData scenedata = SceneData();
 };

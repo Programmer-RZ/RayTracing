@@ -1,5 +1,7 @@
 #include "export.hpp"
 
+#define CHANNEL_NUMBER 4
+
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "../libs/stb/stb_image_write.h"
 
