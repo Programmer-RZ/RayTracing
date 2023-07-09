@@ -31,7 +31,7 @@ void Editor::OnUpdate(float ts)
 			this->renderer.GetImageHeight()
 		);
 		
-		this->imageScale = 0.5f;
+		this->imageScale = 0.25f;
 
 		this->renderer.SetFinishedFinalImage();
 	}
@@ -290,26 +290,26 @@ void Editor::OptionsUI() {
 	ImGui::Separator();
 	ImGui::Separator();
 
-	if (ImGui::Button("Import")) {
+	if (ImGui::Button("Import scene")) {
 		this->scenedata.read(this->scene, this->camera, this->ViewportWidth, this->ViewportHeight);
 		this->renderer.resetFrameIndex();
 		this->render();
 	}
+	
+	if (ImGui::Button("Save / Save to")) {
+		this->scenedata.write(this->scene, this->camera, this->ViewportWidth, this->ViewportHeight);
+	}
 
-	if (ImGui::Button("Export")) {
+	ImGui::Separator();
+	ImGui::Separator();
+	
+	if (ImGui::Button("Export image")) {
 
 		Export::ExportImage(
 			this->renderer.GetImageData(),
 			this->renderer.GetImageWidth(),
 			this->renderer.GetImageHeight()
 		);
-	}
-
-	ImGui::Separator();
-	ImGui::Separator();
-
-	if (ImGui::Button("Save / Save to")) {
-		this->scenedata.write(this->scene, this->camera, this->ViewportWidth, this->ViewportHeight);
 	}
 
 	ImGui::End();

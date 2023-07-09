@@ -11,9 +11,9 @@ void Renderer::SetupFinalImage() {
 	this->resetFrameIndex();
 
 	this->coherence = 1;
-	this->bounces = 3;
+	this->bounces = 5;
 	this->renderingFinalImage = true;
-	this->maxFrameIndex = 30;
+	this->maxFrameIndex = 60;
 }
 
 bool Renderer::on_resize(uint32_t width, uint32_t height) {
