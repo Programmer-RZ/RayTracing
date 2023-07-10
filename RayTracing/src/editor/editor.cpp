@@ -274,6 +274,9 @@ void Editor::SettingsUI(bool& sceneMoved) {
 	if (ImGui::DragInt("Width", &(this->ViewportWidth), 1.0f, 200, 1500)) { sceneMoved = true; }
 
 	if (ImGui::DragInt("Height", &(this->ViewportHeight), 1.0f, 200, 1170)) { sceneMoved = true; }
+	
+	if (ImGui::Button("Enable dark mode")) { this->SetTheme(true, 1.0f); }
+	if (ImGui::Button("Enable light mode")) { this->SetTheme(false, 1.0f); }
 
 	ImGui::End();
 }
