@@ -6,7 +6,7 @@ RayTracing editor where you can create 3D designs and hyper-realistic art! Curre
 
 
 # Requirements
-**C++**
+**Compile**
 - Visual Studio 2022 (other versions have not been tested)
 - Vulkan SDK
 

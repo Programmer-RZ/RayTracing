@@ -17,7 +17,7 @@
 class Editor {
 	
 public:
-	Editor() = default;
+	Editor();
 
 	void OnUIRender();
 	void OnUpdate(float ts);
@@ -33,6 +33,9 @@ private:
 	// object ui in SceneUI
 	void SphereUI(bool& sceneMoved, std::vector<int>& spheres_todelete);
 	void BoxUI(bool& sceneMoved, std::vector<int>& boxes_todelete);
+
+private:
+	void SetTheme(bool darkmode, float alpha_);
 
 private:
 	Renderer renderer;

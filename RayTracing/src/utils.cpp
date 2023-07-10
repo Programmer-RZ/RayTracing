@@ -5,13 +5,28 @@ uint32_t Utils::ConvertToRGBA(const glm::vec4& color) {
 	uint8_t green = uint8_t(color.g * 255.0f);
 	uint8_t blue = uint8_t(color.b * 255.0f);
 	uint8_t alpha = uint8_t(color.a * 255.0f);
-
+	
+	// alpha channel: bits 31 to 24
+	// blue channel: bits 23 to 16
+	// green channel: bits 15 to 8
+	// red channel: bits 8 to 0
+	// combine everything
 	uint32_t result = (alpha << 24) | (blue << 16) | (green << 8) | red;
 
 	return result;
 }
 
 std::vector<uint8_t> Utils::ConvertToFloats(const uint32_t& color) {
+	// Right shift each color to the least significant 8 bits
+	// Use & 0xff to extract the 8 bits
+	// 0xff is 00000000000000000000000011111111 in binary
+	// Example:
+	//
+	// 00011001000100111100010010010101
+	// &
+	// 00000000000000000000000011111111
+	// = 10010101
+	
 	uint8_t r = color & 0xff; // Extract red channel
 	uint8_t g = (color >> 8) & 0xff; // Extract green channel
 	uint8_t b = (color >> 16) & 0xff; // Extract blue channel

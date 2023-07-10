@@ -6,6 +6,10 @@
 // material/object max name length
 #define MAX_NAME_LENGTH 100
 
+Editor::Editor() {
+	this->SetTheme(false, 1.0f);
+}
+
 void Editor::OnUpdate(float ts) 
 {
 	if (!this->renderer.IsRenderingFinalImage()) {
@@ -440,4 +444,38 @@ void Editor::BoxUI(bool& sceneMoved, std::vector<int>& boxes_todelete) {
 			ImGui::PopID();
 		}
 	}
+}
+
+
+
+// imgui theme
+// set ImGui theme
+void Editor::SetTheme(bool darkmode, float alpha_) {
+	// from https://gist.github.com/dougbinks/8089b4bbaccaaf6fa204236978d165a9#file-imguiutils-h-L9-L93
+	
+	ImGuiStyle& style = ImGui::GetStyle();
+	
+	for (int i = 0; i < ImGuiCol_COUNT; i++)
+	{
+		ImGuiCol_ ei = (ImGuiCol_)i;
+		ImVec4& col = style.Colors[i];
+		if(  (ImGuiCol_ModalWindowDimBg  != ei ) &&
+			( ImGuiCol_NavWindowingDimBg != ei ) &&
+			( col.w < 1.00f || ( ImGuiCol_FrameBg  == ei )
+							|| ( ImGuiCol_WindowBg == ei ) 
+							|| ( ImGuiCol_ChildBg  == ei ) ) )
+		{
+			col.w = alpha_ * col.w;
+		}
+	}
+	
+	style.ChildBorderSize = 1.0f;
+	style.FrameBorderSize = 0.0f;
+	style.PopupBorderSize = 1.0f;
+	style.WindowBorderSize = 0.0f;
+	style.FrameRounding = 3.0f;
+	style.Alpha = 1.0f;
+	
+	if (darkmode) { ImGui::StyleColorsDark(); }
+	else { ImGui::StyleColorsLight(); }
 }

@@ -104,7 +104,7 @@ struct Scene {
 	char* objects[2] = { "Sphere", "Box" };
 	char* selected_object = objects[0];
 
-	glm::vec3 skycolor = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 skycolor = glm::vec3(0.5f, 0.8f, 0.9f);
 
 	std::vector<Sphere> spheres = {};
 	std::vector<Box> boxes = {};
