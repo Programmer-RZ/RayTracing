@@ -228,7 +228,7 @@ void SceneData::saveas(Scene& scene, Camera& camera, int width, int height) {
 		return;
 	}
 
-	this->path = std::filesystem::path(parentdirectory) / std::filesystem::path(scene.name);
+	this->path = std::filesystem::path(parentdirectory) / std::filesystem::path(scene.name+" - RayTracing");
 
 	// create the directory
 	std::filesystem::create_directory(this->path);

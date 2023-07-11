@@ -3,7 +3,7 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui_internal.h"
 
-// material/object max name length
+// max name length for any name
 #define MAX_NAME_LENGTH 100
 
 Editor::Editor() {
@@ -189,7 +189,15 @@ void Editor::MaterialUI(bool& sceneMoved) {
 
 void Editor::SceneUI(bool& sceneMoved) {
 	ImGui::Begin("Scene");
-	ImGui::Text(scene.name.c_str());
+
+	char newname[MAX_NAME_LENGTH] = "";
+	strcat_s(newname, scene.name.c_str());
+	ImGui::InputText("Name", newname, MAX_NAME_LENGTH);
+
+	if (newname[0] != 0) {
+		// newname is not empty
+		scene.name = newname;
+	}
 
 	ImGui::Dummy(ImVec2(0, 10));
 
