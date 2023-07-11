@@ -10,7 +10,6 @@
 #include "../scene/scenedata.hpp"
 #include "../scene/scene.hpp"
 #include "../scene/export.hpp"
-#include "../global.h"
 
 #include <glm/gtc/type_ptr.hpp>
 

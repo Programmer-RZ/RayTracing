@@ -1,6 +1,5 @@
 #include "scenedata.hpp"
 
-#include "../global.h"
 #include "../utils.hpp"
 
 SceneData::SceneData()

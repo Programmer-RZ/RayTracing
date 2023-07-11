@@ -8,8 +8,6 @@
 
 #include <iostream>
 
-#include "global.h"
-
 namespace Utils {
 	uint32_t ConvertToRGBA(const glm::vec4& color);
 
