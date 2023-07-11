@@ -51,7 +51,6 @@ Written entirely in C++.
 - Walnut
 - mINI
 - stb
-- spdlog
 - nativefiledialog
 
 ## Examples
