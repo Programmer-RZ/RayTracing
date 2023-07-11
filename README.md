@@ -1,6 +1,10 @@
 # RayTracing
 
-RayTracing editor where you can create 3D designs and hyper-realistic art! Currently in heavy development.
+RayTracing editor where you can create a scene and raytrace it!
+
+Heavily in development.
+
+Written entirely in C++.
 
 ![image](https://github.com/Programmer-RZ/RayTracing/assets/123858154/7793102c-4f5d-411e-aa0e-4fe740a48ec3)
 
@@ -13,7 +17,7 @@ RayTracing editor where you can create 3D designs and hyper-realistic art! Curre
 
 ## Features
 
-### RayTracing
+### Raytracer
 
 - Shading
 - Path Tracing
