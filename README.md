@@ -4,49 +4,63 @@ RayTracing editor where you can create 3D designs and hyper-realistic art! Curre
 
 ![image](https://github.com/Programmer-RZ/RayTracing/assets/123858154/7793102c-4f5d-411e-aa0e-4fe740a48ec3)
 
+## Requirements
 
-# Requirements
-**Compile**
+### Compile
+
 - Visual Studio 2022 (other versions have not been tested)
 - Vulkan SDK
 
-# Features
-**RayTracing**
+## Features
+
+### RayTracing
+
 - Shading
 - Path Tracing
 - Accumulation
 
-**GUI**
+### GUI
+
 - Material/Scene Editor
 - Settings/Options panel
 
-**Materials**
+### Materials
+
 - Lambertians
 - Metal
 - Diffuse light
 
-**Objects**
+### Objects
+
 - Sphere
 - Box
 
-**Optimizations**
+### Optimizations
+
 - Ray coherence
 - Reduced bounces
 - Renders new image when updated objects/position
 - Reduce image quality in scene editor
 
-# Dependencies
+## Dependencies
+
 - Walnut
 - mINI
 - stb
 - spdlog
 - nativefiledialog
 
-# Examples
-## Cornell's Box on steroids
-![image](https://github.com/Programmer-RZ/RayTracing/assets/123858154/ac410e5e-964d-4de4-97ec-f058ba9a4cf6)
+## Examples
 
+### Dark room
 
-# Credits
-- Thanks to [The Cherno](https://www.youtube.com/@TheCherno) for [RayTracing Tutorials](https://www.youtube.com/watch?v=gfW1Fhd9u9Q&list=PLlrATfBNZ98edc5GshdBtREv5asFW3yXl)
-- Thanks to [Raytracing in One Weekend Series](https://raytracing.github.io/) 
+![test1](https://github.com/Programmer-RZ/RayTracing/assets/123858154/ca89569c-ccb9-4a23-a366-1ab6aad7c8e1)
+
+### Bright sky
+
+![test](https://github.com/Programmer-RZ/RayTracing/assets/123858154/faa8491c-d295-46fc-b5e5-e3f517cfae1c)
+
+## Credits
+
+- Thanks to [RayTracing Tutorials](https://www.youtube.com/watch?v=gfW1Fhd9u9Q&list=PLlrATfBNZ98edc5GshdBtREv5asFW3yXl)
+- Thanks to [Raytracing in One Weekend Series](https://raytracing.github.io/)
