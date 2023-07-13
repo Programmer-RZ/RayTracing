@@ -5,7 +5,7 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "../libs/stb/stb_image_write.h"
 
-void Export::ExportImage(uint32_t* imageData, int imageWidth, int imageHeight) {
+void Export::ExportImage(uint32_t* imageData, const int imageWidth, const int imageHeight) {
 	nfdchar_t* savepath = nullptr;
 	nfdresult_t result = NFD_SaveDialog("png", NULL, &savepath);
 

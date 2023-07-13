@@ -17,9 +17,9 @@ public:
 
 	void resetFrameIndex() { this->frameIndex = 1; }
 
-	void render(const Scene& scene, const Camera& camera, glm::vec3& skycolor);
+	void render(const Scene& scene, const Camera& camera, const glm::vec3& skycolor);
 
-	bool on_resize(uint32_t width, uint32_t height);
+	bool on_resize(const uint32_t width, const uint32_t height);
 
 	void SetupFinalImage();
 
@@ -60,7 +60,7 @@ private:
 
 private:
 
-	glm::vec4 PerPixel(uint32_t x, uint32_t y, Ray& ray);
+	glm::vec4 PerPixel(const uint32_t x, const uint32_t y, Ray& ray);
 
 	HitPayload TraceRay(const Ray& ray);
 };

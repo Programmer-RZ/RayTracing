@@ -34,12 +34,15 @@ private:
 	std::filesystem::path materialDataFileName;
 
 private:
-	void save(Scene& scene, Camera& camera, int width, int height);
-	void saveas(Scene& scene, Camera& camera, int width, int height);
+	void save(const Scene& scene, const Camera& camera, const int width, const int height);
+	void saveas(const Scene& scene, const Camera& camera, const int width, const int height);
 
 public:
 	SceneData();
 
+	// read data from the app and write to file
 	void read(Scene& scene, Camera& camera, int& width, int& height);
-	void write(Scene& scene, Camera& camera, int width, int height);
+
+	// take data and write it to the app
+	void write(const Scene& scene, const Camera& camera, const int width, const int height);
 };

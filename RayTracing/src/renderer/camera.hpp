@@ -8,8 +8,8 @@ class Camera
 public:
 	Camera() = default;
 
-	bool OnUpdate(float ts, bool hasObjects);
-	void OnResize(uint32_t width, uint32_t height);
+	bool OnUpdate(const float ts, const bool hasObjects);
+	void OnResize(const uint32_t width, const uint32_t height);
 	void RecalculateProjection();
 	void RecalculateView();
 	

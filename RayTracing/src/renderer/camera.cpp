@@ -8,7 +8,7 @@
 
 using namespace Walnut;
 
-bool Camera::OnUpdate(float ts, bool hasObjects)
+bool Camera::OnUpdate(const float ts, const bool hasObjects)
 {
 	if (!hasObjects) {
 		// no objects in scene
@@ -33,7 +33,7 @@ bool Camera::OnUpdate(float ts, bool hasObjects)
 	constexpr glm::vec3 upDirection(0.0f, 1.0f, 0.0f);
 	glm::vec3 rightDirection = glm::cross(m_ForwardDirection, upDirection);
 
-	float speed = 5.0f;
+	constexpr float speed = 5.0f;
 
 	// Movement
 	if (Input::IsKeyDown(KeyCode::W))
@@ -88,7 +88,7 @@ bool Camera::OnUpdate(float ts, bool hasObjects)
 	return moved;
 }
 
-void Camera::OnResize(uint32_t width, uint32_t height)
+void Camera::OnResize(const uint32_t width, const uint32_t height)
 {
 	if (width == m_ViewportWidth && height == m_ViewportHeight)
 		return;

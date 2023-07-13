@@ -120,7 +120,7 @@ void SceneData::read(Scene& scene, Camera& camera, int& width, int& height) {
 	camera.RecalculateView();
 }
 
-void SceneData::write(Scene& scene, Camera& camera, int width, int height) {
+void SceneData::write(const Scene& scene, const Camera& camera, const int width, const int height) {
 
 	if (this->path.string() != "") {
 		// save
@@ -133,7 +133,7 @@ void SceneData::write(Scene& scene, Camera& camera, int width, int height) {
 	
 }
 
-void SceneData::save(Scene& scene, Camera& camera, int width, int height) {
+void SceneData::save(const Scene& scene, const Camera& camera, const int width, const int height) {
 	// full paths
 	std::filesystem::path SceneDataPath = this->path / this->sceneDataFileName;
 	std::filesystem::path SphereDataPath = this->path / this->sphereDataFileName;
@@ -220,7 +220,7 @@ void SceneData::save(Scene& scene, Camera& camera, int width, int height) {
 	materialfile.write(materialini, true);
 }
 
-void SceneData::saveas(Scene& scene, Camera& camera, int width, int height) {
+void SceneData::saveas(const Scene& scene, const Camera& camera, const int width, const int height) {
 	nfdchar_t* parentdirectory = nullptr;
 	nfdresult_t result = NFD_PickFolder(NULL, &(parentdirectory));
 

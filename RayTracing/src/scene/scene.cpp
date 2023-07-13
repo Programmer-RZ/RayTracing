@@ -1,6 +1,6 @@
 #include "scene.hpp"
 
-std::string Scene::createNewSphere(glm::vec3 camera_pos, glm::vec3 camera_dir) {
+std::string Scene::createNewSphere(const glm::vec3 camera_pos, const glm::vec3 camera_dir) {
 	glm::vec3 pos = {
 		camera_pos.x + camera_dir.x * 2,
 		camera_pos.y + camera_dir.y * 2,
@@ -18,7 +18,7 @@ std::string Scene::createNewSphere(glm::vec3 camera_pos, glm::vec3 camera_dir) {
 	return name;
 }
 
-std::string Scene::createNewBox(glm::vec3 camera_pos, glm::vec3 camera_dir) {
+std::string Scene::createNewBox(const glm::vec3 camera_pos, const glm::vec3 camera_dir) {
 	glm::vec3 box_min = {
 		camera_pos.x + camera_dir.x * 2,
 		camera_pos.y + camera_dir.y * 2,

@@ -16,7 +16,7 @@ void Renderer::SetupFinalImage() {
 	this->maxFrameIndex = 60;
 }
 
-bool Renderer::on_resize(uint32_t width, uint32_t height) {
+bool Renderer::on_resize(const uint32_t width, const uint32_t height) {
 
 	if (this->m_FinalImage) {
 
@@ -40,7 +40,7 @@ bool Renderer::on_resize(uint32_t width, uint32_t height) {
 	return true;
 }
 
-void Renderer::render(const Scene& scene, const Camera& camera, glm::vec3& skycolor) {
+void Renderer::render(const Scene& scene, const Camera& camera, const glm::vec3& skycolor) {
 	if (this->frameIndex > this->maxFrameIndex) {
 		// no need to calculate the image again
 		if (this->renderingFinalImage) {
@@ -95,7 +95,7 @@ void Renderer::render(const Scene& scene, const Camera& camera, glm::vec3& skyco
 	this->frameIndex++;
 }
 
-glm::vec4 Renderer::PerPixel(uint32_t x, uint32_t y, Ray& ray)
+glm::vec4 Renderer::PerPixel(const uint32_t x, const uint32_t y, Ray& ray)
 {
 	
 	glm::vec3 light(1.0f, 1.0f, 1.0f);

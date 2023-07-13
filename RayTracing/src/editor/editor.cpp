@@ -10,7 +10,7 @@ Editor::Editor() {
 	this->SetTheme(false, 1.0f);
 }
 
-void Editor::OnUpdate(float ts) 
+void Editor::OnUpdate(const float ts) 
 {
 	if (!this->renderer.IsRenderingFinalImage()) {
 		bool hasObjects = (
@@ -461,7 +461,7 @@ void Editor::BoxUI(bool& sceneMoved, std::vector<int>& boxes_todelete) {
 
 // imgui theme
 // set ImGui theme
-void Editor::SetTheme(bool darkmode, float alpha_) {
+void Editor::SetTheme(const bool darkmode, const float alpha_) {
 	// from https://gist.github.com/dougbinks/8089b4bbaccaaf6fa204236978d165a9#file-imguiutils-h-L9-L93
 	
 	ImGuiStyle& style = ImGui::GetStyle();

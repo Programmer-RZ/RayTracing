@@ -111,6 +111,6 @@ struct Scene {
 
 	std::vector<Material> materials = {};
 
-	std::string createNewSphere(glm::vec3 camera_pos, glm::vec3 camera_dir);
-	std::string createNewBox(glm::vec3 camera_pos, glm::vec3 camera_dir);
+	std::string createNewSphere(const glm::vec3 camera_pos, const glm::vec3 camera_dir);
+	std::string createNewBox(const glm::vec3 camera_pos, const glm::vec3 camera_dir);
 };

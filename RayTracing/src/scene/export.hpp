@@ -6,5 +6,5 @@
 #include "glm/glm.hpp"
 
 namespace Export {
-	void ExportImage(uint32_t* imageData, int imageWidth, int imageHeight);
+	void ExportImage(uint32_t* imageData, const int imageWidth, const int imageHeight);
 }

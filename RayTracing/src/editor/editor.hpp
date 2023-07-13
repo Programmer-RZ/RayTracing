@@ -19,7 +19,7 @@ public:
 	Editor();
 
 	void OnUIRender();
-	void OnUpdate(float ts);
+	void OnUpdate(const float ts);
 
 private:
 	void render();
@@ -34,7 +34,7 @@ private:
 	void BoxUI(bool& sceneMoved, std::vector<int>& boxes_todelete);
 
 private:
-	void SetTheme(bool darkmode, float alpha_);
+	void SetTheme(const bool darkmode, const float alpha_);
 
 private:
 	Renderer renderer;
