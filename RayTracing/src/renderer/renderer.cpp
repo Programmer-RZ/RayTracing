@@ -120,13 +120,13 @@ glm::vec4 Renderer::PerPixel(const uint32_t x, const uint32_t y, Ray& ray)
 		const Material* material = payload.materialPtr;
 		ray.Origin = payload.WorldPosition + payload.WorldNormal * 0.0001f;
 
-		if (material->lighting == "lambertian") {
+		if (material->type == "lambertian") {
 			scatter = Scatter::lambertian(payload, material, this->ActiveScene->skycolor, light, attenuation, ray.Direction, seed);
 		}
-		else if (material->lighting == "reflect") {
+		else if (material->type == "metal") {
 			scatter = Scatter::reflect(payload, material, this->ActiveScene->skycolor, light, attenuation, ray.Direction, seed);
 		}
-		else if (material->lighting == "diffuse light") {
+		else if (material->type == "diffuse light") {
 			scatter = Scatter::diffuse_light(payload, material, this->ActiveScene->skycolor, light, attenuation, ray.Direction, seed);
 		}
 		

@@ -5,12 +5,12 @@
 #include <string>
 
 struct Material {
-	Material(glm::vec3 Albedo, float roughness, float EmissionPower, int id, std::string lighting, std::string name) 
-		: Albedo(Albedo), roughness(roughness), EmissionPower(EmissionPower), id(id), lighting(lighting), name(name)
+	Material(glm::vec3 Albedo, float roughness, float EmissionPower, int id, std::string type, std::string name) 
+		: Albedo(Albedo), roughness(roughness), EmissionPower(EmissionPower), id(id), type(type), name(name)
 	{}
 	std::string name;
 
-	std::string lighting;
+	std::string type;
 
 	glm::vec3 Albedo;
 	

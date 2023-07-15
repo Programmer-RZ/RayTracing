@@ -84,9 +84,9 @@ void SceneData::read(Scene& scene, Camera& camera, int& width, int& height) {
 		float b = static_cast<float>(std::stod(m.second.get("b")));
 		float roughness = static_cast<float>(std::stod(m.second.get("roughness")));
 		float emission = static_cast<float>(std::stod(m.second.get("emission")));
-		std::string lighting = m.second.get("lighting");
+		std::string type = m.second.get("type");
 
-		Material material = Material(glm::vec3{r, g, b}, roughness, emission, id, lighting, m.first);
+		Material material = Material(glm::vec3{r, g, b}, roughness, emission, id, type, m.first);
 
 		scene.materials.push_back(material);
 	}
@@ -186,7 +186,7 @@ void SceneData::save(const Scene& scene, const Camera& camera, const int width, 
 		materialini[material.name]["g"] = std::to_string(material.Albedo.g);
 		materialini[material.name]["roughness"] = std::to_string(material.roughness);
 		materialini[material.name]["emission"] = std::to_string(material.EmissionPower);
-		materialini[material.name]["lighting"] = material.lighting;
+		materialini[material.name]["type"] = material.type;
 	}
 
 	// appearance

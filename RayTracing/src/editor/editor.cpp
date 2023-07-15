@@ -128,18 +128,18 @@ void Editor::MaterialUI(bool& sceneMoved) {
 
 			if (ImGui::ColorEdit3("Color", glm::value_ptr(material.Albedo))) { sceneMoved = true; }
 			
-			if (material.lighting == "reflect")
+			if (material.type == "metal")
 			{ if (ImGui::DragFloat("Roughness", &material.roughness, 0.1f, 0.0f, 1.0f)) { sceneMoved = true; } }
 			
-			if (material.lighting == "diffuse light")
+			if (material.type == "diffuse light")
 			{ if (ImGui::DragFloat("Emission Power", &material.EmissionPower, 0.05f, 0.0f, FLT_MAX)) { sceneMoved = true; } }
 
-			if (ImGui::BeginCombo("Lighting", material.lighting.c_str())) {
-				char* lightingMethods[3] = { "lambertian", "reflect" , "diffuse light" };
+			if (ImGui::BeginCombo("Material type", material.type.c_str())) {
+				char* types[3] = { "lambertian", "metal" , "diffuse light" };
 				for (int n = 0; n < 3; n++) {
-					bool isSelected = (material.lighting == lightingMethods[n]);
-					if (ImGui::Selectable(lightingMethods[n], isSelected)) {
-						material.lighting = std::string(lightingMethods[n]);
+					bool isSelected = (material.type == types[n]);
+					if (ImGui::Selectable(types[n], isSelected)) {
+						material.type = std::string(types[n]);
 						sceneMoved = true;
 					}
 					if (isSelected) {
@@ -161,7 +161,7 @@ void Editor::MaterialUI(bool& sceneMoved) {
 		// if materials only has one element
 		// cannot delete it
 		std::string name = this->scene.materials[index].name;
-		if (this->scene.materials.size() > 1 || this->scene.spheres.size() == 0) {
+		if (this->scene.materials.size() > 1 || (this->scene.spheres.size() == 0 && this->scene.boxes.size() == 0)) {
 			this->scene.materials.erase(this->scene.materials.begin() + index);
 		}
 	}
