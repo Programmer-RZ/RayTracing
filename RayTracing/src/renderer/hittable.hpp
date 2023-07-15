@@ -6,6 +6,9 @@
 
 struct HitPayload {
 	float HitDist = 0.0f;
+	float u;
+	float v;
+
 	bool miss = true;
 	bool front_face;
 

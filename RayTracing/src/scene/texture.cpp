@@ -10,6 +10,10 @@ SolidTexture::SolidTexture(glm::vec3 color)
 	: Texture("solid texture"), color(color)
 {}
 
+glm::vec3& SolidTexture::GetColor() {
+	return this->color;
+}
+
 glm::vec3 SolidTexture::GetColorAt(float u, float v, const glm::vec3& p) const {
 	return this->color;
 }

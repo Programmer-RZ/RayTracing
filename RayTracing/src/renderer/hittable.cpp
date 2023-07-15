@@ -1,6 +1,7 @@
 #include "hittable.hpp"
 #include <iostream>
 
+#define PI 3.14159265358979323846
 
 void SphereIntersection::TraceRay(const Ray& ray, const Scene* ActiveScene, HitPayload& payload) {
 	// (bx^2 + by^2)t^2 + (2(axbx + ayby))t + (ax^2 + ay^2 - r^2) = 0
@@ -47,6 +48,13 @@ void SphereIntersection::TraceRay(const Ray& ray, const Scene* ActiveScene, HitP
 		payload.WorldNormal = payload.front_face ? outwardnormal : -outwardnormal;
 
 		payload.materialPtr = &(ActiveScene->materials[sphere.material_index]);
+
+		// calculate u and v
+		float theta = acosf(-outwardnormal.y);
+		float phi = atan2f(-outwardnormal.z, outwardnormal.x) + PI;
+
+		payload.u = phi / (2 * PI);
+		payload.v = theta / PI;
 	}
 }
 

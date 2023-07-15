@@ -10,6 +10,8 @@ private:
 public:
 	Texture(std::string type);
 
+	std::string GetType() const { return this->type; }
+
 	virtual glm::vec3 GetColorAt(float u, float v, const glm::vec3& p) const;
 };
 
@@ -20,5 +22,6 @@ private:
 public:
 	SolidTexture(glm::vec3 color);
 	
+	glm::vec3& GetColor();
 	glm::vec3 GetColorAt(float u, float v, const glm::vec3& p) const override;
 };
