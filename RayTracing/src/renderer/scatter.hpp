@@ -7,16 +7,10 @@
 #include "../utils.hpp"
 
 namespace Scatter {
-	static bool lambertian(HitPayload payload, const Material* material, glm::vec3 skycolor, glm::vec3& light, glm::vec3& attenuation, glm::vec3& rDir, uint32_t& seed) {		
-		glm::vec3 color(0.0f);
+	static bool lambertian(HitPayload payload, const Material* material, glm::vec3 skycolor, glm::vec3& light, glm::vec3& attenuation, glm::vec3& rDir, uint32_t& seed) {	
+		attenuation *= material->Albedo;
 		
-		if (material->texture_type == "solid") {
-			color = material->solidtexture.GetColorAt(payload.u, payload.v, payload.WorldPosition);
-		}
-		
-		attenuation *= color;
-		
-		light *= color * attenuation;
+		light *= material->Albedo * attenuation;
 		
 		rDir = payload.WorldNormal + glm::normalize(Utils::RandomUnitSphere(seed));
 		
@@ -28,15 +22,9 @@ namespace Scatter {
 	}
 
 	static bool reflect(HitPayload payload, const Material* material, glm::vec3 skycolor, glm::vec3& light, glm::vec3& attenuation, glm::vec3& rDir, uint32_t& seed) {
-		glm::vec3 color(0.0f);
-
-		if (material->texture_type == "solid") {
-			color = material->solidtexture.GetColorAt(payload.u, payload.v, payload.WorldPosition);
-		}
+		attenuation *= material->Albedo;
 		
-		attenuation *= color;
-		
-		light *= color * attenuation;
+		light *= material->Albedo * attenuation;
 
 		rDir = glm::reflect(rDir, payload.WorldNormal + material->roughness * Utils::RandomUnitSphere(seed));
 		
@@ -44,15 +32,9 @@ namespace Scatter {
 	}
 	
 	static bool diffuse_light(HitPayload payload, const Material* material, glm::vec3 skycolor, glm::vec3& light, glm::vec3& attenuation, glm::vec3& rDir, uint32_t& seed) {
-		glm::vec3 color(0.0f);
+		attenuation *= material->Albedo;
 
-		if (material->texture_type == "solid") {
-			color = material->solidtexture.GetColorAt(payload.u, payload.v, payload.WorldPosition);
-		}
-		
-		attenuation *= color;
-
-		light *= color * material->EmissionPower;
+		light *= material->Albedo * material->EmissionPower;
 		
 		return false;
 	}

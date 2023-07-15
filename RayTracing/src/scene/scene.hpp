@@ -4,17 +4,15 @@
 #include <vector>
 #include <string>
 
-#include "texture.hpp"
 
 struct Material {
-	Material(glm::vec3 Albedo, float roughness, float EmissionPower, int id, std::string type, std::string texture_type, std::string name) 
-		: solidtexture(Albedo), roughness(roughness), EmissionPower(EmissionPower), id(id), type(type), texture_type(texture_type), name(name)
+	Material(glm::vec3 Albedo, float roughness, float EmissionPower, int id, std::string type, std::string name) 
+		: Albedo(Albedo), roughness(roughness), EmissionPower(EmissionPower), id(id), type(type), name(name)
 	{}
 	std::string name;
 	std::string type;
-	std::string texture_type;
-
-	SolidTexture solidtexture;
+	
+	glm::vec3 Albedo;
 	
 	// metal material
 	float roughness;

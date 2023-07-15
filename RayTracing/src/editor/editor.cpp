@@ -98,7 +98,7 @@ void Editor::MaterialUI(bool& sceneMoved) {
 		int id = this->scene.materials.size();
 		std::string name = "material" + std::to_string(id);
 
-		Material material = Material(Albedo, roughness, EmissionPower, id, "lambertian", "solid", name);
+		Material material = Material(Albedo, roughness, EmissionPower, id, "lambertian", name);
 
 		this->scene.materials.push_back(material);
 	}
@@ -126,10 +126,7 @@ void Editor::MaterialUI(bool& sceneMoved) {
 				material.name = newname;
 			}
 
-			if (material.texture_type == "solid") {
-				glm::vec3& color = material.solidtexture.GetColor();
-				if (ImGui::ColorEdit3("Color", glm::value_ptr(color))) { sceneMoved = true; }
-			}
+			if (ImGui::ColorEdit3("Color", glm::value_ptr(material.Albedo))) { sceneMoved = true; }
 			
 			if (material.type == "metal")
 			{ if (ImGui::DragFloat("Roughness", &material.roughness, 0.1f, 0.0f, 1.0f)) { sceneMoved = true; } }

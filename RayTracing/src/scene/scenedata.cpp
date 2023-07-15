@@ -85,9 +85,8 @@ void SceneData::read(Scene& scene, Camera& camera, int& width, int& height) {
 		float roughness = static_cast<float>(std::stod(m.second.get("roughness")));
 		float emission = static_cast<float>(std::stod(m.second.get("emission")));
 		std::string type = m.second.get("type");
-		std::string texture_type = m.second.get("texturetype");
 
-		Material material = Material(glm::vec3{r, g, b}, roughness, emission, id, type, texture_type, m.first);
+		Material material = Material(glm::vec3{r, g, b}, roughness, emission, id, type, m.first);
 
 		scene.materials.push_back(material);
 	}
@@ -183,17 +182,16 @@ void SceneData::save(const Scene& scene, const Camera& camera, const int width, 
 		// write the material's info to materialInfo.ini
 		materialini[material.name]["id"] = std::to_string(material.id);
 
-		// solid texture rgb
-		materialini[material.name]["r"] = std::to_string(material.solidtexture.GetColor().r);
-		materialini[material.name]["b"] = std::to_string(material.solidtexture.GetColor().b);
-		materialini[material.name]["g"] = std::to_string(material.solidtexture.GetColor().g);
+		// color
+		materialini[material.name]["r"] = std::to_string(material.Albedo.r);
+		materialini[material.name]["b"] = std::to_string(material.Albedo.b);
+		materialini[material.name]["g"] = std::to_string(material.Albedo.g);
 
 		materialini[material.name]["roughness"] = std::to_string(material.roughness);
 		materialini[material.name]["emission"] = std::to_string(material.EmissionPower);
 
 		// type
 		materialini[material.name]["type"] = material.type;
-		materialini[material.name]["texturetype"] = material.texture_type;
 	}
 
 	// appearance

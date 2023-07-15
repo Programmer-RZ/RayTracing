@@ -50,3 +50,7 @@ float Utils::RandomFloat(uint32_t& seed) {
 glm::vec3 Utils::RandomUnitSphere(uint32_t& seed) {
 	return glm::normalize(glm::vec3(Utils::RandomFloat(seed) * 2.0f - 1.0f, Utils::RandomFloat(seed) * 2.0f - 1.0f, Utils::RandomFloat(seed) * 2.0f - 1.0f));
 }
+
+float Utils::clamp(float n, float lower, float upper) {
+	return std::max(lower, std::min(n, upper));
+}

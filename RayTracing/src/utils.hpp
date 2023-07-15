@@ -18,4 +18,6 @@ namespace Utils {
 	float RandomFloat(uint32_t& seed);
 	
 	glm::vec3 RandomUnitSphere(uint32_t& seed);
+
+	float clamp(float n, float lower, float upper);
 }
