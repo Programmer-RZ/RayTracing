@@ -10,10 +10,11 @@
 void Renderer::SetupFinalImage() {
 	this->resetFrameIndex();
 
-	this->coherence = 1;
-	this->bounces = 5;
+	this->coherence = this->finalImage_coherence;
+	this->bounces = this->finalImage_bounces;
+	this->maxFrameIndex = this->finalImage_maxFrameIndex;
+	
 	this->renderingFinalImage = true;
-	this->maxFrameIndex = 60;
 }
 
 bool Renderer::on_resize(const uint32_t width, const uint32_t height) {
@@ -98,7 +99,7 @@ void Renderer::render(const Scene& scene, const Camera& camera, const glm::vec3&
 glm::vec4 Renderer::PerPixel(const uint32_t x, const uint32_t y, Ray& ray)
 {
 	
-	glm::vec3 light(1.0f, 1.0f, 1.0f);
+	glm::vec3 light(1.0f);
 	glm::vec3 attenuation(1.0f);
 	uint32_t seed = x + y * this->m_FinalImage->GetWidth();
 	seed *= this->frameIndex;

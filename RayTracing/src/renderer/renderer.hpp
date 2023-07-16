@@ -31,10 +31,15 @@ public:
 	bool IsRenderingFinalImage() const { return this->renderingFinalImage; }
 	bool IsFinishedFinalImage() const { return this->finishedFinalImage; }
 	bool IsCameraMoved() const { return this->cameraMoved; }
+	
 	int& GetBounces() { return this->bounces; }
+	
+	int* GetFinalImageBounces() { return &(this->finalImage_bounces); }
+	int* GetFinalImageIterations() { return &(this->finalImage_maxFrameIndex); }
+	int* GetFinalImageCoherence() { return &(this->finalImage_coherence); }
 
 	// setters
-	void SetFinishedFinalImage() { this->renderingFinalImage = false; this->resetFrameIndex(); this->finishedFinalImage = false; this->coherence = 3; this->bounces = 3; this->maxFrameIndex = 5; }
+	void SetFinishedFinalImage() { this->renderingFinalImage = false; this->resetFrameIndex(); this->finishedFinalImage = false; this->coherence = 3; this->bounces = 3; this->maxFrameIndex = 10; }
 	void SetCameraMoved(bool cameraMoved) { this->cameraMoved = cameraMoved; }
 
 private:
@@ -47,16 +52,20 @@ private:
 
 	// rendering
 	int frameIndex = 1;
-	int maxFrameIndex = 5;
+	int maxFrameIndex = 10;
 	int bounces = 3;
 	int coherence = 3;
 	
 	// scene
 	bool cameraMoved = false;
 
-
+	// final image
 	bool renderingFinalImage = false;
 	bool finishedFinalImage = false;
+	
+	int finalImage_maxFrameIndex = 60;
+	int finalImage_bounces = 5;
+	int finalImage_coherence = 1;
 
 private:
 

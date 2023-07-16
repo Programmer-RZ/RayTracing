@@ -291,10 +291,12 @@ void Editor::SettingsUI(bool& sceneMoved) {
 
 void Editor::OptionsUI() {
 	ImGui::Begin("Options");
-
-	if (this->renderer.IsRenderingFinalImage()) {
-		ImGui::Text("Rendering Final Image...");
-	}
+	
+	ImGui::Separator();
+	
+	ImGui::DragInt("Bounces", this->renderer.GetFinalImageBounces(), 1.0f, 1, 100);
+	ImGui::DragInt("Iterations", this->renderer.GetFinalImageIterations(), 1.0f, 2, 100);
+	ImGui::DragInt("Coherence", this->renderer.GetFinalImageCoherence(), 2.0f, 1, 19);
 
 	if (ImGui::Button("Render and export final image")) {
 		this->renderer.SetupFinalImage();
