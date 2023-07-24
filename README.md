@@ -1,6 +1,6 @@
 # RayTracing
 
-RayTracing editor where you can create a scene and raytrace it!
+RayTracing editor. Extremely lightweight! Seriously, this could run on oven!
 
 Heavily in development.
 
@@ -14,6 +14,10 @@ Written entirely in C++.
 
 - Visual Studio 2022 (other versions have not been tested)
 - Vulkan SDK
+
+### System
+
+Currently only supports Windows. Preferably, Windows 11 since it has been tested.
 
 ## Features
 
