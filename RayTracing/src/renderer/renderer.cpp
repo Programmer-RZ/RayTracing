@@ -5,7 +5,11 @@
 
 #include "../utils.hpp"
 
-#include "scatter.hpp"
+// scatter ray functions
+static bool lambertian(HitPayload payload, const Material* material, glm::vec3 skycolor, glm::vec3& light, glm::vec3& attenuation, glm::vec3& rDir, uint32_t& seed);
+static bool metal(HitPayload payload, const Material* material, glm::vec3 skycolor, glm::vec3& light, glm::vec3& attenuation, glm::vec3& rDir, uint32_t& seed);
+static bool diffuse_light(HitPayload payload, const Material* material, glm::vec3 skycolor, glm::vec3& light, glm::vec3& attenuation, glm::vec3& rDir, uint32_t& seed);
+
 
 void Renderer::SetupFinalImage() {
 	this->resetFrameIndex();
@@ -122,13 +126,13 @@ glm::vec4 Renderer::PerPixel(const uint32_t x, const uint32_t y, Ray& ray)
 		ray.Origin = payload.WorldPosition + payload.WorldNormal * 0.0001f;
 
 		if (material->type == "lambertian") {
-			scatter = Scatter::lambertian(payload, material, this->ActiveScene->skycolor, light, attenuation, ray.Direction, seed);
+			scatter = lambertian(payload, material, this->ActiveScene->skycolor, light, attenuation, ray.Direction, seed);
 		}
 		else if (material->type == "metal") {
-			scatter = Scatter::reflect(payload, material, this->ActiveScene->skycolor, light, attenuation, ray.Direction, seed);
+			scatter = metal(payload, material, this->ActiveScene->skycolor, light, attenuation, ray.Direction, seed);
 		}
 		else if (material->type == "diffuse light") {
-			scatter = Scatter::diffuse_light(payload, material, this->ActiveScene->skycolor, light, attenuation, ray.Direction, seed);
+			scatter = diffuse_light(payload, material, this->ActiveScene->skycolor, light, attenuation, ray.Direction, seed);
 		}
 		
 		if (!scatter) { break; }
@@ -147,4 +151,39 @@ HitPayload Renderer::TraceRay(const Ray& ray)
 	BoxIntersection::TraceRay(ray, this->ActiveScene, payload);
 
 	return payload;
+}
+
+
+
+
+static bool lambertian(HitPayload payload, const Material* material, glm::vec3 skycolor, glm::vec3& light, glm::vec3& attenuation, glm::vec3& rDir, uint32_t& seed) {	
+	attenuation *= material->Albedo;
+	
+	light *= material->Albedo * attenuation;
+	
+	rDir = payload.WorldNormal + glm::normalize(Utils::RandomUnitSphere(seed));
+	
+	if (fabs(rDir.x) < 1e-8 && fabs(rDir.y) < 1e-8 && fabs(rDir.z) < 1e-8) {
+		rDir = payload.WorldNormal;
+	}
+	
+	return true;
+}
+
+static bool metal(HitPayload payload, const Material* material, glm::vec3 skycolor, glm::vec3& light, glm::vec3& attenuation, glm::vec3& rDir, uint32_t& seed) {
+	attenuation *= material->Albedo;
+	
+	light *= material->Albedo * attenuation;
+
+	rDir = glm::reflect(rDir, payload.WorldNormal + material->roughness * Utils::RandomUnitSphere(seed));
+	
+	return (glm::dot(rDir, payload.WorldNormal) > 0);
+}
+
+static bool diffuse_light(HitPayload payload, const Material* material, glm::vec3 skycolor, glm::vec3& light, glm::vec3& attenuation, glm::vec3& rDir, uint32_t& seed) {
+	attenuation *= material->Albedo;
+
+	light *= material->Albedo * material->EmissionPower;
+	
+	return false;
 }

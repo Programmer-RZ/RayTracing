@@ -21,17 +21,6 @@ Currently only supports Windows. Preferably, Windows 11 since it has been tested
 
 ## Features
 
-### Raytracer
-
-- Shading
-- Path Tracing
-- Accumulation
-
-### GUI
-
-- Material/Scene Editor
-- Settings/Options panel
-
 ### Materials
 
 - Lambertians
@@ -43,12 +32,18 @@ Currently only supports Windows. Preferably, Windows 11 since it has been tested
 - Sphere
 - Box
 
+### GUI
+
+- Material/Scene Editor
+- Settings/Options panel
+
 ### Optimizations
 
 - Ray coherence
-- Reduced bounces
+- Reduced bounces in editor
 - Renders new image when updated objects/position
 - Reduce image quality in scene editor
+- Only enable high image quality when finalImage is enabled
 
 ## Dependencies
 
