@@ -62,6 +62,11 @@ Currently only supports Windows. Preferably, Windows 11 since it has been tested
 
 ![test](https://github.com/Programmer-RZ/RayTracing/assets/123858154/faa8491c-d295-46fc-b5e5-e3f517cfae1c)
 
+### Sphere One
+
+![test3](https://github.com/Programmer-RZ/RayTracing/assets/123858154/1d40dc21-0828-4ca6-8a67-1a9e2bdfe8f9)
+
+
 ## Credits
 
 - Thanks to [RayTracing Tutorials](https://www.youtube.com/watch?v=gfW1Fhd9u9Q&list=PLlrATfBNZ98edc5GshdBtREv5asFW3yXl)
