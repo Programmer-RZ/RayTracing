@@ -79,7 +79,7 @@ void Renderer::render(const Scene& scene, const Camera& camera, const glm::vec3&
 			
 			uint32_t RGBA;
 
-			for (int c = 0; c < this->coherence; c++) {
+			for (size_t c = 0; c < this->coherence; c++) {
 				this->AccumulationData[(x - c) + y * this->m_FinalImage->GetWidth()] += color;
 			}
 
@@ -89,7 +89,7 @@ void Renderer::render(const Scene& scene, const Camera& camera, const glm::vec3&
 			accumulatedColor = glm::clamp(accumulatedColor, glm::vec4(0.0f), glm::vec4(1.0f));
 			RGBA = Utils::ConvertToRGBA(accumulatedColor);
 
-			for (int c = 0; c < this->coherence; c++) {
+			for (size_t c = 0; c < this->coherence; c++) {
 				this->imageData[(x - c) + y * this->m_FinalImage->GetWidth()] = RGBA;
 			}
 		}
@@ -110,7 +110,7 @@ glm::vec4 Renderer::PerPixel(const uint32_t x, const uint32_t y, Ray& ray)
 	
 	bool scatter = true;
 
-	for (int i = 0; i < this->bounces; i++) {
+	for (size_t i = 0; i < this->bounces; i++) {
 		seed += i;
 		
 		

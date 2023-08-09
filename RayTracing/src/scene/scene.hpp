@@ -25,7 +25,7 @@ struct Material {
 
 
 struct Sphere {
-	Sphere(glm::vec3 pos, float radius, std::string name, int material_index) 
+	Sphere(glm::vec3 pos, float radius, std::string name, size_t material_index) 
 		: pos(pos), radius(radius), name(name), material_index(material_index)
 	{}
 
@@ -34,33 +34,33 @@ struct Sphere {
 
 	std::string name;
 
-	int material_index;
+	size_t material_index;
 };
 
 struct xy_rect {
-	xy_rect(float x0, float x1, float y0, float y1, float k, int material_index)
+	xy_rect(float x0, float x1, float y0, float y1, float k, size_t material_index)
 		: x0(x0), x1(x1), y0(y0), y1(y1), k(k), material_index(material_index)
 	{}
 	float x0, x1, y0, y1, k;
-	int material_index;
+	size_t material_index;
 };
 struct xz_rect {
-	xz_rect(float x0, float x1, float z0, float z1, float k, int material_index)
+	xz_rect(float x0, float x1, float z0, float z1, float k, size_t material_index)
 		: x0(x0), x1(x1), z0(z0), z1(z1), k(k), material_index(material_index)
 	{}
 	float x0, x1, z0, z1, k;
-	int material_index;
+	size_t material_index;
 };
 struct yz_rect {
-	yz_rect(float y0, float y1, float z0, float z1, float k, int material_index)
+	yz_rect(float y0, float y1, float z0, float z1, float k, size_t material_index)
 		: y0(y0), y1(y1), z0(z0), z1(z1), k(k), material_index(material_index)
 	{}
 	float y0, y1, z0, z1, k;
-	int material_index;
+	size_t material_index;
 };
 
 struct Box {
-	Box(glm::vec3 box_min, glm::vec3 box_max, std::string name, int material_index) 
+	Box(glm::vec3 box_min, glm::vec3 box_max, std::string name, size_t material_index) 
 		: box_min(box_min), box_max(box_max), name(name), material_index(material_index),
 
 		side1(box_min.x, box_max.x, box_min.y, box_max.y, box_max.z, material_index),
@@ -76,7 +76,7 @@ struct Box {
 	{}
 
 	std::string name;
-	int material_index;
+	size_t material_index;
 	
 	glm::vec3 box_min;
 	glm::vec3 box_max;

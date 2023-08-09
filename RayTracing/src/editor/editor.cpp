@@ -104,8 +104,8 @@ void Editor::MaterialUI(bool& sceneMoved) {
 	}
 
 	// holds the indexes of material that the user deleted
-	std::vector<int> materials_todelete = {};
-	for (int i = 0; i < this->scene.materials.size(); i++) {
+	std::vector<size_t> materials_todelete = {};
+	for (size_t i = 0; i < this->scene.materials.size(); i++) {
 		ImGui::Separator();
 
 		Material& material = this->scene.materials[i];
@@ -157,7 +157,7 @@ void Editor::MaterialUI(bool& sceneMoved) {
 		}
 	}
 	// delete all the materials
-	for (int index : materials_todelete) {
+	for (size_t index : materials_todelete) {
 		// if materials only has one element
 		// cannot delete it
 		std::string name = this->scene.materials[index].name;
@@ -167,7 +167,7 @@ void Editor::MaterialUI(bool& sceneMoved) {
 	}
 
 	// check if any spheres hold the materials
-	for (int i = 0; i < this->scene.spheres.size(); i++) {
+	for (size_t i = 0; i < this->scene.spheres.size(); i++) {
 		Sphere& sphere = this->scene.spheres[i];
 		if (sphere.material_index > this->scene.materials.size() - 1) {
 			sphere.material_index = this->scene.materials.size() - 1;
@@ -176,7 +176,7 @@ void Editor::MaterialUI(bool& sceneMoved) {
 	}
 
 	// check if any boxes hold the materials
-	for (int i = 0; i < this->scene.boxes.size(); i++) {
+	for (size_t i = 0; i < this->scene.boxes.size(); i++) {
 		Box& box = this->scene.boxes[i];
 		if (box.material_index > this->scene.materials.size() - 1) {
 			box.material_index = this->scene.materials.size() - 1;
@@ -213,7 +213,7 @@ void Editor::SceneUI(bool& sceneMoved) {
 
 	if (ImGui::BeginCombo("3D Shape", this->scene.selected_object)) {
 
-		for (int n = 0; n < this->scene.num_of_avail_obj; n++) {
+		for (size_t n = 0; n < this->scene.num_of_avail_obj; n++) {
 			bool isSelected = (this->scene.selected_object == this->scene.objects[n]);
 			if (ImGui::Selectable(this->scene.objects[n], isSelected)) {
 				this->scene.selected_object = this->scene.objects[n];
@@ -257,13 +257,13 @@ void Editor::SceneUI(bool& sceneMoved) {
 	
 
 	// delete the spheres
-	for (int index : spheres_todelete) {
+	for (size_t index : spheres_todelete) {
 		std::string name = this->scene.spheres[index].name;
 		this->scene.spheres.erase(this->scene.spheres.begin() + index);
 
 	}
 	// delete the boxes
-	for (int index : boxes_todelete) {
+	for (size_t index : boxes_todelete) {
 		std::string name = this->scene.boxes[index].name;
 		this->scene.boxes.erase(this->scene.boxes.begin() + index);
 
@@ -346,7 +346,7 @@ void Editor::render() {
 
 void Editor::SphereUI(bool& sceneMoved, std::vector<int>& spheres_todelete) {
 	// spheres ui in Scene tab
-	for (int i = 0; i < this->scene.spheres.size(); i++) {
+	for (size_t i = 0; i < this->scene.spheres.size(); i++) {
 		ImGui::Separator();
 
 		Sphere& sphere = this->scene.spheres[i];
@@ -401,7 +401,7 @@ void Editor::SphereUI(bool& sceneMoved, std::vector<int>& spheres_todelete) {
 }
 
 void Editor::BoxUI(bool& sceneMoved, std::vector<int>& boxes_todelete) {
-	for (int i = 0; i < this->scene.boxes.size(); i++) {
+	for (size_t i = 0; i < this->scene.boxes.size(); i++) {
 		ImGui::Separator();
 
 		Box& box = this->scene.boxes[i];
@@ -468,7 +468,7 @@ void Editor::SetTheme(const bool darkmode, const float alpha_) {
 	
 	ImGuiStyle& style = ImGui::GetStyle();
 	
-	for (int i = 0; i < ImGuiCol_COUNT; i++)
+	for (size_t i = 0; i < ImGuiCol_COUNT; i++)
 	{
 		ImGuiCol_ ei = (ImGuiCol_)i;
 		ImVec4& col = style.Colors[i];

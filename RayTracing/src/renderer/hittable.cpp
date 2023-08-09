@@ -9,7 +9,7 @@ void SphereIntersection::TraceRay(const Ray& ray, const Scene* ActiveScene, HitP
 	// r = radius of sphere
 	// t = hit distance
 
-	for (int i = 0; i < ActiveScene->spheres.size(); i++) {
+	for (size_t i = 0; i < ActiveScene->spheres.size(); i++) {
 
 		const Sphere& sphere = ActiveScene->spheres[i];
 
@@ -51,7 +51,7 @@ void SphereIntersection::TraceRay(const Ray& ray, const Scene* ActiveScene, HitP
 
 void BoxIntersection::TraceRay(const Ray& ray, const Scene* ActiveScene, HitPayload& payload)
 {
-	for (int i = 0; i < ActiveScene->boxes.size(); i++) {
+	for (size_t i = 0; i < ActiveScene->boxes.size(); i++) {
 		const Box& box = ActiveScene->boxes[i];
 
 		xy_rect side1 = box.side1;

@@ -49,7 +49,7 @@ void SceneData::read(Scene& scene, Camera& camera, int& width, int& height) {
 		float y = static_cast<float>(std::stod(s.second.get("y")));
 		float z = static_cast<float>(std::stod(s.second.get("z")));
 		float radius = static_cast<float>(std::stod(s.second.get("radius")));
-		int material = static_cast<int>(std::stod(s.second.get("material")));
+		size_t material = static_cast<size_t>(std::stod(s.second.get("material")));
 
 		Sphere sphere = Sphere(glm::vec3(x, y, z), radius, s.first, material);
 		scene.spheres.push_back(sphere);
@@ -69,7 +69,7 @@ void SceneData::read(Scene& scene, Camera& camera, int& width, int& height) {
 			static_cast<float>(std::stod(b.second.get("boxmaxz"))),
 		};
 		
-		int material = static_cast<int>(std::stod(b.second.get("material")));
+		size_t material = static_cast<size_t>(std::stod(b.second.get("material")));
 
 		Box box = Box(boxmin, boxmax, b.first, material);
 		scene.boxes.push_back(box);
