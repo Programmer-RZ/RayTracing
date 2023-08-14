@@ -7,7 +7,7 @@
 #define MAX_NAME_LENGTH 100
 
 Editor::Editor() {
-	this->SetTheme(false, 1.0f);
+	this->SetTheme(true, 1.0f);
 }
 
 void Editor::OnUpdate(const float ts) 
@@ -313,7 +313,7 @@ void Editor::OptionsUI() {
 		this->render();
 	}
 	
-	if (ImGui::Button("Save / Save to")) {
+	if (ImGui::Button("Save / Save as")) {
 		this->scenedata.write(this->scene, this->camera, this->ViewportWidth, this->ViewportHeight);
 	}
 

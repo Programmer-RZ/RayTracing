@@ -1,7 +1,6 @@
 #pragma once
 
 #include <fstream>
-#include <filesystem>
 
 #include "..\libs\mINI\src\mini\ini.h"
 #include "scene.hpp"
@@ -26,19 +25,14 @@ private:
 	mINI::INIStructure boxini;
 	*/
 
-	std::filesystem::path path;
-
-	std::filesystem::path sceneDataFileName;
-	std::filesystem::path sphereDataFileName;
-	std::filesystem::path boxDataFileName;
-	std::filesystem::path materialDataFileName;
+	std::string filepath;
 
 private:
 	void save(const Scene& scene, const Camera& camera, const int width, const int height);
 	void saveas(const Scene& scene, const Camera& camera, const int width, const int height);
 
 public:
-	SceneData();
+	SceneData() = default;
 
 	// read data from the app and write to file
 	void read(Scene& scene, Camera& camera, int& width, int& height);
