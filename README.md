@@ -1,6 +1,6 @@
 # RayTracing
 
-RayTracing editor. Extremely lightweight! Seriously, this could run on oven!
+RayTracing editor.
 
 Heavily in development.
 
